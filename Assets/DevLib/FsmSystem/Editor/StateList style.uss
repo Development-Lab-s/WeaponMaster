@@ -1,0 +1,19 @@
+:root {
+}
+
+.container-box {
+    flex-direction: row;
+}
+
+.selected-label {
+    flex-grow: 1;
+    -unity-text-align: middle-left;
+}
+
+.btn {
+    background-color: #0e5a28;
+    color: white;
+    padding: 5px 9px;
+    border-width: 1px;
+    border-color: #8f8f8f;
+}
