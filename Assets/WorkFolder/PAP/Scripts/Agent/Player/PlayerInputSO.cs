@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
@@ -7,9 +8,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     public class PlayerInputSO : ScriptableObject, Controls.IPlayerActions
     {
         private Controls _controls;
-        
         public Vector2 MoveDirection { get; private set; }
         public Vector2 AimDirection { get; private set; }
+        public Action<bool> OnEquipKeyPressed;
 
         private void OnEnable()
         {
@@ -50,6 +51,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public void OnSprint(InputAction.CallbackContext context)
         {
+        }
+
+        public void OnEquip(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                OnEquipKeyPressed?.Invoke(true);
+            else if (context.canceled)
+                OnEquipKeyPressed?.Invoke(false);
         }
     }
 }

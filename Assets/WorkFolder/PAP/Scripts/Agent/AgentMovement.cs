@@ -11,7 +11,7 @@ namespace WorkFolder.PAP.Scripts.Agent
         void SetMovementDirection(Vector2 dir);
     }
 
-    public class AgentMovement : NetworkModule, IAgentMovement
+    public class AgentMovement : NetworkModule, IAgentMovement,IAfterInitModule
     {
         [SerializeField] private float moveSpeed = 5;
         [SerializeField] private float accelation = 0.3f;
@@ -22,11 +22,16 @@ namespace WorkFolder.PAP.Scripts.Agent
         private Rigidbody _rigidbody;
         private Vector3 _currentDirection;
 
+        
         public override void Initialize(NetworkOwner owner)
         {
             base.Initialize(owner);
             _rigidbody = owner.GetComponent<Rigidbody>();
-            CameraController = owner.GetModule<ICameraController>();
+        }
+        
+        public void AfterInit()
+        {
+            CameraController = Owner.GetModule<ICameraController>();
         }
 
         public void SetMovementDirection(Vector2 dir)
@@ -37,16 +42,16 @@ namespace WorkFolder.PAP.Scripts.Agent
         
         public override void FixedUpdateNetwork()
         {
-            if (HasStateAuthority == false) return;
+            if (!HasStateAuthority) return;
             
             Vector3 dir = transform.TransformDirection(MoveDirection);
             dir.y = _rigidbody.linearVelocity.y;
             _currentDirection = Vector3.Lerp(_currentDirection, dir * moveSpeed, accelation);
             _rigidbody.linearVelocity = new Vector3(_currentDirection.x, _rigidbody.linearVelocity.y, _currentDirection.z);
-            //움직임
+
+            
             _rigidbody.rotation = Quaternion.Euler(0, CameraController.EularAngle.y, 0);
         }
-        
-        
+
     }
 }
