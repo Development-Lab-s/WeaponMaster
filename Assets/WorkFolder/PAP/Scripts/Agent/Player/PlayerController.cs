@@ -33,8 +33,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Spawned()
         {
-            if (!HasStateAuthority) return;
-                CinemachineCore.GetVirtualCamera(0).Follow = transform;
+
         }
 
         private void Update()

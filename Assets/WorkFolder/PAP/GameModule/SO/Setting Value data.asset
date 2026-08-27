@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e097117444e0345bf58568ebf38add, type: 3}
   m_Name: Setting Value data
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SO.DataFolder.SettingValueSO
-  MouseSensitivityX: 2
-  MouseSensitivityY: 2
+  MouseSensitivityX: 1
+  MouseSensitivityY: 1
