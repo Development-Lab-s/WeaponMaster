@@ -56,6 +56,7 @@ namespace WorkFolder.PAP.Scripts.Camera
 
         private void Update()
         {
+            if (!HasStateAuthority) return;
             RotateCharacter();
             AxisControl();
         }
@@ -72,7 +73,7 @@ namespace WorkFolder.PAP.Scripts.Camera
                 }
                 else if (controller.Name == "Look Orbit Y" || controller.Name == "Look Y (Tilt)")
                 {
-                    controller.Input.Gain = values.MouseSensitivityY * (EquipWeapon ? 0.1f : 1f);
+                    controller.Input.Gain = -values.MouseSensitivityY * (EquipWeapon ? 0.1f : 1f);
                 }
             }
         }

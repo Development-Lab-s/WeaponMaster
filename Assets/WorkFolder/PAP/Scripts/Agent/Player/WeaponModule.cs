@@ -27,8 +27,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public override void FixedUpdateNetwork()
         {
             if (!HasStateAuthority || !IsEquipped) return;
-            _currentDirection = new Vector2(Mathf.Clamp(_currentDirection.x + _cameraController.AimDirection.x * 0.01f, -1,1)
-                , Mathf.Clamp(_currentDirection.y + _cameraController.AimDirection.y * 0.01f, -1,1));
+            _currentDirection = new Vector2(Mathf.Clamp(_currentDirection.x + _cameraController.AimDirection.x * 0.05f, -1,1)
+                , Mathf.Clamp(_currentDirection.y + _cameraController.AimDirection.y * 0.05f, -1,1));
             targetWeapon.transform.position = transform.position + transform.TransformDirection(_currentDirection.normalized * moveRadius);
         }
 
