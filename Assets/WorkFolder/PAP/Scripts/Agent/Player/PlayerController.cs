@@ -19,7 +19,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             base.InitializeModules();
             AgentMover = GetModule<IAgentMovement>();
-            WeaponModule = GetModule<WeaponModule>();
+            WeaponModule = GetModule<IWeaponModule>();
             CameraController = GetModule<ICameraController>();
         }
 
