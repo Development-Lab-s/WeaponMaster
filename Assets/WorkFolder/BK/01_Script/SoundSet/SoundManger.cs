@@ -2,10 +2,12 @@ using System;
 using BK._01_Script.SO;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SoundManger : MonoBehaviour
 {
+    [FormerlySerializedAs("mouseSettings")]
     [Header("사운드 데이터")]
     [SerializeField] private SoundSO soundSettings;
 

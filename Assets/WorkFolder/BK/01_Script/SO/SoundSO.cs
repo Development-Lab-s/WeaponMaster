@@ -32,5 +32,6 @@ namespace BK._01_Script.SO
             get => vfxVolume;
             set => vfxVolume = Mathf.Clamp01(value);
         }
+        //태헌님의 말 -> 감도만 넣어놓으면 될거 같다 -> 감도에 있는 값 SO에 저장하는 코드
     }
 }
