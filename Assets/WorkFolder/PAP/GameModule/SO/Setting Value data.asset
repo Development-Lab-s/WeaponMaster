@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SO.DataFolder.SettingValueSO
   MouseSensitivityX: 1
   MouseSensitivityY: 1
+  WeaponSensitivityX: 1
+  WeaponSensitivityY: 1
+  WeaponMoveSensitivity: 1
