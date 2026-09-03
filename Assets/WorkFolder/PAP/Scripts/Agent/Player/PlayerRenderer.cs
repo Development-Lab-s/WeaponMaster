@@ -1,8 +1,4 @@
-﻿using System;
-using DevLib.ModuleSystem;
-using DevLib.ServiceLocator;
-using Fusion;
-using Unity.Android.Gradle.Manifest;
+﻿using DevLib.ModuleSystem;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Camera;
 
