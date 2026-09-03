@@ -10,7 +10,7 @@ public class RagdollSwitch : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] CharacterController controller;
     [SerializeField] BoneCopier boneCopier;
-    [SerializeField] LowerBodyDriver lowerDriver;
+    [SerializeField] HipFollower lowerDriver;
 
     Rigidbody[] bodies;
     ConfigurableJoint[] joints;
