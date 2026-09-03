@@ -18,10 +18,10 @@ namespace WorkFolder.PAP.Scripts.Camera
 
     public class CameraController : NetworkModule, ICameraController
     {
-        [SerializeField] private SettingValueSO values;
         private UnityEngine.Camera _mainCam;
         private IWeaponModule _weaponModule;
         private CinemachineInputAxisController _axisController;
+        private PlayerController _player;
         
         public Vector3 EularAngle { get; private set; }
         public Vector2 EularCamera { get; private set; }
@@ -30,10 +30,15 @@ namespace WorkFolder.PAP.Scripts.Camera
         
         private void Awake()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+
         }
-        
+
+        public override void Initialize(NetworkOwner owner)
+        {
+            base.Initialize(owner);
+            _player = owner as PlayerController;
+        }
+
         private void Start()
         {
             _mainCam = UnityEngine.Camera.main;
@@ -45,6 +50,8 @@ namespace WorkFolder.PAP.Scripts.Camera
         {
             base.Spawned();
             if (!HasStateAuthority) return;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             CinemachineCore.GetVirtualCamera(0).Follow = transform;
         }
 
@@ -60,7 +67,7 @@ namespace WorkFolder.PAP.Scripts.Camera
             RotateCharacter();
             AxisControl();
         }
-
+        
         private void AxisControl()
         {
             if (_axisController == null) return;
@@ -69,11 +76,11 @@ namespace WorkFolder.PAP.Scripts.Camera
             {
                 if (controller.Name == "Look Orbit X" || controller.Name == "Look X (Pan)")
                 {
-                    controller.Input.Gain = values.MouseSensitivityX * (EquipWeapon ? 0.1f : 1f);
+                    controller.Input.Gain = _player.SettingValue.MouseSensitivityX * (EquipWeapon ? 0.05f : 1f);
                 }
                 else if (controller.Name == "Look Orbit Y" || controller.Name == "Look Y (Tilt)")
                 {
-                    controller.Input.Gain = -values.MouseSensitivityY * (EquipWeapon ? 0.1f : 1f);
+                    controller.Input.Gain = _player.SettingValue.MouseSensitivityY * (EquipWeapon ? 0.05f : 1f);
                 }
             }
         }

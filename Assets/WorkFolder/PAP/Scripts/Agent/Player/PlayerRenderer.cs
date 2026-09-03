@@ -1,8 +1,4 @@
-﻿using System;
-using DevLib.ModuleSystem;
-using DevLib.ServiceLocator;
-using Fusion;
-using Unity.Android.Gradle.Manifest;
+﻿using DevLib.ModuleSystem;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Camera;
 
@@ -21,7 +17,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public override void Render()
         {
             if (!HasStateAuthority || _cameraController == null) return;
-            waistTrm.eulerAngles = _cameraController.EularAngle;
         }
     }
 }
