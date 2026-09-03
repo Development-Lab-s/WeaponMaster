@@ -30,8 +30,7 @@ namespace WorkFolder.PAP.Scripts.Camera
         
         private void Awake()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+
         }
 
         public override void Initialize(NetworkOwner owner)
@@ -51,6 +50,8 @@ namespace WorkFolder.PAP.Scripts.Camera
         {
             base.Spawned();
             if (!HasStateAuthority) return;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             CinemachineCore.GetVirtualCamera(0).Follow = transform;
         }
 

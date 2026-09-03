@@ -2360,7 +2360,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 1911057345
+  SortKey: 519912612
   SendPriority: 1
   EnableInterpolation: 1
   Flags: 262146
@@ -3327,7 +3327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4133392798778747164}
   - component: {fileID: 9195467972144034615}
-  - component: {fileID: 8661872342543869075}
+  - component: {fileID: 1527322226310650298}
   m_Layer: 0
   m_Name: RigComplete
   m_TagString: Untagged
@@ -3373,7 +3373,7 @@ MonoBehaviour:
   - forearm.L
   - upper_arm.R
   - forearm.R
---- !u!114 &8661872342543869075
+--- !u!114 &1527322226310650298
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3382,13 +3382,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 8442921854293769575}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4c9a297a9b34f099c574d2d0fa615b9, type: 3}
+  m_Script: {fileID: 11500000, guid: 668ea1a31a6f4b86af610ff4de6a518e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkeletonWaveTest
-  bone: {fileID: 3621908896384209349}
-  axis: {x: 1, y: 0, z: 0}
-  amplitude: 45
-  speed: 1.5
+  m_EditorClassIdentifier: Assembly-CSharp::BoneCopier
+  skeletonRoot: {fileID: 7353093399547307871}
+  visualRoot: {fileID: 3437489117126294650}
+  copiedBones:
+  - thigh.L
+  - shin.L
+  - foot.L
+  - thigh.R
+  - shin.R
+  - foot.R
 --- !u!1 &8527851286510134897
 GameObject:
   m_ObjectHideFlags: 0
