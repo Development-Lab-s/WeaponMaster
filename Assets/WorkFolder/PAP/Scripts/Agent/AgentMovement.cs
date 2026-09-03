@@ -1,5 +1,6 @@
 ﻿using DevLib.ModuleSystem;
 using Fusion;
+using Fusion.Addons.Physics;
 using Unity.Cinemachine;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Camera;
@@ -28,7 +29,6 @@ namespace WorkFolder.PAP.Scripts.Agent
         {
             base.Initialize(owner);
             _rigidbody = owner.GetComponent<Rigidbody>();
-            Debug.Log(_rigidbody);
         }
         
         public void AfterInit()
@@ -44,6 +44,7 @@ namespace WorkFolder.PAP.Scripts.Agent
 
         public override void Render()
         {
+            if (!HasStateAuthority) return;
             _rigidbody.rotation = Quaternion.Euler(0, CameraController.EularAngle.y, 0);
         }
 
