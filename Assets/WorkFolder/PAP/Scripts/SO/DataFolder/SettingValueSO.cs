@@ -7,5 +7,8 @@ namespace WorkFolder.PAP.Scripts.SO.DataFolder
     {
         public float MouseSensitivityX;
         public float MouseSensitivityY;
+        public float WeaponSensitivityX;
+        public float WeaponSensitivityY;
+        public float WeaponMoveSensitivity;
     }
 }

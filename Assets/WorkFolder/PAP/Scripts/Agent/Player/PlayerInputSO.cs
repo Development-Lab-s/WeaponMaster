@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
@@ -7,9 +8,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     public class PlayerInputSO : ScriptableObject, Controls.IPlayerActions
     {
         private Controls _controls;
-        
         public Vector2 MoveDirection { get; private set; }
         public Vector2 AimDirection { get; private set; }
+        public Vector2 WeaponMoveDirection { get; private set; }
+        public Action<bool> OnAttackKeyPressed;
 
         private void OnEnable()
         {
@@ -42,6 +44,15 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public void OnAttack(InputAction.CallbackContext context)
         {
+            if (context.performed)
+                OnAttackKeyPressed?.Invoke(true);
+            else if (context.canceled)
+                OnAttackKeyPressed?.Invoke(false);
+        }
+
+        public void OnWeaponMove(InputAction.CallbackContext context)
+        {
+            WeaponMoveDirection = context.ReadValue<Vector2>();
         }
 
         public void OnDash(InputAction.CallbackContext context)
