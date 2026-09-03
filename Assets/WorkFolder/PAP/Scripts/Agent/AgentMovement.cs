@@ -28,11 +28,13 @@ namespace WorkFolder.PAP.Scripts.Agent
         {
             base.Initialize(owner);
             _rigidbody = owner.GetComponent<Rigidbody>();
+            Debug.Log(_rigidbody);
         }
         
         public void AfterInit()
         {
             CameraController = Owner.GetModule<ICameraController>();
+            Debug.Log(CameraController);
         }
 
         public void SetMovementDirection(Vector2 dir)
