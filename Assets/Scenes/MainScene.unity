@@ -597,73 +597,9 @@ PrefabInstance:
       propertyPath: SortKey
       value: 1639242100
       objectReference: {fileID: 0}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: NestedObjects.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NestedObjects.Array.data[0]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: NetworkedBehaviours.Array.size
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[6]'
-      value: 
-      objectReference: {fileID: 678646967}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[7]'
-      value: 
-      objectReference: {fileID: 689257208}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[8]'
-      value: 
-      objectReference: {fileID: 1511212314}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[9]'
-      value: 
-      objectReference: {fileID: 271591539}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[10]'
-      value: 
-      objectReference: {fileID: 1229620503}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[11]'
-      value: 
-      objectReference: {fileID: 952187743}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[12]'
-      value: 
-      objectReference: {fileID: 1417093535}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[13]'
-      value: 
-      objectReference: {fileID: 335282485}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[14]'
-      value: 
-      objectReference: {fileID: 1281871550}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[15]'
-      value: 
-      objectReference: {fileID: 1887538980}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[16]'
-      value: 
-      objectReference: {fileID: 796726850}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: 'NetworkedBehaviours.Array.data[17]'
-      value: 
-      objectReference: {fileID: 2115254794}
     - target: {fileID: 5394159356429554557, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: m_Name
       value: Player 1 (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5394159356429554557, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5777852339850430074, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1399,17 +1335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89131eb6d6bc4e6597f4ee1b238f6ea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
---- !u!114 &271591539 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 650806932845451621, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &273829253
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,17 +1626,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!114 &335282485 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5158197612775872914, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &356995162
 GameObject:
   m_ObjectHideFlags: 0
@@ -3205,17 +3119,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.2199986
   m_Center: {x: 0, y: 0.2199986, z: 0}
---- !u!114 &678646967 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8066999705985338453, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &681471024
 GameObject:
   m_ObjectHideFlags: 0
@@ -3420,28 +3323,6 @@ CapsuleCollider:
   m_Height: 0.9815308
   m_Direction: 1
   m_Center: {x: 0, y: 0.4907654, z: 0}
---- !u!114 &689257208 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1204744618624897698, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
---- !u!114 &796726850 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5101978989323730261, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3523,17 +3404,6 @@ Transform:
   - {fileID: 1482422626}
   m_Father: {fileID: 1966938218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &952187743 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6568788872141224668, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &970878739
 GameObject:
   m_ObjectHideFlags: 0
@@ -3757,17 +3627,6 @@ Transform:
   - {fileID: 1291175996}
   m_Father: {fileID: 1966938218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1229620503 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8894909469719432749, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &1252992625
 GameObject:
   m_ObjectHideFlags: 0
@@ -3799,17 +3658,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1482422626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1281871550 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6997210261149670252, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &1291175995
 GameObject:
   m_ObjectHideFlags: 0
@@ -4110,17 +3958,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1417093535 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6020924148251554086, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &1428525500
 GameObject:
   m_ObjectHideFlags: 0
@@ -4561,17 +4398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da432944f724ca2ac34166d3de73de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
---- !u!114 &1511212314 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8656574426174874401, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &1581257072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5485,17 +5311,6 @@ CapsuleCollider:
   m_Height: 0.8926913
   m_Direction: 1
   m_Center: {x: 0, y: 0.44634566, z: 0}
---- !u!114 &1887538980 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 666164350461031118, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1 &1940288545
 GameObject:
   m_ObjectHideFlags: 0
@@ -5699,17 +5514,6 @@ MonoBehaviour:
   tripodSize: 1
   boneColor: {r: 0, g: 0, b: 1, a: 0.5}
   m_Transforms: []
---- !u!114 &2115254794 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 171201946615197059, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-  m_PrefabInstance: {fileID: 110989265}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
