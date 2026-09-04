@@ -42,12 +42,6 @@ namespace WorkFolder.PAP.Scripts.Agent
             MoveDirection = new Vector3(dir.x, 0, dir.y).normalized;
         }
 
-        public override void Render()
-        {
-            if (!HasStateAuthority) return;
-            _rigidbody.rotation = Quaternion.Euler(0, CameraController.EularAngle.y, 0);
-        }
-
         public override void FixedUpdateNetwork()
         {
             if (!HasStateAuthority) return;
@@ -56,7 +50,7 @@ namespace WorkFolder.PAP.Scripts.Agent
             dir.y = _rigidbody.linearVelocity.y;
             _currentDirection = Vector3.Lerp(_currentDirection, dir * moveSpeed, accelation);
             _rigidbody.linearVelocity = new Vector3(_currentDirection.x, _rigidbody.linearVelocity.y, _currentDirection.z);
-
+            _rigidbody.rotation = Quaternion.Euler(0, CameraController.EularAngle.y, 0);
             
         }   
 

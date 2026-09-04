@@ -80,7 +80,7 @@ namespace WorkFolder.PAP.Scripts.Camera
                 }
                 else if (controller.Name == "Look Orbit Y" || controller.Name == "Look Y (Tilt)")
                 {
-                    controller.Input.Gain = _player.SettingValue.MouseSensitivityY * (EquipWeapon ? 0.05f : 1f);
+                    controller.Input.Gain = -_player.SettingValue.MouseSensitivityY * (EquipWeapon ? 0.05f : 1f);
                 }
             }
         }
