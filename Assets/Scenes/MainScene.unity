@@ -645,26 +645,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8220125032390259549, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_Radius
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 8220125032390259549, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_Center.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8220125032390259549, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_Center.z
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8785780790727672725, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_Size.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8785780790727672725, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: m_Center.y
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2496,6 +2476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LowerBodyDriver
   animatedHips: {fileID: 0}
   physicsHips: {fileID: 0}
+  teleportThreshold: 0.5
 --- !u!143 &592737877
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3702,9 +3683,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
-  TargetOffset: {x: 4, y: 3, z: 5}
+  TargetOffset: {x: 1, y: 4, z: -2.5}
   TrackerSettings:
-    BindingMode: 4
+    BindingMode: 1
     PositionDamping: {x: 0.1, y: 0.1, z: 0.1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
@@ -3775,7 +3756,7 @@ MonoBehaviour:
   Target:
     TrackingTarget: {fileID: 0}
     LookAtTarget: {fileID: 0}
-    CustomLookAtTarget: 0
+    CustomLookAtTarget: 1
   Lens:
     FieldOfView: 60.000004
     OrthographicSize: 5
@@ -4361,6 +4342,10 @@ PrefabInstance:
       propertyPath: 'NetworkedBehaviours.Array.data[5]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2222367325807355069, guid: 6092ae77d24647c4f81b48f5efb5e71f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2655391768119954287, guid: 6092ae77d24647c4f81b48f5efb5e71f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.98577
@@ -4412,6 +4397,10 @@ PrefabInstance:
     - target: {fileID: 6648264919463282651, guid: 6092ae77d24647c4f81b48f5efb5e71f, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774772761387401000, guid: 6092ae77d24647c4f81b48f5efb5e71f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4306692309728849521, guid: 6092ae77d24647c4f81b48f5efb5e71f, type: 3}
@@ -4489,7 +4478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 18
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: 'NetworkedBehaviours.Array.data[4]'
@@ -4661,6 +4650,12 @@ PrefabInstance:
     - {fileID: 604613487076924078, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
     - {fileID: 5686901071070405091, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
     - {fileID: 8738453587236117429, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 1204744618624897698, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 6020924148251554086, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 666164350461031118, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 5101978989323730261, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 5158197612775872914, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+    - {fileID: 8066999705985338453, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
     m_RemovedGameObjects:
     - {fileID: 2519822736696478278, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
     m_AddedGameObjects: []

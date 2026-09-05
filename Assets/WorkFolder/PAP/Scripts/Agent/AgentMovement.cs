@@ -37,6 +37,17 @@ namespace WorkFolder.PAP.Scripts.Agent
             Debug.Log(CameraController);
         }
 
+        public override void Spawned()
+        {
+            if (HasStateAuthority) return;
+
+            // Shared Mode에선 물리 애드온(NetworkRigidbody)을 쓸 수 없고 NetworkTransform이 위치를 쓴다.
+            // 프록시의 Rigidbody가 다이나믹으로 남아 있으면 중력·잔여 속도가 그 위치를 매 프레임
+            // 끌고 가면서 NetworkTransform과 싸운다(미끄러짐/고무줄). 프록시는 물리를 끈다.
+            _rigidbody.isKinematic = true;
+            _rigidbody.interpolation = RigidbodyInterpolation.None;
+        }
+
         public void SetMovementDirection(Vector2 dir)
         {
             MoveDirection = new Vector3(dir.x, 0, dir.y).normalized;
