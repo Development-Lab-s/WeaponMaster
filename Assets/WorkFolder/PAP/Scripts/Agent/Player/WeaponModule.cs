@@ -30,7 +30,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [SerializeField] private float drag = 3f;
 
         private ICameraController _cameraController;
-        private PlayerController _player;
+        private Player _player;
         private float _accumulatedForce = 0f;
         private Vector3 _fixedVelocity = Vector3.zero;
         
@@ -46,7 +46,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public override void Initialize(NetworkOwner owner)
         {
             base.Initialize(owner);
-            _player = owner as PlayerController;
+            _player = owner as Player;
             CurrentDirection = Vector3.zero;
         }
 

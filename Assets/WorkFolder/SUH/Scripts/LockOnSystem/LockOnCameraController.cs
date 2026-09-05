@@ -8,20 +8,10 @@ namespace WorkFolder.SUH.Scripts.LockOnSystem
     {
         [SerializeField] private CinemachineCamera freeLookCamera;
         [SerializeField] private CinemachineCamera lookOnCamera;
-        private Transform currentFollowTarget;
-        private Transform currentLookAtTarget;
 
-        public void BindPlayer(Transform followTarget)
+        public void EnterLookOn(Transform trackingTarget,Transform lookAtTarget)
         {
-            currentFollowTarget = followTarget;
-
-            freeLookCamera.Target.TrackingTarget = followTarget;
-            lookOnCamera.Target.TrackingTarget = followTarget;
-        }
-
-        public void EnterLookOn(Transform followTarget,Transform lookAtTarget)
-        {
-            lookOnCamera.Target.TrackingTarget = followTarget;
+            lookOnCamera.Target.TrackingTarget = trackingTarget;
             lookOnCamera.Target.CustomLookAtTarget = true;
             lookOnCamera.Target.LookAtTarget = lookAtTarget;
             
@@ -34,17 +24,6 @@ namespace WorkFolder.SUH.Scripts.LockOnSystem
             freeLookCamera.gameObject.SetActive(true);
             lookOnCamera.gameObject.SetActive(false);
         }
-
-        public void SetLockOnTarget(Transform targetPoint)
-        {
-            if (!targetPoint) return;
-            
-            currentLookAtTarget = targetPoint;
-
-            lookOnCamera.Target.CustomLookAtTarget = true;
-            lookOnCamera.Target.LookAtTarget = currentLookAtTarget;
-        }
-
        
     }
 }
