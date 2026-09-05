@@ -10,7 +10,7 @@ namespace WorkFolder.SUH.Scripts.OnTargetingLib.ScriptableObject
         [Header("Candidate Settings")] 
         public float searchRadius;
         public float maximumTargetAngle;
-        public float candidateRefeshInvertal;
+        public float candidateRefreshInterval;
         public int maximumCandidates;
         public LayerMask targetLayerMask;
         public LayerMask lineOfSightMask;
@@ -34,6 +34,11 @@ namespace WorkFolder.SUH.Scripts.OnTargetingLib.ScriptableObject
         public float currentTargetBonus;
         public float occlusionPenalty;
         public float outsideScreenPenalty;
+
+        public TargetingSettingSO(float candidateRefeshInvertal)
+        {
+            this.candidateRefreshInterval = candidateRefeshInvertal;
+        }
 
         private void OnValidate()
         {
