@@ -25,9 +25,9 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                 swordRb.isKinematic = false;
                 return;
             }
-            
-            swordRb.isKinematic = true;
-            swordRb.interpolation = RigidbodyInterpolation.None;
+            //
+            // swordRb.isKinematic = true;
+            // swordRb.interpolation = RigidbodyInterpolation.None;
         }
     }
 }
