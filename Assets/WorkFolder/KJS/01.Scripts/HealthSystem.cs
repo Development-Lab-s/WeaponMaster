@@ -2,7 +2,7 @@
 using DevLib.ModuleSystem;
 using Fusion;
 
-namespace WorkFolder.KJS._00.Scripts
+namespace WorkFolder.KJS._01.Scripts
 {
     public interface IHealthSystem
     {
