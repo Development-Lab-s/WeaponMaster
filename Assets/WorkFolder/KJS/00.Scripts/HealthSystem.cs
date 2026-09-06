@@ -36,7 +36,7 @@ namespace WorkFolder.KJS._00.Scripts
 
         private void TakeDamage(DamageData data)
         {
-            if(data.Damage <= 0 && _isDead) return;
+            if(data.Damage <= 0 || _isDead) return;
             
             Health -= data.Damage;
             if(Health <= 0 && !_isDead)
