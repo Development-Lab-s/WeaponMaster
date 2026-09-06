@@ -1,7 +1,6 @@
 ﻿using Fusion;
-using WorkFolder.PAP.Scripts.Agent.Player;
 
-namespace WorkFolder.KJS._00.Scripts
+namespace WorkFolder.KJS._01.Scripts
 {
     public struct DamageData : INetworkStruct
     {
