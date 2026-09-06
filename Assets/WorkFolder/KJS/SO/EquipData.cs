@@ -7,8 +7,15 @@ namespace WorkFolder.KJS.SO
     {
         public string weaponName;
         public Sprite weaponImage;
+        
         public Vector3 pivotPosition;
         public Vector3 pivotRotation;
         public Vector3 pivotScale;
+        
+        public float mass;
+        public float baseForce;
+        public float rampRate;
+        public float maxForce;
+        public float drag;
     }
 }
