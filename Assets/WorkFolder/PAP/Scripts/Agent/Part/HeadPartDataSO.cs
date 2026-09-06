@@ -15,7 +15,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
             }
             Vector3 newEuler = Quaternion.FromToRotation(Vector3.up,dir).eulerAngles;
             (newEuler.y, newEuler.z) = (newEuler.z, newEuler.y);
-            newEuler.x -= 15f;
             target.localRotation = Quaternion.Euler(newEuler);
         }
     }
