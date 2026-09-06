@@ -9,7 +9,12 @@ namespace WorkFolder.KJS._00.Scripts
         public int Health { get;}
         public void RpcTakeDamage(DamageData data);
     }
-    public sealed class HealthSystem : NetworkModule , IHealthSystem
+
+    public interface IDamagable
+    {
+        
+    }
+    public sealed class HealthSystem : NetworkModule , IHealthSystem , IDamagable
     {
         [Networked, OnChangedRender(nameof(OnHealthChanged))]
         // If you use the OnHealthChanged Method, Write code to update ui and other visual things.
