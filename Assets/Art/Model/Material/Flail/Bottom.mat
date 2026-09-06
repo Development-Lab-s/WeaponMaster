@@ -123,7 +123,7 @@ Material:
     - baseColorTexture_texCoord: 0
     - emissiveExposureWeight: 0
     - emissiveTexture_texCoord: 0
-    - metallicFactor: 0
+    - metallicFactor: 1
     - metallicRoughnessTexture_texCoord: 0
     - normalTexture_scale: 1
     - normalTexture_texCoord: 0
@@ -132,7 +132,7 @@ Material:
     - roughnessFactor: 0.5
     - transmissionFactor: 0
     m_Colors:
-    - baseColorFactor: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
+    - baseColorFactor: {r: 0.59748423, g: 0.59748423, b: 0.59748423, a: 1}
     - baseColorTexture_Rotation: {r: 0, g: 0, b: 0, a: 0}
     - emissiveFactor: {r: 0, g: 0, b: 0, a: 1}
     - emissiveTexture_Rotation: {r: 0, g: 0, b: 0, a: 0}
