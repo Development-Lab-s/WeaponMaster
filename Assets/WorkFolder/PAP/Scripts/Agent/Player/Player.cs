@@ -42,7 +42,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Spawned()
         {
-            if (!HasStateAuthority) return;
+            if (!HasInputAuthority) return;
             playerInput.OnAttackKeyPressed += HandleAttack;
         }
 
@@ -53,7 +53,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         private void Update()
         {
-            if (!HasStateAuthority) return;
+            if (!HasInputAuthority) return;
             AgentMover.SetMovementDirection(playerInput.MoveDirection);
             CameraController.SetAimDirection(playerInput.AimDirection);
             WeaponModule.SetWeaponMoveDirection(playerInput.WeaponMoveDirection);

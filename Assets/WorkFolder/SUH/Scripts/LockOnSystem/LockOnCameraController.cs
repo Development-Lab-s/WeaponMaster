@@ -19,8 +19,9 @@ namespace WorkFolder.SUH.Scripts.LockOnSystem
             lookOnCamera.gameObject.SetActive(true);
         }
 
-        public void ExitLookOn()
+        public void ExitLookOn(Vector3 currentPosition, Quaternion currentRotation)
         {
+            freeLookCamera.ForceCameraPosition(currentPosition,currentRotation);
             freeLookCamera.gameObject.SetActive(true);
             lookOnCamera.gameObject.SetActive(false);
         }

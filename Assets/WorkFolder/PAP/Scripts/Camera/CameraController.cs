@@ -25,6 +25,7 @@ namespace WorkFolder.PAP.Scripts.Camera
         private Player _player;
         private Player _targetPlayer;
         private LockOnCameraController _lockOn;
+        private bool _lastLock = false;
         
         public Vector3 EularAngle { get; private set; }
         public Vector2 AimDirection { get; private set; }
@@ -39,7 +40,7 @@ namespace WorkFolder.PAP.Scripts.Camera
         public override void Spawned()
         {
             base.Spawned();
-            if (!HasStateAuthority) return;
+            if (!HasInputAuthority) return;
             
             _mainCam = UnityEngine.Camera.main;
             Debug.Assert(_mainCam != null, "Main camera is Null");
@@ -56,18 +57,28 @@ namespace WorkFolder.PAP.Scripts.Camera
 
         public override void Render()
         {
-            if (!HasStateAuthority) return;
+            if (!HasInputAuthority) return;
             RotateCharacter();
             AxisControl();
             if (EquipWeapon)
+            {
                 FindTargetToLockOn();
+            }
             else
             {
                 _targetPlayer = null;
-                _lockOn.ExitLookOn();
+                ExitLockCamera();
             }
+
             if (_targetPlayer == null)
-                _lockOn.ExitLookOn();
+                ExitLockCamera();
+        }
+
+        private void ExitLockCamera()
+        {
+            if (!_lastLock) return;
+            _lastLock = false;
+            _lockOn.ExitLookOn(transform.position,transform.rotation);
         }
 
         private void FindTargetToLockOn()
@@ -89,8 +100,8 @@ namespace WorkFolder.PAP.Scripts.Camera
                 }
             }
             if (_targetPlayer == null) return;
+            _lastLock = true;
             _lockOn.EnterLookOn(Owner.transform,_targetPlayer.transform);
-            
         }
 
         private void AxisControl()

@@ -10,8 +10,6 @@ public class HipFollower : MonoBehaviour
         if (physicsHips != null)
         {
             physicsHips.isKinematic = true;
-            // 루트/본과 보간 모드를 맞춘다. Interpolate면 힙만 한 물리 스텝 과거를 그려
-            // 이동 중 리그 전체가 스켈레톤보다 뒤처진다.
             physicsHips.interpolation = RigidbodyInterpolation.None;
         }
     }

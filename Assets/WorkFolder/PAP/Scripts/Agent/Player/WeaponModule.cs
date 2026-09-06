@@ -16,6 +16,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         [Header("Debug")] 
         [SerializeField] private float moveRadius;
+        [SerializeField] private AnimationCurve zCurve;
         
         [Header("PhysicSetting")]
         [Tooltip("관성업!")]
@@ -87,7 +88,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Render()
         {
-            if (!HasStateAuthority) return;
+            if (!HasInputAuthority) return;
             if (IsEquipped)
             {
                 float x = Mathf.Clamp(
@@ -95,9 +96,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     _player.SettingValue.WeaponSensitivityX, -1f, 1f);
                 float y = Mathf.Clamp(
                     CurrentDirection.y + _cameraController.AimDirection.y * 0.001f *
-                    _player.SettingValue.WeaponSensitivityY, -0.5f, 1f);
-                float val = new Vector2(Mathf.Abs(CurrentDirection.x), Mathf.Abs(CurrentDirection.y)).magnitude;
-                float z = Mathf.Lerp(1, 0f, val );
+                    _player.SettingValue.WeaponSensitivityY, -0.8f, 1f);
+                float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
+                float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
                 CurrentDirection = new Vector3(x,y,z);
             }
             else
@@ -108,7 +109,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void FixedUpdateNetwork()
         {
-            if (!HasStateAuthority) return; 
+            if (!HasInputAuthority) return; 
             //부위별로 돌아가는거 다르게 할 예정임. 
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             _fixedVelocity = CalculateInertialVelocity(CurrentDirection, _fixedVelocity, Time.fixedDeltaTime);
