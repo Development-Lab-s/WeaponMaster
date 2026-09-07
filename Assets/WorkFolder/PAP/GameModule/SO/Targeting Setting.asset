@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb4bbe412bc34bffb7ff771eb4415ca6, type: 3}
+  m_Name: Targeting Setting
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.OnTargetingLib.ScriptableObject.TargetingSettingSO
+  searchRadius: 0
+  maximumTargetAngle: 0
+  candidateRefeshInvertal: 0
+  maximumCandidates: 0
+  targetLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  lineOfSightMask:
+    serializedVersion: 2
+    m_Bits: 0
+  includeNeutralTarget: 0
+  maximumTargetDistance: 0
+  occlusionGraceTime: 0
+  viewportPadding: 0
+  targetSwitchCooldown: 0
+  maximumLookDuration: 0
+  screenCenterWeight: 0
+  distanceWeight: 0
+  facingWeight: 0
+  visibilityWeight: 0
+  recenterWeight: 0
+  weaponDirectionWeight: 0
+  priorityBiasWeight: 0
+  currentTargetBonus: 0
+  occlusionPenalty: 0
+  outsideScreenPenalty: 0

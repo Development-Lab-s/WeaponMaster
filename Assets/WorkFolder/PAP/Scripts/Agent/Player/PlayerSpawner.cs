@@ -12,7 +12,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (player == Runner.LocalPlayer)
             {
                 Debug.Log("Player joined");
-                Runner.Spawn(PlayerPrefab, new Vector3(0,4,0),Quaternion.identity);
+                Runner.Spawn(PlayerPrefab, new Vector3(0,4,0),Quaternion.identity,inputAuthority:player );
             }
         }
     }

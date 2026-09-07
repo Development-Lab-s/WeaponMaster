@@ -16,6 +16,7 @@ public class PuppetJoint : MonoBehaviour
     float currentStrength = 1f;
 
     public Transform AnimatedBone => animatedBone;
+    Quaternion _smoothed;
 
     void Awake()
     {
@@ -30,7 +31,7 @@ public class PuppetJoint : MonoBehaviour
 
         baseSpring = load * springPerKg * strengthMultiplier;
         baseDamper = 2f * dampingRatio * Mathf.Sqrt(baseSpring * load);
-
+        _smoothed = Quaternion.identity;
         SetStrength(1f);
     }
 
@@ -50,7 +51,11 @@ public class PuppetJoint : MonoBehaviour
     void FixedUpdate()
     {
         if (animatedBone == null) return;
-        joint.targetRotation =
+
+        Quaternion desired =
             Quaternion.Inverse(animatedBone.localRotation) * startLocalRotation;
+
+        _smoothed = Quaternion.Slerp(_smoothed, desired, 0.35f);
+        joint.targetRotation = _smoothed;
     }
 }
