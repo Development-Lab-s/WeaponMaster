@@ -850,6 +850,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  followRate: 0.35
 --- !u!1 &1311697976267961792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1308,6 +1309,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  followRate: 0.35
 --- !u!114 &954113716383120590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1348,8 +1350,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2234492095697644243}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.50000006, y: 0.50000006, z: -0.49999994, w: 0.49999994}
-  m_LocalPosition: {x: 0, y: 4.2, z: -0.05}
+  m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 1.403, z: 0.9}
   m_LocalScale: {x: 0.14999996, y: 0.15000002, z: 0.14999999}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1358,7 +1360,7 @@ Transform:
   - {fileID: 567497504240810329}
   - {fileID: 5140110594754006384}
   m_Father: {fileID: 8740663501092383978}
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 90}
 --- !u!54 &3258212151546016243
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1417,7 +1419,7 @@ ConfigurableJoint:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2234492095697644243}
   serializedVersion: 4
-  m_ConnectedBody: {fileID: 3382168615873304227}
+  m_ConnectedBody: {fileID: 7091437439231295202}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
@@ -2018,6 +2020,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  followRate: 0.35
 --- !u!1 &3480620804512900496
 GameObject:
   m_ObjectHideFlags: 0
@@ -3425,6 +3428,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  followRate: 0.35
 --- !u!1 &6331291990437028526
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,6 +3631,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.7
   springPerKg: 500
+  followRate: 0.35
 --- !u!1 &6409534270989042535
 GameObject:
   m_ObjectHideFlags: 0
@@ -3736,41 +3741,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 7722158019954105509}
-  targetPartData: {fileID: 11400000, guid: 45935f4733bf0f947a9fe3edd72d8045, type: 2}
+  targetPartData: {fileID: 11400000, guid: 6b6c9332d2a77e343ba82b3652a8ba9b, type: 2}
   zCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
+      inSlope: 0.097391084
+      outSlope: 0.097391084
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.0810005
+    - serializedVersion: 3
+      time: 0.94943184
+      value: -0.0026205778
+      inSlope: 0.09656301
+      outSlope: 0.09656301
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.22234099
+    - serializedVersion: 3
+      time: 0.9536898
+      value: 0.99357766
+      inSlope: 0.05668776
+      outSlope: 0.05668776
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.03947355
+      outWeight: 0.29160136
+    - serializedVersion: 3
+      time: 1
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 0.9629263
-      value: -0.0052997153
-      inSlope: 0.02530091
-      outSlope: 0.02530091
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.36395448
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 6.5649896
-      outSlope: 6.5649896
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.10203167
-      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  mass: 10
+  mass: 8
   baseForce: 60
   rampRate: 20
   maxForce: 1000
