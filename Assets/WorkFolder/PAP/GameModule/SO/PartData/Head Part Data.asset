@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e187124d8d4352b0220387de80b113, type: 3}
   m_Name: Head Part Data
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Part.HeadPartDataSO
-  deadZone: 8

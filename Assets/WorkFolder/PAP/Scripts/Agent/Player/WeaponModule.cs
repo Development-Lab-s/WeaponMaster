@@ -92,7 +92,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     _player.SettingValue.WeaponSensitivityX, -1f, 1f);
                 float y = Mathf.Clamp(
                     CurrentDirection.y + _cameraController.AimDirection.y * 0.001f *
-                    _player.SettingValue.WeaponSensitivityY, -0.8f, 1f);
+                    _player.SettingValue.WeaponSensitivityY, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
                 float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
                 CurrentDirection = new Vector3(x,y,z);
