@@ -11,11 +11,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         [Header("References")]
         [SerializeField] private Transform rotTargetTrm;
-        [SerializeField] private GameObject targetWeapon;
         [SerializeField] private AbstractPartDataSO targetPartData;
         
         [Header("Debug")] 
-        [SerializeField] private float moveRadius;
         [SerializeField] private AnimationCurve zCurve;
         
         [Header("PhysicSetting")]
@@ -54,8 +52,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public void EquipWeapon(bool isEquip)
         {
             IsEquipped = isEquip;
-            if (IsEquipped) return;
-            targetWeapon.transform.position = transform.position;
         }
 
         public void SetWeaponMoveDirection(Vector2 dir)
@@ -96,7 +92,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     _player.SettingValue.WeaponSensitivityX, -1f, 1f);
                 float y = Mathf.Clamp(
                     CurrentDirection.y + _cameraController.AimDirection.y * 0.001f *
-                    _player.SettingValue.WeaponSensitivityY, -0.8f, 1f);
+                    _player.SettingValue.WeaponSensitivityY, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
                 float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
                 CurrentDirection = new Vector3(x,y,z);
@@ -120,7 +116,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, moveRadius);
         }
     }
 }
