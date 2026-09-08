@@ -12,7 +12,7 @@ namespace WorkFolder.KJS._01.Scripts
 
     public interface IDamagable
     {
-        
+        void TakeDamage(DamageData data);
     }
     public sealed class HealthSystem : NetworkModule , IHealthSystem , IDamagable
     {
@@ -34,7 +34,7 @@ namespace WorkFolder.KJS._01.Scripts
         [Rpc(RpcSources.All , RpcTargets.StateAuthority)]
         public void RpcTakeDamage(DamageData data) => TakeDamage(data);
 
-        private void TakeDamage(DamageData data)
+        public void TakeDamage(DamageData data)
         {
             if(data.Damage <= 0 || _isDead) return;
             

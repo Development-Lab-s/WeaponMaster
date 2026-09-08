@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using WorkFolder.KJS._01.Scripts;
 
 namespace WorkFolder.PAP.Scripts.WeaponSystem
 {
@@ -28,6 +29,18 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             //
             // swordRb.isKinematic = true;
             // swordRb.interpolation = RigidbodyInterpolation.None;
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                IDamagable damagable = other.GetComponentInParent<IDamagable>();
+                if (damagable != null)
+                {
+                    damagable
+                }
+            }
         }
     }
 }
