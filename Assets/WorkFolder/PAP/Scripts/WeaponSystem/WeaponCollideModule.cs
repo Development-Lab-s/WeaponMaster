@@ -38,7 +38,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                 IDamagable damagable = other.GetComponentInParent<IDamagable>();
                 if (damagable != null)
                 {
-                    damagable
+                    // damagable.TakeDamage();
                 }
             }
         }
