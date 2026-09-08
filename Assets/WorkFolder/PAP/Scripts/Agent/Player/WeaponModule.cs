@@ -74,7 +74,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             targetPartData.ChangePart(rotTargetTrm, CurrentDirection);
             //해결 해 시발 이거 왜 해결이 안돼
-        }
+        } 
 
         private void OnDrawGizmos()
         {
