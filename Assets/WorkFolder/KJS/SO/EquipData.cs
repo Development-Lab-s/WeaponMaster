@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace WorkFolder.KJS.SO
 {
@@ -17,5 +18,6 @@ namespace WorkFolder.KJS.SO
         public float rampRate;
         public float maxForce;
         public float drag;
+        
     }
 }
