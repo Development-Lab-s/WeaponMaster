@@ -6,11 +6,11 @@ using WorkFolder.KJS._01.Scripts;
 public class HealthBar : MonoBehaviour
 {
     private Slider slider;
-    private HealthSystem healthSystem;
+    private IHealthSystem healthSystem;
     private void Awake()
     {
         slider = GetComponent<Slider>();
-        healthSystem = GetComponent<HealthSystem>();
+        healthSystem = GetComponent<IHealthSystem>();
         healthSystem.OnDamaged += OnHealthChanged;
     }
 
