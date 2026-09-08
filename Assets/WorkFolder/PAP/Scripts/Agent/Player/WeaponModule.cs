@@ -18,6 +18,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private ICameraController _cameraController;
         private Player _player;
         private float _force;
+        private Rigidbody _weaponRigid;
         
         public bool IsEquipped { get; private set; }
         public Vector3 CurrentDirection { get; private set; }
@@ -28,6 +29,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             base.Initialize(owner);
             _player = owner as Player;
             CurrentDirection = Vector3.zero;
+            _weaponRigid = GetComponentInChildren<Rigidbody>();
         }
                 
         public void AfterInit()

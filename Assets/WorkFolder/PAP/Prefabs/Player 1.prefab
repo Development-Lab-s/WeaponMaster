@@ -1371,7 +1371,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2234492095697644243}
   serializedVersion: 5
-  m_Mass: 8
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3549,11 +3549,11 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -125.53812
+    limit: -177
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 88.43641
+    limit: 67.016304
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
