@@ -214,7 +214,7 @@ Transform:
   m_GameObject: {fileID: 485139219126049327}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.26, z: 0.62776303}
+  m_LocalPosition: {x: 0, y: -0.26, z: -6.4}
   m_LocalScale: {x: 0.26681766, y: 0.54577506, z: 0.41108844}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -304,7 +304,7 @@ Transform:
   m_GameObject: {fileID: 578547519410941776}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.02305603, y: -0.08, z: -1.0682287}
+  m_LocalPosition: {x: -0.02305603, y: -0.08, z: -8.1}
   m_LocalScale: {x: 0.8097906, y: 0.4889325, z: 0.8097906}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -850,6 +850,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &1311697976267961792
 GameObject:
@@ -1309,6 +1310,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  maxTorque: 5000
   followRate: 0.35
 --- !u!114 &954113716383120590
 MonoBehaviour:
@@ -1351,7 +1353,7 @@ Transform:
   m_GameObject: {fileID: 2234492095697644243}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0.7071068, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 1.403, z: 0.9}
+  m_LocalPosition: {x: 0, y: 1.552, z: 0.157}
   m_LocalScale: {x: 0.14999996, y: 0.15000002, z: 0.14999999}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1369,9 +1371,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2234492095697644243}
   serializedVersion: 5
-  m_Mass: 6
+  m_Mass: 8
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1410,7 +1412,7 @@ CapsuleCollider:
   m_Radius: 1.2
   m_Height: 14
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: -6}
+  m_Center: {x: 0, y: 0, z: -13.5}
 --- !u!153 &5447881004601322121
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -1753,7 +1755,7 @@ Transform:
   m_GameObject: {fileID: 3300443225925424920}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.009403229, y: 0.02, z: 1.2901945}
+  m_LocalPosition: {x: -0.009403229, y: 0.02, z: -5.74}
   m_LocalScale: {x: 0.5943217, y: 0.1702231, z: 0.59432185}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2020,6 +2022,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &3480620804512900496
 GameObject:
@@ -3428,6 +3431,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &6331291990437028526
 GameObject:
@@ -3531,8 +3535,8 @@ ConfigurableJoint:
   m_XMotion: 0
   m_YMotion: 0
   m_ZMotion: 0
-  m_AngularXMotion: 2
-  m_AngularYMotion: 2
+  m_AngularXMotion: 1
+  m_AngularYMotion: 1
   m_AngularZMotion: 1
   m_LinearLimitSpring:
     spring: 0
@@ -3545,22 +3549,22 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: 0
+    limit: -125.53812
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 0
+    limit: 88.43641
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 60
+    limit: 177
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 170
+    limit: 111.43566
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -3631,6 +3635,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.7
   springPerKg: 500
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &6409534270989042535
 GameObject:
@@ -3748,47 +3753,33 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0.097391084
-      outSlope: 0.097391084
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.0810005
-    - serializedVersion: 3
-      time: 0.94943184
-      value: -0.0026205778
-      inSlope: 0.09656301
-      outSlope: 0.09656301
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.22234099
-    - serializedVersion: 3
-      time: 0.9536898
-      value: 0.99357766
-      inSlope: 0.05668776
-      outSlope: 0.05668776
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.03947355
-      outWeight: 0.29160136
-    - serializedVersion: 3
-      time: 1
-      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
+    - serializedVersion: 3
+      time: 0.8504938
+      value: -0.011620533
+      inSlope: -0.01142533
+      outSlope: -0.01142533
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.6394868
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.310686
+      outSlope: 3.310686
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.02924633
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  mass: 8
-  baseForce: 60
-  rampRate: 20
-  maxForce: 1000
-  drag: 15
 --- !u!1 &7028229648209244437
 GameObject:
   m_ObjectHideFlags: 0
@@ -4082,7 +4073,7 @@ Transform:
   m_GameObject: {fileID: 8439605408114332517}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.16, z: 0}
+  m_LocalPosition: {x: 0, y: -0.16, z: -7.03}
   m_LocalScale: {x: 0.2279888, y: 0.33650517, z: 0.35126442}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4234,7 +4225,7 @@ Transform:
   m_GameObject: {fileID: 8737918239529738082}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.525, y: 2.9, z: 0}
+  m_LocalPosition: {x: 0.525, y: 2.5, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
