@@ -7,14 +7,13 @@ namespace WorkFolder.KJS._01.Scripts
     public interface IHealthSystem
     {
         public int Health { get;}
-        public void RpcTakeDamage(DamageData data);
     }
 
-    public interface IDamagable
+    public interface IDamageable
     {
-        void TakeDamage(DamageData data);
+        public void RpcTakeDamage(DamageData data);
     }
-    public sealed class HealthSystem : NetworkModule , IHealthSystem , IDamagable
+    public sealed class HealthSystem : NetworkModule , IHealthSystem , IDamageable
     {
         [Networked, OnChangedRender(nameof(OnHealthChanged))]
         // If you use the OnHealthChanged Method, Write code to update ui and other visual things.
@@ -34,7 +33,7 @@ namespace WorkFolder.KJS._01.Scripts
         [Rpc(RpcSources.All , RpcTargets.StateAuthority)]
         public void RpcTakeDamage(DamageData data) => TakeDamage(data);
 
-        public void TakeDamage(DamageData data)
+        private void TakeDamage(DamageData data)
         {
             if(data.Damage <= 0 || _isDead) return;
             
