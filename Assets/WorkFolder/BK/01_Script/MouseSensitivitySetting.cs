@@ -10,7 +10,7 @@ public class MouseSensitivitySetting : MonoBehaviour
     [SerializeField] private float maxSensitivity = 10f;
     [SerializeField] private float defaultSensitivity = 1f;
 
-    private Slider sensitivitySlider;
+    private UnityEngine.UI.Slider sensitivitySlider;
 
     private const string SensitivityKey = "MouseSensitivity";
 
@@ -18,7 +18,7 @@ public class MouseSensitivitySetting : MonoBehaviour
 
     private void Awake()
     {
-        sensitivitySlider = GetComponent<Slider>();
+        sensitivitySlider = GetComponent<UnityEngine.UI.Slider>();
 
         if (sensitivityInput == null)
         {
