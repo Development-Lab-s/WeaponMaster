@@ -50,14 +50,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         
         
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
-            if (other.CompareTag("Player"))
+            if (collision.transform.CompareTag("Player"))
             {
-                if (other.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
+                if (collision.transform.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
                 {
                     DamageData data = new DamageData();
-                    data.Damage = (int)(_swordRb.linearVelocity.magnitude * _swordRb.mass/4f * hitBox.Part.DamageMultiplier);
+                    data.Damage = (int)(_swordRb.linearVelocity.magnitude * _swordRb.mass * hitBox.Part.DamageMultiplier);
                     Debug.Log(data.Damage);
                     hitBox.Damageable.RpcTakeDamage(data);
                     _damagables.Add(hitBox.Damageable);

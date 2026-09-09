@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Arm Leg
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SO.DataFolder.BodyPartDataSO
   Name: ArmLeg
-  DamageMultiplier: 0.8
+  DamageMultiplier: 0.4
