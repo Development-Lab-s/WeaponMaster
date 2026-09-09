@@ -9,6 +9,7 @@ public class PuppetJoint : MonoBehaviour
     [SerializeField] float strengthMultiplier = 1f;
     [SerializeField] float dampingRatio = 0.6f;
     [SerializeField] float springPerKg = 900f;
+    [SerializeField] private float maxTorque = 5000f;
 
     [Header("Smoothing")]
     [Range(0.05f, 1f)]
@@ -67,7 +68,7 @@ public class PuppetJoint : MonoBehaviour
         {
             positionSpring = baseSpring * currentStrength,
             positionDamper = baseDamper * currentStrength,
-            maximumForce   = Mathf.Infinity
+            maximumForce   = maxTorque
         };
     }
 
