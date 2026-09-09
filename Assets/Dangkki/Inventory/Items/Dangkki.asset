@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85d1b8c913bb7d94896f368c68df8db0, type: 3}
+  m_Name: Dangkki
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  displayName: "\uBB34\uB77C\uC0AC\uD0A4\uB2F9\uB07C"
+  icon: {fileID: 21300000, guid: daad7cf4fd5c4cc4ebe48c0cf8daa155, type: 3}

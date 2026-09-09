@@ -390,7 +390,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1055,7 +1055,7 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 4
+  Radius: 3
   Orbits:
     Top:
       Radius: 2
@@ -1122,7 +1122,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 60.000004
+    FieldOfView: 70
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -1533,12 +1533,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: Flags
-      value: 262402
-      objectReference: {fileID: 0}
-    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: SortKey
       value: 3496666511
+      objectReference: {fileID: 0}
+    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+      propertyPath: 'NetworkedBehaviours.Array.data[8]'
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5394159356429554557, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: m_Name
@@ -1585,7 +1589,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6475881440754411778, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
@@ -1831,6 +1836,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &143731484060512009
 GameObject:
@@ -1962,6 +1968,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.4
   springPerKg: 120
+  maxTorque: 5000
   followRate: 0.35
 --- !u!1 &485139219015259646
 GameObject:
@@ -2393,6 +2400,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  maxTorque: 5000
   followRate: 0.35
 --- !u!114 &954113716357067551
 MonoBehaviour:
@@ -5563,6 +5571,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.7
   springPerKg: 500
+  maxTorque: 5000
   followRate: 0.35
 --- !u!114 &7401780588504816849
 MonoBehaviour:
@@ -5721,6 +5730,7 @@ MonoBehaviour:
   strengthMultiplier: 1
   dampingRatio: 0.5
   springPerKg: 200
+  maxTorque: 5000
   followRate: 0.35
 --- !u!4 &7532577516908828742
 Transform:
@@ -5787,11 +5797,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  mass: 10
-  baseForce: 60
-  rampRate: 20
-  maxForce: 1000
-  drag: 15
 --- !u!23 &7563190591610940185
 MeshRenderer:
   m_ObjectHideFlags: 0
