@@ -13,8 +13,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
                 target.localRotation = Quaternion.identity;
                 return;
             }
-            Vector3 newEuler = Quaternion.FromToRotation(Vector3.forward,dir).eulerAngles;
-            target.localRotation = Quaternion.Euler(newEuler);
+            Quaternion baseRot = Quaternion.FromToRotation(Vector3.forward,dir);
+            target.localRotation = baseRot * Quaternion.Euler(-25f, 0, 0);
         }
     }
 }
