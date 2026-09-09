@@ -8,11 +8,11 @@ namespace WorkFolder.KJS._01.Scripts.Health
 
     public class HealthInput : MonoBehaviour
     {
-        private IDamagable IDamagable;
+        private IDamageable IDamagable;
 
         private void Awake()
         {
-            IDamagable  = GetComponent<IDamagable>();
+            IDamagable  = GetComponent<IDamageable>();
         }
 
         private void Update()
