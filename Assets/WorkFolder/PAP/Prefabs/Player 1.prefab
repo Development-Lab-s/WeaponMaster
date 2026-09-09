@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 5085246706864203973}
   - component: {fileID: 7536056647519459499}
   - component: {fileID: 1134522290032982193}
+  - component: {fileID: 1312310037846786442}
   m_Layer: 6
   m_Name: thigh.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,7 +51,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -187,6 +188,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1312310037846786442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 143731484101632216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &485139219126049327
 GameObject:
   m_ObjectHideFlags: 0
@@ -445,7 +459,7 @@ GameObject:
   - component: {fileID: 3162878147087020752}
   m_Layer: 6
   m_Name: head
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -480,7 +494,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -659,9 +673,10 @@ GameObject:
   - component: {fileID: 4032928693025018651}
   - component: {fileID: 5991241651745085476}
   - component: {fileID: 436562694001525988}
+  - component: {fileID: 4568027953546750399}
   m_Layer: 6
   m_Name: forearm.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -697,7 +712,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -852,6 +867,19 @@ MonoBehaviour:
   springPerKg: 120
   maxTorque: 5000
   followRate: 0.35
+--- !u!114 &4568027953546750399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1030236081732578471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &1311697976267961792
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,9 +892,10 @@ GameObject:
   - component: {fileID: 3642298573733845541}
   - component: {fileID: 1719313688901993532}
   - component: {fileID: 503431126664833401}
+  - component: {fileID: 2063762766673300011}
   m_Layer: 6
   m_Name: shin.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -902,7 +931,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1039,6 +1068,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &2063762766673300011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311697976267961792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &1491953842999189862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1118,10 +1160,10 @@ GameObject:
   - component: {fileID: 3648660352233558742}
   - component: {fileID: 7716362634293862312}
   - component: {fileID: 7530576831826099230}
-  - component: {fileID: 954113716383120590}
+  - component: {fileID: 344830111576767579}
   m_Layer: 6
   m_Name: upper_arm.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1157,7 +1199,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1312,7 +1354,7 @@ MonoBehaviour:
   springPerKg: 200
   maxTorque: 5000
   followRate: 0.35
---- !u!114 &954113716383120590
+--- !u!114 &344830111576767579
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1321,9 +1363,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2056111221018831817}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 017585abcc24440cbcd6d6ae9a548b85, type: 3}
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::JointDebug
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &2234492095697644243
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,7 +1418,7 @@ Rigidbody:
   m_LinearDamping: 0
   m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaTensor: {x: 0.2, y: 0.2, z: 0.2}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1623,9 +1666,10 @@ GameObject:
   - component: {fileID: 6671553723059582684}
   - component: {fileID: 8936811927835272171}
   - component: {fileID: 3680583071330143781}
+  - component: {fileID: 2191836137631036462}
   m_Layer: 6
   m_Name: root
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1663,7 +1707,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1696,6 +1740,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2191836137631036462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880963240568866255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: 826f88a017ee99c42b0fd5aa075974a6, type: 2}
 --- !u!1 &3016730592611248393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1831,9 +1888,10 @@ GameObject:
   - component: {fileID: 3342275488579945949}
   - component: {fileID: 1501838103064047314}
   - component: {fileID: 879549439612405432}
+  - component: {fileID: 3760559392072881390}
   m_Layer: 6
   m_Name: upper_arm.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1869,7 +1927,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2024,6 +2082,19 @@ MonoBehaviour:
   springPerKg: 200
   maxTorque: 5000
   followRate: 0.35
+--- !u!114 &3760559392072881390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3443138080865150043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &3480620804512900496
 GameObject:
   m_ObjectHideFlags: 0
@@ -2035,7 +2106,7 @@ GameObject:
   - component: {fileID: 3078411791930871650}
   m_Layer: 6
   m_Name: clavicle.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2100,9 +2171,10 @@ GameObject:
   - component: {fileID: 5217257185857092069}
   - component: {fileID: 2877588696904944995}
   - component: {fileID: 826605123004736225}
+  - component: {fileID: 5923819255076382244}
   m_Layer: 6
   m_Name: foot.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2137,7 +2209,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -2272,6 +2344,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &5923819255076382244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4018567957583702308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &4316507505610286450
 GameObject:
   m_ObjectHideFlags: 0
@@ -2316,9 +2401,10 @@ GameObject:
   - component: {fileID: 2159288388576595929}
   - component: {fileID: 647602197049809673}
   - component: {fileID: 8759589309177372156}
+  - component: {fileID: 5641207678737956639}
   m_Layer: 6
   m_Name: thigh.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2354,7 +2440,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2491,6 +2577,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &5641207678737956639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4376137137784418366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &4803769944688373919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2502,7 +2601,7 @@ GameObject:
   - component: {fileID: 8371215623936268455}
   m_Layer: 6
   m_Name: chest
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2602,9 +2701,10 @@ GameObject:
   - component: {fileID: 219102943265846504}
   - component: {fileID: 6470878538805687497}
   - component: {fileID: 7109969574955301409}
+  - component: {fileID: 5898854277994517411}
   m_Layer: 6
   m_Name: shin.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2640,7 +2740,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2777,6 +2877,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &5898854277994517411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4929042493771884847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &5131056426213807540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2852,7 +2965,7 @@ GameObject:
   - component: {fileID: 6451756465482550391}
   m_Layer: 6
   m_Name: hand.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2886,6 +2999,7 @@ GameObject:
   - component: {fileID: 7453622829213636101}
   - component: {fileID: 2370037534712184905}
   - component: {fileID: 3727529660450433821}
+  - component: {fileID: 6613994416269537881}
   m_Layer: 3
   m_Name: Player 1
   m_TagString: Player
@@ -2932,6 +3046,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 3727529660450433821}
   - {fileID: 8085688440492758205}
+  - {fileID: 6613994416269537881}
   - {fileID: 9168301364674135390}
   - {fileID: 7401780588546069248}
   - {fileID: 7538473669355263676}
@@ -3043,6 +3158,19 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &6613994416269537881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394159356429554557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b43aa06b2fd4b44a53126e42aaa0257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.HealthSystem
+  _Health: 100
 --- !u!1 &5700361591020074492
 GameObject:
   m_ObjectHideFlags: 0
@@ -3055,9 +3183,10 @@ GameObject:
   - component: {fileID: 4654162131736628727}
   - component: {fileID: 3931371716408923120}
   - component: {fileID: 6579047849574995074}
+  - component: {fileID: 9017971597384257180}
   m_Layer: 6
   m_Name: foot.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3092,7 +3221,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -3227,6 +3356,19 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &9017971597384257180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5700361591020074492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &6047381940928167098
 GameObject:
   m_ObjectHideFlags: 0
@@ -3240,9 +3382,10 @@ GameObject:
   - component: {fileID: 4177132338821641066}
   - component: {fileID: 2863458961044544019}
   - component: {fileID: 127577880478221785}
+  - component: {fileID: 3628071776612522681}
   m_Layer: 6
   m_Name: forearm.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3278,7 +3421,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -3433,6 +3576,19 @@ MonoBehaviour:
   springPerKg: 120
   maxTorque: 5000
   followRate: 0.35
+--- !u!114 &3628071776612522681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6047381940928167098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: a54bf93eebcf4f94685bcdab3bb85071, type: 2}
 --- !u!1 &6331291990437028526
 GameObject:
   m_ObjectHideFlags: 0
@@ -3446,9 +3602,10 @@ GameObject:
   - component: {fileID: 7091437439231295202}
   - component: {fileID: 8926005828431177031}
   - component: {fileID: 7401563968238153580}
+  - component: {fileID: 8120796228235623423}
   m_Layer: 6
   m_Name: spine
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3484,11 +3641,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.7599888, y: 2, z: 1.0304343}
+  m_Size: {x: 1.5, y: 1.5, z: 1}
   m_Center: {x: 0.0000038146973, y: 1, z: -0.010127664}
 --- !u!54 &7091437439231295202
 Rigidbody:
@@ -3549,11 +3706,11 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -177
+    limit: -84.24763
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 67.016304
+    limit: 89.7521
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -3637,6 +3794,19 @@ MonoBehaviour:
   springPerKg: 500
   maxTorque: 5000
   followRate: 0.35
+--- !u!114 &8120796228235623423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6331291990437028526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: 826f88a017ee99c42b0fd5aa075974a6, type: 2}
 --- !u!1 &6409534270989042535
 GameObject:
   m_ObjectHideFlags: 0
@@ -3769,8 +3939,8 @@ MonoBehaviour:
       inWeight: 0.33333334
       outWeight: 0.6394868
     - serializedVersion: 3
-      time: 1
-      value: 1
+      time: 1.0005363
+      value: 0.92934704
       inSlope: 3.310686
       outSlope: 3.310686
       tangentMode: 0
@@ -3930,7 +4100,7 @@ GameObject:
   - component: {fileID: 6692332005568601819}
   m_Layer: 6
   m_Name: hand.R
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3993,7 +4163,7 @@ GameObject:
   - component: {fileID: 382726804460103406}
   m_Layer: 6
   m_Name: clavicle.L
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4419,7 +4589,7 @@ GameObject:
   - component: {fileID: 3156582200206196589}
   m_Layer: 6
   m_Name: neck
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
