@@ -10,29 +10,24 @@ namespace WorkFolder.SUH.Scripts.UserInterface.CharacterEditor
     public class CharacterEditor : MonoBehaviour, IEnter, IExit
     {
         [SerializeField] private ColorPickerFeedback ColorPickerFeedback;
-        
+
         public void Enter()
         {
-            ColorPickerFeedback.CreateFeedback();
-        }
-
-        void Start()
-        {
- 
-        }
-        
-        #region UNITY_LifeCycle
-
-        private void Awake()
-        {
             
+        }
+
+        #region Event
+
+        public void CharacterEditorExit()
+        {
+            // 씬 이동 또는 종료 메소드
         }
         
         #endregion
         
         public void Exit()
         {
-            ColorPickerFeedback.CreateFeedback();
+            
         }
     }
 }

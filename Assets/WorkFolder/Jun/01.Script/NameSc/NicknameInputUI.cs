@@ -40,7 +40,7 @@ public class NicknameInputUI : MonoBehaviour
         if (!LengthCheck(text)) return;
         if (!BannedCheck(text)) return;
         
-        Debug.Log(text);
+        
     }
     private bool LengthCheck(string nickname)
     {
