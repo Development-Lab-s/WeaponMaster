@@ -12,9 +12,9 @@ public class SoundManger : MonoBehaviour
     [SerializeField] private SoundSO soundSettings;
 
     [Header("슬라이더")]
-    [SerializeField] private Slider masterSlider;
-    [SerializeField] private Slider bgmSlider;
-    [SerializeField] private Slider vfxSlider;
+    [SerializeField] private UnityEngine.UI.Slider masterSlider;
+    [SerializeField] private UnityEngine.UI.Slider bgmSlider;
+    [SerializeField] private UnityEngine.UI.Slider vfxSlider;
 
     [Header("오디오 믹서")]
     //[SerializeField] private AudioMixer audioMixer;
@@ -74,7 +74,7 @@ public class SoundManger : MonoBehaviour
         }
     }
 
-    private void ConfigureSlider(Slider slider)
+    private void ConfigureSlider(UnityEngine.UI.Slider slider)
     {
         slider.minValue = 0f;
         slider.maxValue = 1f;

@@ -622,6 +622,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1303066902}
+  - component: {fileID: 1303066904}
   - component: {fileID: 1303066903}
   m_Layer: 5
   m_Name: Slider
@@ -702,6 +703,19 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1303066904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303066901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd39f48069249c5a43d6d22a460a0af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.Health.HealthBar
+  _healthSystem: {fileID: 1451482201}
 --- !u!1 &1451482200
 GameObject:
   m_ObjectHideFlags: 0
@@ -713,6 +727,7 @@ GameObject:
   - component: {fileID: 1451482205}
   - component: {fileID: 1451482204}
   - component: {fileID: 1451482203}
+  - component: {fileID: 1451482206}
   - component: {fileID: 1451482202}
   - component: {fileID: 1451482201}
   m_Layer: 0
@@ -828,6 +843,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -37.785, z: 42.012}
+--- !u!114 &1451482206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451482200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca11dd960334dabb00fcb15c3239cb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.Health.HealthInput
 --- !u!1 &1558683954
 GameObject:
   m_ObjectHideFlags: 0
