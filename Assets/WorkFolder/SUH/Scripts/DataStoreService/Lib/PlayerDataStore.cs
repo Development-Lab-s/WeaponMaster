@@ -1,9 +1,13 @@
-﻿namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
+﻿using UnityEngine;
+
+namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
 {
-    public struct PlayerDataStore
+    public class PlayerDataStore
     {
         public string PlayerName;
-        public uint BodyColor;
+        public string BodyType;
+        public string WeaponType;
+        public Color BodyColor;
         public uint HairStyle;
         public uint KillCount;
         public uint DeathCount;
