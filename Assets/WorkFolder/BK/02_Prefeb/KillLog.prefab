@@ -89,8 +89,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59cfee15963612941a66935acfa3fe4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestKillLogMoveEffect
-  KillLog: {fileID: 0}
-  parentPos: {fileID: 0}
 --- !u!1 &2476046977544697354
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,7 +100,6 @@ GameObject:
   - component: {fileID: 5213103296437475958}
   - component: {fileID: 3924205002517182474}
   - component: {fileID: 2144784295328609623}
-  - component: {fileID: 6960262029027864000}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -229,16 +226,3 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &6960262029027864000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2476046977544697354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8c6af37842c6cf46ad4c855b19152a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestKillLogVOne
-  killLogText: {fileID: 2144784295328609623}
