@@ -1,0 +1,19 @@
+﻿using UnityEngine;
+
+namespace WorkFolder.PAP.Scripts.Agent.Part
+{
+    [CreateAssetMenu(fileName = "Head Part Data", menuName = "SO/Head Part Data", order = 0)]
+    public class HeadPartDataSO : AbstractPartDataSO
+    {
+        public override void ChangePart(Transform target, Vector3 dir)
+        {
+            if (dir == Vector3.zero)
+            {
+                target.localRotation = Quaternion.identity;
+                return;
+            }
+            Quaternion baseRot = Quaternion.FromToRotation(Vector3.up,dir);
+            target.localRotation = baseRot * Quaternion.Euler(-25f, 0, 0);
+        }
+    }
+}
