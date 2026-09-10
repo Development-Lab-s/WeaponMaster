@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class NicknameInputUI : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class NicknameInputUI : MonoBehaviour
     [SerializeField] private TMP_Text warningText;
     [SerializeField] private RectTransform warningRect;
     private Vector2 originalPos;
-
+    [SerializeField] private string defaultNickname = "건전한 닉네임";
+    
     [Header("Size")]
     [SerializeField] private float horizontalPadding = 20f;
     
@@ -26,8 +28,20 @@ public class NicknameInputUI : MonoBehaviour
         inputField.onValueChanged.AddListener(SetUI);
         inputField.onEndEdit.AddListener(NameChange);
         originalPos = warningRect.anchoredPosition;
-    }
+        int random = Random.Range(0, 10) * 1000 +
+                     Random.Range(0, 10) * 100 +
+                     Random.Range(0, 10) * 10 +
+                     Random.Range(0, 10);
+        inputField.text = $"{defaultNickname} {random}";
+    }private void LateUpdate()
+    {
+        if (!inputField.isFocused) return;
 
+        int caret = inputField.caretPosition;
+
+        inputField.selectionAnchorPosition = caret;
+        inputField.selectionFocusPosition = caret;
+    }
     private void SetUI(string text)
     {
         float width = inputField.textComponent.GetPreferredValues(text).x;
@@ -75,9 +89,10 @@ public class NicknameInputUI : MonoBehaviour
 
         warningRect.DOKill();
         Sequence seq = DOTween.Sequence();
-
+        
         seq.Append(warningRect.DOAnchorPos(originalPos, 0.25f));
-        seq.Join(warningText.DOFade(0f, 0.8f));
+        seq.AppendInterval(0.8f);
+        seq.Append(warningText.DOFade(0f, 0.5f));
 
         seq.OnComplete(() => { warningText.gameObject.SetActive(false); });
     }

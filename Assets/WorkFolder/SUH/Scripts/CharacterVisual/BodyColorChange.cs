@@ -7,13 +7,13 @@ using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.SUH.Scripts.CharacterVisual
 {
-    public async class BodyColorChange : MonoBehaviour
+    public class BodyColorChange : MonoBehaviour
     {
         [SerializeField] private Material playerMaterial;
 
         private Color myColor;
         
-        public void ColorChange()
+        public async void ColorChange()
         {
             IDataStoreService service = ServiceLocator.Get<IDataStoreService>();
             
