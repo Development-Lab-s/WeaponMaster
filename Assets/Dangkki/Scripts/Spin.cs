@@ -1,18 +1,21 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Spin : MonoBehaviour
+public class Spin : MonoBehaviour//깡깡
 {
     [SerializeField] private float spinDuration = 2f;
     [SerializeField] private float spinDistance = 5f;
     [SerializeField] private bool useLocalRotate = false;
-    
     [SerializeField] private Transform modelRoot;
     [SerializeField] private bool autoCenterPivot = true; 
-    [SerializeField] private Vector3 pivotOffset; 
+    [SerializeField] private Vector3 pivotOffset;
+    [SerializeField] private float nextDelay = 0f; 
+    [SerializeField] private GameObject[] nextObjects;
 
     private Vector3 endPos;
     private bool captured;
+    private Sequence sequence;
 
     private void Awake()
     {
@@ -52,7 +55,7 @@ public class Spin : MonoBehaviour
 
         transform.position = endPos - Vector3.up * spinDistance;
 
-        transform.DOMove(endPos, spinDuration)
+        Tween moveTween = transform.DOMove(endPos, spinDuration)
             .SetEase(Ease.OutCubic)
             .SetLink(gameObject);
 
@@ -62,10 +65,38 @@ public class Spin : MonoBehaviour
             : transform.DORotate(spin, spinDuration, RotateMode.FastBeyond360);
 
         rotateTween.SetEase(Ease.OutCubic).SetLink(gameObject);
+
+        sequence = DOTween.Sequence()
+            .Append(moveTween)
+            .Join(rotateTween)
+            .AppendInterval(nextDelay)
+            .OnComplete(PlayNext)
+            .SetLink(gameObject);
+    }
+
+    private void PlayNext()
+    {
+        sequence = null;
+
+        if (nextObjects != null)
+        {
+            foreach (var go in nextObjects)
+            {
+                if (go != null)
+                    go.SetActive(true);
+            }
+        }
+        
     }
 
     private void OnDisable()
     {
+        if (sequence != null)
+        {
+            sequence.Kill();
+            sequence = null;
+        }
+
         transform.DOKill();
     }
 }

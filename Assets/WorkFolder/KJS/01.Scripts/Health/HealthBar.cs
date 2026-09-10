@@ -30,12 +30,9 @@ namespace WorkFolder.KJS._01.Scripts.Health
         private void ChangeBar()
         {
             float health = _healthSystem.Health;
-            
             _healthSlider.value = health;
-            
             _damageTween?.Kill();
-
-            _damageTween = _damageSlider .DOValue(health, _duration) .SetDelay(_delay) .SetEase(Ease.OutQuad);
+            _damageTween = _damageSlider.DOValue(health, _duration).SetDelay(_delay).SetEase(Ease.OutQuad);
         }
 
         private void OnDisable()

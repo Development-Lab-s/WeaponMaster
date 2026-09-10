@@ -1317,9 +1317,9 @@ MonoBehaviour:
   videoScreen: {fileID: 2028820772}
   uiToShow:
   - target: {fileID: 800250713}
-    delaySeconds: 1.2
+    delaySeconds: 1.7
   - target: {fileID: 901155091}
-    delaySeconds: 1.2
+    delaySeconds: 1.7
 --- !u!4 &1089848186
 Transform:
   m_ObjectHideFlags: 0
