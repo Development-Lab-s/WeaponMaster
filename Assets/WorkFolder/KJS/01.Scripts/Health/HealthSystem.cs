@@ -1,6 +1,8 @@
 ﻿using System;
 using DevLib.ModuleSystem;
 using Fusion;
+using UnityEngine;
+using WorkFolder.KJS._01.Scripts.Feedback;
 
 namespace WorkFolder.KJS._01.Scripts
 {
@@ -19,9 +21,10 @@ namespace WorkFolder.KJS._01.Scripts
         [Networked, OnChangedRender(nameof(OnHealthChanged))]
         // If you use the OnHealthChanged Method, Write code to update ui and other visual things.
         public int Health{ get; private set;} 
-        
         public event Action OnDied;
         public event Action OnDamaged;
+
+        private IFeedable _iFeedable;
 
         private bool _isDead = false;
 
@@ -29,6 +32,7 @@ namespace WorkFolder.KJS._01.Scripts
         {
             if (!Object.HasStateAuthority) return;
             Health = 100;
+            _iFeedable = gameObject.GetComponentInChildren<IFeedable>();
         }
 
         [Rpc(RpcSources.All , RpcTargets.StateAuthority)]
@@ -39,6 +43,7 @@ namespace WorkFolder.KJS._01.Scripts
             if(data.Damage <= 0 || _isDead) return;
             
             Health -= data.Damage;
+            _iFeedable.PlayAllFeedBacks();
             if(Health <= 0 && !_isDead)
                 Die();
         }
