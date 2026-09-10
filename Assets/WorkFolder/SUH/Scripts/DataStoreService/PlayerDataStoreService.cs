@@ -1,0 +1,127 @@
+using System;
+using System.Threading.Tasks;
+using DevLib.ServiceLocator;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using UnityEngine;
+using System.Reflection;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+
+namespace WorkFolder.SUH.Scripts.DataStoreService
+{
+    public class PlayerDataStoreService : MonoBehaviour, IAsyncInitModule, IDataStoreService
+    {
+        private PlayerDataStore playerDataStore;
+        private readonly string storeName = "V1";
+        private IDataStore<PlayerDataStore> _store;
+        private Task _initializationTask;
+        
+        private void Awake()
+        {
+            IDataStoreService registeredService = ServiceLocator.Get<IDataStoreService>();
+            if (registeredService != null && !ReferenceEquals(registeredService, this))
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            ServiceLocator.Register<IDataStoreService>(this);
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private async void Start()
+        {
+            await AsyncInit();
+        }
+
+        private void OnDestroy()
+        {
+            if (ReferenceEquals(ServiceLocator.Get<IDataStoreService>(), this))
+                ServiceLocator.UnRegister<IDataStoreService>(this);
+        }
+
+        public Task AsyncInit()
+        {
+            return EnsureInitializedAsync();
+        }
+
+        public async Task<TValue> GetAsync<TValue>(string valueName)
+        {
+            await EnsureInitializedAsync();
+
+            FieldInfo field = GetField<TValue>(valueName);
+            object value = field.GetValue(playerDataStore);
+
+            return value == null ? default : (TValue)value;
+        }
+
+        public async Task<TValue> SetAsync<TValue>(string valueName, TValue value)
+        {
+            await EnsureInitializedAsync();
+
+            FieldInfo field = GetField<TValue>(valueName);
+            object boxedValue = value;
+            string playerId = AuthenticationService.Instance.PlayerId;
+
+            playerDataStore = await _store.UpdateAsync(
+                playerId,
+                data =>
+                {
+                    data ??= new PlayerDataStore();
+                    field.SetValue(data, boxedValue);
+
+                    return data;
+                }
+            );
+
+            return value;
+        }
+
+        public async Task SaveAsync()
+        {
+            await EnsureInitializedAsync();
+            await _store.SetAsync(AuthenticationService.Instance.PlayerId, playerDataStore);
+        }
+
+        private Task EnsureInitializedAsync()
+        {
+            return _initializationTask ??= InitializeCoreAsync();
+        }
+
+        private async Task InitializeCoreAsync()
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+                await UnityServices.InitializeAsync();
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+            _store = Lib.DataStoreService.GetDataStore<PlayerDataStore>(storeName);
+            playerDataStore = await _store.GetAsync(AuthenticationService.Instance.PlayerId)
+                              ?? new PlayerDataStore();
+            
+            await _store.SetAsync(AuthenticationService.Instance.PlayerId, playerDataStore);
+        }
+
+        private static FieldInfo GetField<TValue>(string valueName)
+        {
+            FieldInfo field = typeof(PlayerDataStore).GetField(
+                valueName,
+                BindingFlags.Instance | BindingFlags.Public);
+
+            if (field == null)
+                throw new ArgumentException($"{valueName} 필드가 PlayerDataStore에 없습니다.");
+
+            if (field.FieldType != typeof(TValue))
+            {
+                throw new ArgumentException(
+                    $"{valueName} 필드는 {field.FieldType.Name} 타입이지만 " +
+                    $"{typeof(TValue).Name} 타입으로 요청했습니다.");
+            }
+
+            return field;
+        }
+    }
+}
