@@ -629,30 +629,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2099126310}
-        m_TargetAssemblyTypeName: DropText, Assembly-CSharp
-        m_MethodName: Drop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 2099126312}
-        m_TargetAssemblyTypeName: DropText, Assembly-CSharp
-        m_MethodName: Drop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &567603901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -850,7 +826,6 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
-  useUnscaledTime: 0
 --- !u!1 &830737673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,7 +1409,6 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
-  useUnscaledTime: 0
 --- !u!1 &1492342565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2098,7 +2072,6 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
-  useUnscaledTime: 0
 --- !u!1 &1812391140
 GameObject:
   m_ObjectHideFlags: 0
@@ -2158,7 +2131,6 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
-  useUnscaledTime: 0
 --- !u!114 &1812391143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2269,8 +2241,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2099126309}
   - component: {fileID: 2099126311}
-  - component: {fileID: 2099126310}
-  - component: {fileID: 2099126312}
   m_Layer: 5
   m_Name: UIParent
   m_TagString: Untagged
@@ -2304,24 +2274,6 @@ RectTransform:
   m_AnchoredPosition: {x: -555.1046, y: 125}
   m_SizeDelta: {x: 689.791, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2099126310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099126308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d965a449bc37654b8010d7e25d1b9df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropText
-  textObjects:
-  - {fileID: 1812391140}
-  - {fileID: 772723839}
-  - {fileID: 1471541359}
-  startDelay: 1
-  interval: 0.5
 --- !u!114 &2099126311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2334,28 +2286,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d965a449bc37654b8010d7e25d1b9df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropText
-  textObjects:
-  - {fileID: 1187533306}
-  - {fileID: 1749364511}
-  startDelay: 0
-  interval: 0.5
---- !u!114 &2099126312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099126308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d965a449bc37654b8010d7e25d1b9df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropText
-  textObjects:
-  - {fileID: 1268718261}
-  - {fileID: 424905286}
-  startDelay: 2.5
-  interval: 0.2
+  entries:
+  - target: {fileID: 1187533306}
+    delay: 0
+  - target: {fileID: 1749364511}
+    delay: 0.5
+  - target: {fileID: 1812391140}
+    delay: 1
+  - target: {fileID: 772723839}
+    delay: 0.5
+  - target: {fileID: 1471541359}
+    delay: 0.5
+  - target: {fileID: 1268718261}
+    delay: 0.5
+  - target: {fileID: 424905286}
+    delay: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

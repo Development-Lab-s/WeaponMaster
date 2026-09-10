@@ -1,23 +1,30 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class DropText : MonoBehaviour
 {
-    [SerializeField] private GameObject[] textObjects;
-    [SerializeField] private float startDelay = 0.5f;
-    [SerializeField] private float interval = 1f;
+    [Serializable]
+    private struct Entry
+    {
+        public GameObject target;
+        public float delay;
+    }
+
+    [SerializeField] private Entry[] entries;
 
     private Coroutine dropRoutine;
 
     private void Awake()
     {
-        for (int i = 0; i < textObjects.Length; i++)
+        for (int i = 0; i < entries.Length; i++)
         {
-            textObjects[i].SetActive(false);
+            if (entries[i].target != null)
+                entries[i].target.SetActive(false);
         }
     }
 
-    public void Drop()
+    public void Drop() // 떨굴때 부르기
     {
         if (dropRoutine != null)
             StopCoroutine(dropRoutine);
@@ -27,24 +34,14 @@ public class DropText : MonoBehaviour
 
     private IEnumerator DropRoutine()
     {
-        if (startDelay > 0f)
-            yield return Wait(startDelay);
-
-        for (int i = 0; i < textObjects.Length; i++)
+        for (int i = 0; i < entries.Length; i++)
         {
-            Debug.unityLogger.Log(textObjects[i]);
-            textObjects[i].SetActive(true);
-
-            if (i < textObjects.Length - 1 && interval > 0f)
-                yield return Wait(interval);
+            if (entries[i].delay > 0f)
+                yield return new WaitForSeconds(entries[i].delay);
+            if (entries[i].target != null)
+                entries[i].target.SetActive(true);
         }
 
         dropRoutine = null;
-    }
-
-    private object Wait(float seconds)
-    {
-
-        return new WaitForSeconds(seconds);
     }
 }
