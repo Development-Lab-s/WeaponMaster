@@ -12,7 +12,8 @@ public class EquipSocket
 
 public class EquipSocketContainer : ItemContainer
 {
-    [Header("장착 칸")]
+    [SerializeField] private GameObject targetObject;
+    [Header("장착 칸")] 
     [SerializeField]
     private EquipSocket[] sockets = {};
 
@@ -21,6 +22,19 @@ public class EquipSocketContainer : ItemContainer
     private void Awake()
     {
         Resize(SocketCount);
+    }
+
+    public (int, ItemData) GetCurrentPartAndWeapon()
+    {
+        targetObject.SetActive(false);
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                return (i, slots[i]);
+            }
+        }
+        return (0, null);
     }
 
 

@@ -8,22 +8,18 @@ using TMPro;
 public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private Image background;
-    [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private RawImage icon;
+    [SerializeField] private bool canInteract;
 
-    private Color NormalColor = new Color(1f, 1f, 1f, 0.06f);
-    private Color HoverColor = new Color(1f, 1f, 1f, 0.16f);
-    private Color DragSourceColor = new Color(1f, 1f, 1f, 0.03f);
-    private Color NameColor = new Color(0.92f, 0.94f, 1f);
-    private Color EmptyNameColor = new Color(0.55f, 0.6f, 0.7f);
+    private Color NormalColor = new Color(1f, 1f, 1f, 0f);
+    private Color HoverColor = new Color(1f, 1f, 1f, 0f);
+    private Color DragSourceColor = new Color(1f, 1f, 1f, 0f);
 
     private ItemContainer _container;
     private int _index = -1;
     private bool _hovered;
     private bool _isDragSource;
     private string _emptyLabel = string.Empty;
-
-    private static readonly bool fucked = true;
 
     public ItemContainer Container => _container;
     public int Index => _index;
@@ -49,20 +45,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (icon != null)
         {
-            bool has = item != null;
-            icon.enabled = has;
-            if (has)
-            {
-                icon.sprite = item.icon;
-                icon.preserveAspect = true;
-            }
-            ApplyIconAlpha();
-        }
-
-        if (nameText != null)
-        {
-            nameText.text = item != null ? item.displayName : _emptyLabel;
-            nameText.color = item != null ? NameColor : EmptyNameColor;
+            icon.texture = CurrentItem.icon;
         }
 
         UpdateBackground();
@@ -82,23 +65,14 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void SetDragSourceVisual(bool isSource)
     {
         _isDragSource = isSource;
-        ApplyIconAlpha();
         UpdateBackground();
-    }
-
-    private void ApplyIconAlpha()
-    {
-        if (icon == null) return;
-
-        var c = icon.color;
-        c.a = _isDragSource && CurrentItem != null ? 0.3f : 1f;
-        icon.color = c;
     }
 
 
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!canInteract) return;
         if (eventData.button != PointerEventData.InputButton.Left) return;
         if (CurrentItem == null) return;
 

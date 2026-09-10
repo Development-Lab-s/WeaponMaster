@@ -5,7 +5,9 @@ using UnityEngine;
 public abstract class ItemContainer : MonoBehaviour
 {
     [SerializeField] protected ItemData[] slots = Array.Empty<ItemData>();
-
+    [SerializeField] private Transform[] targetParts;
+    [SerializeField] private GameObject[] weaponPrefabs;
+    
 
     public event Action<ItemContainer, int> SlotChanged;
     public event Action<ItemContainer> StructureChanged;
@@ -13,6 +15,7 @@ public abstract class ItemContainer : MonoBehaviour
     public bool IsValidIndex(int index) => slots != null && index >= 0 && index < slots.Length;
 
     public ItemData Get(int index) => IsValidIndex(index) ? slots[index] : null;
+    [SerializeField] private bool isCanAccept;
 
 
     public void Set(int index, ItemData item)
@@ -26,7 +29,7 @@ public abstract class ItemContainer : MonoBehaviour
 
     public virtual bool CanAccept(int index, ItemData item)
     {
-        return IsValidIndex(index);
+        return isCanAccept;
     }
 
     protected void Resize(int newCapacity)
@@ -67,6 +70,21 @@ public abstract class ItemContainer : MonoBehaviour
         return -1;
     }
 
+    public void ChangePart(int bodyPartIndex, int weaponIndex)
+    {
+        GameObject targetPart = Instantiate(weaponPrefabs[weaponIndex],targetParts[bodyPartIndex]);
+        targetPart.transform.localPosition = Vector3.zero;
+        targetPart.transform.localRotation = Quaternion.identity;
+    }
+
+    public void TryRemovePart(int bodyPartIndex)
+    {
+        if (targetParts[bodyPartIndex].GetChild(0))
+        {
+            Destroy(targetParts[bodyPartIndex].GetChild(0).gameObject);
+        }
+    }
+
 
 
 
@@ -79,21 +97,23 @@ public abstract class ItemContainer : MonoBehaviour
         var src = from.Get(fromIndex);
         if (src == null) return false;
         if (!to.CanAccept(toIndex, src)) return false;
+        
+        
 
-        var dst = to.Get(toIndex);
-
-        if (dst == null)
+        for (int i = 0; i < to.slots.Length; i++)
         {
-            to.Set(toIndex, src);
-            from.Set(fromIndex, null);
-            return true;
+            var dst = to.Get(i);
+            if (to.Get(i) != null)
+            {
+                to.Set(i, null);
+                from.Set(from.slots.Length, dst);
+                to.TryRemovePart(i);
+            }
         }
 
-
-        if (!from.CanAccept(fromIndex, dst)) return false;
+        to.ChangePart(toIndex, src.PrefabId);
 
         to.Set(toIndex, src);
-        from.Set(fromIndex, dst);
         return true;
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using WorkFolder.PAP.Scripts.SelectUIScene;
 
 
 public class InventoryDragController : MonoBehaviour
@@ -11,11 +12,17 @@ public class InventoryDragController : MonoBehaviour
 
     public InventorySlotUI SourceSlot { get; private set; }
     public bool IsDragging => SourceSlot != null;
+    public RotateCharacter RotateChar { get; private set; }
 
     private RectTransform _root;
     private RectTransform _ghost;
-    private Image _ghostIcon;
+    private RawImage _ghostIcon;
     private Canvas _canvas;
+
+    public void SetRotateChar(RotateCharacter rotateChar)
+    {
+        RotateChar = rotateChar;
+    }
     
     public static InventoryDragController GetOrCreate(Canvas canvas)
     {
@@ -54,15 +61,14 @@ public class InventoryDragController : MonoBehaviour
 
     private void BuildGhost()
     {
-        var go = new GameObject("Ghost", typeof(RectTransform), typeof(Image));
+        var go = new GameObject("Ghost", typeof(RectTransform), typeof(RawImage));
         _ghost = (RectTransform)go.transform;
         _ghost.SetParent(_root, false);
-        _ghost.sizeDelta = new Vector2(72, 72);
+        _ghost.sizeDelta = new Vector2(500, 500);
 
-        _ghostIcon = go.GetComponent<Image>();
+        _ghostIcon = go.GetComponent<RawImage>();
         _ghostIcon.raycastTarget = false;
-        _ghostIcon.preserveAspect = true;
-        _ghostIcon.color = new Color(1, 1, 1, 0.85f);
+        _ghostIcon.color = new Color(1, 1, 1, 1f);
 
         _ghost.gameObject.SetActive(false);
     }
@@ -74,9 +80,9 @@ public class InventoryDragController : MonoBehaviour
         if (item == null) return;
 
         SourceSlot = slot;
+        RotateChar.SetRotateEnabled(false);
 
-        _ghost.sizeDelta = slot.CellSize * 0.9f;
-        _ghostIcon.sprite = item.icon;
+        _ghostIcon.texture = item.icon;
         _ghost.gameObject.SetActive(true);
         _ghost.SetAsLastSibling();
         UpdatePosition(screenPosition, eventCamera);
@@ -97,6 +103,7 @@ public class InventoryDragController : MonoBehaviour
     {
         if (SourceSlot != null) SourceSlot.SetDragSourceVisual(false);
         SourceSlot = null;
+        RotateChar.SetRotateEnabled(true);
         if (_ghost != null) _ghost.gameObject.SetActive(false);
     }
 }

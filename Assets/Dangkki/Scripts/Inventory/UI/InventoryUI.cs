@@ -27,7 +27,6 @@ public class InventoryUI : MonoBehaviour // 깡통
     [SerializeField] private InventorySlotUI[] fixedSlots;
 
     private readonly System.Collections.Generic.List<InventorySlotUI> _slots = new();
-    private GridLayoutGroup _grid;
     private Canvas _canvas;
 
     private void Awake()
@@ -77,15 +76,6 @@ public class InventoryUI : MonoBehaviour // 깡통
             gridParent.offsetMin = new Vector2(12, 12);
             gridParent.offsetMax = new Vector2(-12, -12);
         }
-
-        _grid = gridParent.GetComponent<GridLayoutGroup>();
-        if (_grid == null) _grid = gridParent.gameObject.AddComponent<GridLayoutGroup>();
-
-        _grid.cellSize = cellSize;
-        _grid.spacing = spacing;
-        _grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        _grid.constraintCount = 1;
-        _grid.childAlignment = TextAnchor.UpperCenter;
     }
 
     [ContextMenu("Rebuild")]
@@ -107,7 +97,7 @@ public class InventoryUI : MonoBehaviour // 깡통
 
         for (int i = 0; i < container.Capacity; i++)
         {
-            var slot = Instantiate(slotPrefab, gridParent);
+            var slot = gridParent.GetChild(i).GetComponent<InventorySlotUI>();
 
             slot.name = string.Format("Slot_{0:00}", i);
             slot.Bind(container, i);

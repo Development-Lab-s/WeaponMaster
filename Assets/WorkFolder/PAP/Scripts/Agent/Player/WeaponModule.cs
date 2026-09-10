@@ -2,6 +2,7 @@
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
+using WorkFolder.PAP.Scripts.SO.DataFolder;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
 {
@@ -10,7 +11,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         [Header("References")]
         [SerializeField] private Transform rotTargetTrm;
-        [SerializeField] private AbstractPartDataSO targetPartData;
         
         [Header("Debug")] 
         [SerializeField] private AnimationCurve zCurve;
@@ -19,9 +19,17 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private Player _player;
         private float _force;
         private Rigidbody _weaponRigid;
+        private ConfigurableJoint _joint;
         
         public bool IsEquipped { get; private set; }
+        public GameObject GameObject => gameObject;
+        private AbstractPartDataSO _partData;
         public Vector3 CurrentDirection { get; private set; }
+        public void SetPartData(AbstractPartDataSO partData)
+        {
+            _partData = partData;
+        }
+
         public Vector2 WeaponMoveDirection { get; private set; }
 
         public override void Initialize(NetworkOwner owner)
@@ -29,7 +37,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             base.Initialize(owner);
             _player = owner as Player;
             CurrentDirection = Vector3.zero;
+        }
+
+        public void AttachWeapon()
+        {
             _weaponRigid = GetComponentInChildren<Rigidbody>();
+            _joint = _weaponRigid.transform.GetComponent<ConfigurableJoint>();
         }
                 
         public void AfterInit()
@@ -46,6 +59,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             WeaponMoveDirection = dir;
         }
+
         public override void Render()
         {
             if (!HasInputAuthority) return;
@@ -72,7 +86,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (!HasInputAuthority) return; 
             //부위별로 돌아가는거 다르게 할 예정임. 
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
-            targetPartData.ChangePart(rotTargetTrm, CurrentDirection);
+            // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
+            _partData.ChangePart(rotTargetTrm, CurrentDirection);
             //해결 해 시발 이거 왜 해결이 안돼
         } 
 

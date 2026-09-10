@@ -6,10 +6,13 @@ public class ItemData : ScriptableObject
 {
     public string displayName = "New Item";
 
-    public Sprite icon;
+    public Texture icon;
 
-    private void OnValidate()
-    {
-        if (string.IsNullOrEmpty(displayName)) displayName = name;
-    }
+    public int PrefabId;
+
+    public GameObject ItemPrefab;
+
+    public Vector3 rightRot;
+    public Vector3 leftRot;
+    public Vector3 originRot;
 }

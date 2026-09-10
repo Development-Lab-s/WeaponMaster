@@ -1,41 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevLib.ModuleSystem;
 using Fusion;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
+using WorkFolder.PAP.Scripts.Agent.Player;
 
 namespace WorkFolder.PAP.Scripts.WeaponSystem
 {
-    public class WeaponCollideModule : NetworkBehaviour
+    public class WeaponCollideModule : MonoBehaviour
     {
-        [SerializeField] private Transform visualRoot;
         private Rigidbody _swordRb;
-        private Collider _swordCol;
+        private Collider[] _swordCol;
         private HashSet<IDamageable> _damagables = new HashSet<IDamageable>();
         private bool _isEnabled;
+        private NetworkOwner _owner;
 
         private void Awake()
         {
             _swordRb = GetComponent<Rigidbody>();
-            _swordCol = GetComponent<Collider>();
+            _swordCol = GetComponentsInChildren<Collider>();
         }
 
-        public override void Spawned()
+        private void Start()
         {
-            foreach (Collider col in visualRoot.GetComponentsInChildren<Collider>())
-                Physics.IgnoreCollision(_swordCol, col,true);
-            if (HasStateAuthority)
+            _owner = GetComponentInParent<Player>();
+            foreach (Collider col in _owner.GetComponentsInChildren<Collider>())
             {
-                _swordRb.isKinematic = false;
-                return;
+                foreach (Collider swordCol in _swordCol)
+                {
+                    Physics.IgnoreCollision(swordCol, col,true);
+                }
             }
-            // swordRb.isKinematic = true;
-            // swordRb.interpolation = RigidbodyInterpolation.None;
         }
 
         
-        public override void FixedUpdateNetwork()
+        private void FixedUpdate()
         {
             if (_swordRb.linearVelocity.sqrMagnitude > 200)
             {
@@ -52,13 +53,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.transform.CompareTag("Player"))
+            if (_owner == null || !_owner.HasInputAuthority) return;
+            var contact = collision.contacts[0];
+            if (collision.transform.CompareTag("Player") && contact.thisCollider.CompareTag("Weapon"))
             {
-                if (collision.transform.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
+                if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
                 {
                     DamageData data = new DamageData();
                     data.Damage = (int)(_swordRb.linearVelocity.magnitude * _swordRb.mass * hitBox.Part.DamageMultiplier);
-                    Debug.Log(data.Damage);
                     hitBox.Damageable.RpcTakeDamage(data);
                     _damagables.Add(hitBox.Damageable);
                 }
