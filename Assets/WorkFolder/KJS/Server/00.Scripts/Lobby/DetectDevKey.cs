@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class DetectDevKey : MonoBehaviour
 {
@@ -6,20 +7,28 @@ public class DetectDevKey : MonoBehaviour
 
     private string _input = "";
 
-    private void Update()
+    private void OnEnable()
     {
-        foreach (char c in Input.inputString)
+        Keyboard.current.onTextInput += OnTextInput;
+    }
+
+    private void OnDisable()
+    {
+        if (Keyboard.current != null)
+            Keyboard.current.onTextInput -= OnTextInput;
+    }
+
+    private void OnTextInput(char character)
+    {
+        _input += character;
+
+        if (_input.Length > 6)
+            _input = _input[^6..];
+
+        if (_input == "devlab")
         {
-            _input += c;
-
-            if (_input.Length > 6)
-                _input = _input[^6..];
-
-            if (_input == "devlab")
-            {
-                OpenTheDevTab();
-                _input = "";
-            }
+            OpenTheDevTab();
+            _input = "";
         }
     }
 
