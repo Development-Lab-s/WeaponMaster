@@ -33,7 +33,7 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
             NetworkObject player = RunnerProvider.Current.Spawn(playerPrefab, new Vector3(0,4,0),Quaternion.identity,inputAuthority:RunnerProvider.Current.LocalPlayer);
             Player playerHandler = player.GetComponent<Player>();
             PartOffsetDataSO partData = partDataList[pack.Item1];
-            playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName),pack.Item2.ItemPrefab);
+            playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);
         }
     }
 }

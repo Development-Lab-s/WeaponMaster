@@ -17,9 +17,7 @@ namespace WorkFolder.KJS._01.Scripts.Feedback
             
             if(_delayCoroutine != null)
                 StopCoroutine(_delayCoroutine);
-            
             _delayCoroutine =  StartCoroutine(IDelayEnumerator());
-            
         }
 
         public override void StopFeedback()

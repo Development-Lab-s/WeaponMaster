@@ -43,7 +43,8 @@ namespace WorkFolder.KJS._01.Scripts
             if(data.Damage <= 0 || _isDead) return;
             
             Health -= data.Damage;
-            _iFeedable.PlayAllFeedBacks();
+            if (_iFeedable != null)
+                _iFeedable.PlayAllFeedBacks();
             if(Health <= 0 && !_isDead)
                 Die();
         }

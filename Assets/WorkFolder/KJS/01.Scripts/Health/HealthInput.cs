@@ -19,6 +19,7 @@ namespace WorkFolder.KJS._01.Scripts.Health
         {
             if (Keyboard.current.tKey.wasPressedThisFrame)
             {
+                Debug.Log("afaf");
                 IDamagable.RpcTakeDamage(new DamageData
                 {
                     Damage = 10
