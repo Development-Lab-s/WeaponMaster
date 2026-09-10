@@ -16,6 +16,8 @@ public class ButtonSlide : MonoBehaviour
     private RectTransform rect;
     private Vector2 endPos;
     private Sequence seq;
+    
+
 
     private void Awake()
     {
