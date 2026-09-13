@@ -715,7 +715,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cd39f48069249c5a43d6d22a460a0af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.Health.HealthBar
-  _healthSystem: {fileID: 1451482201}
+  _healthSlider: {fileID: 0}
+  _damageSlider: {fileID: 0}
+  _delay: 0.15
+  _duration: 0.5
 --- !u!1 &1451482200
 GameObject:
   m_ObjectHideFlags: 0

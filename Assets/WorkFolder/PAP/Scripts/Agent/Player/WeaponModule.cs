@@ -66,11 +66,11 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (IsEquipped)
             {
                 float x = Mathf.Clamp(
-                    CurrentDirection.x + _cameraController.AimDirection.x * 0.001f *
-                    _player.SettingValue.WeaponSensitivityX, -1f, 1f);
+                    CurrentDirection.x + _cameraController.AimDirection.x * 0.075f *
+                    _player.SettingValue.WeaponSensitivityX * Runner.DeltaTime, -1f, 1f);
                 float y = Mathf.Clamp(
-                    CurrentDirection.y + _cameraController.AimDirection.y * 0.001f *
-                    _player.SettingValue.WeaponSensitivityY, -1f, 1f);
+                    CurrentDirection.y + _cameraController.AimDirection.y * 0.075f *
+                    _player.SettingValue.WeaponSensitivityY * Runner.DeltaTime, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
                 float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
                 CurrentDirection = new Vector3(x, y, z);
