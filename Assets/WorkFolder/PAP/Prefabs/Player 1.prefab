@@ -3942,7 +3942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8071f810832a4be3b0e94da55c2b9426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.Feedback.CameraEffectFeedback
-  vignette: {fileID: 0}
   duration: 3
 --- !u!1 &6758724898801104979
 GameObject:
