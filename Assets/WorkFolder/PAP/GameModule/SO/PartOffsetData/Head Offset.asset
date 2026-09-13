@@ -16,4 +16,4 @@ MonoBehaviour:
   offset: {x: 0, y: 3.3, z: 0}
   eulerAngles: {x: 90, y: 270, z: 0}
   bodyPartData: {fileID: 11400000, guid: 45935f4733bf0f947a9fe3edd72d8045, type: 2}
-  driveX: {x: 0, y: 0}
+  driveX: {x: -140, y: 0}

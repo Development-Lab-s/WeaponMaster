@@ -3,6 +3,8 @@ using DevLib.ModuleSystem;
 using Fusion;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts.Feedback;
+using WorkFolder.KJS._01.Scripts.Health;
+using WorkFolder.PAP.Scripts.Agent.Player;
 
 namespace WorkFolder.KJS._01.Scripts
 {
@@ -19,8 +21,9 @@ namespace WorkFolder.KJS._01.Scripts
     public sealed class HealthSystem : NetworkModule , IHealthSystem , IDamageable
     {
         [Networked, OnChangedRender(nameof(OnHealthChanged))]
-        // If you use the OnHealthChanged Method, Write code to update ui and other visual things.
         public int Health{ get; private set;} 
+        
+        private int _maxHealth;
         public event Action OnDied;
         public event Action OnDamaged;
 
@@ -28,10 +31,13 @@ namespace WorkFolder.KJS._01.Scripts
 
         private bool _isDead = false;
 
+        [SerializeField] private ResetCharacter resetModule;
+
         public override void Spawned()
         {
             if (!Object.HasStateAuthority) return;
             Health = 100;
+            _maxHealth = Health;
             _iFeedable = gameObject.GetComponentInChildren<IFeedable>();
         }
 
@@ -42,7 +48,9 @@ namespace WorkFolder.KJS._01.Scripts
         {
             if(data.Damage <= 0 || _isDead) return;
             
-            Health -= data.Damage;
+            
+            Health = Mathf.Clamp(Health - data.Damage, 0, _maxHealth);
+            HealthBar.Instance.ChangeBar(Health, _maxHealth);
             if (_iFeedable != null)
                 _iFeedable.PlayAllFeedBacks();
             if(Health <= 0 && !_isDead)
@@ -56,8 +64,8 @@ namespace WorkFolder.KJS._01.Scripts
 
         private void Die()
         {
-            if(_isDead) return;
-            
+            if(_isDead && !HasStateAuthority) return;
+            resetModule.TryReset();
             _isDead = true;
             OnDied?.Invoke();
         }

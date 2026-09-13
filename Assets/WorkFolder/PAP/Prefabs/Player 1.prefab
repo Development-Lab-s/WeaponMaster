@@ -279,6 +279,8 @@ GameObject:
   - component: {fileID: 3162878147087020752}
   - component: {fileID: 2303997721685729075}
   - component: {fileID: 5450899739446577671}
+  - component: {fileID: 1726364838132147983}
+  - component: {fileID: 5343119350410798618}
   m_Layer: 6
   m_Name: head
   m_TagString: Player
@@ -330,7 +332,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 703551706707667495}
   serializedVersion: 5
-  m_Mass: 10
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -381,22 +383,22 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -21.882755
+    limit: -40
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 13.967623
+    limit: 35
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 15.851044
+    limit: 35
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 47.130157
+    limit: 47
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -450,7 +452,7 @@ ConfigurableJoint:
   m_EnableCollision: 0
   m_EnablePreprocessing: 0
   m_MassScale: 1
-  m_ConnectedMassScale: 1
+  m_ConnectedMassScale: 5
 --- !u!114 &2303997721685729075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +513,37 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &1726364838132147983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703551706707667495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403560f9f373495d940ee2c1dea13075, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.HitBox
+  part: {fileID: 11400000, guid: 602e71b047b080b4898b0692f0ec7f27, type: 2}
+--- !u!114 &5343119350410798618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703551706707667495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89131eb6d6bc4e6597f4ee1b238f6ea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
+  animatedBone: {fileID: 0}
+  strengthMultiplier: 1
+  dampingRatio: 1
+  springPerKg: 9000
+  maxTorque: 36000
+  followRate: 0.35
 --- !u!1 &957170662637236621
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,9 +778,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
   animatedBone: {fileID: 5853966529371864294}
   strengthMultiplier: 1
-  dampingRatio: 0.4
-  springPerKg: 120
-  maxTorque: 5000
+  dampingRatio: 0.9
+  springPerKg: 450
+  maxTorque: 8000
   followRate: 0.35
 --- !u!114 &4568027953546750399
 MonoBehaviour:
@@ -1232,9 +1265,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
   animatedBone: {fileID: 5290183807211112779}
   strengthMultiplier: 1
-  dampingRatio: 0.5
-  springPerKg: 200
-  maxTorque: 5000
+  dampingRatio: 1
+  springPerKg: 700
+  maxTorque: 25000
   followRate: 0.35
 --- !u!114 &344830111576767579
 MonoBehaviour:
@@ -1666,9 +1699,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
   animatedBone: {fileID: 7328031508275255164}
   strengthMultiplier: 1
-  dampingRatio: 0.5
-  springPerKg: 200
-  maxTorque: 5000
+  dampingRatio: 1
+  springPerKg: 700
+  maxTorque: 25000
   followRate: 0.35
 --- !u!114 &3760559392072881390
 MonoBehaviour:
@@ -2224,6 +2257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.HealthSystem
   _Health: 100
+  resetModule: {fileID: 1099728873260847778}
 --- !u!1 &4803769944688373919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2633,6 +2667,7 @@ GameObject:
   - component: {fileID: 7453622829213636101}
   - component: {fileID: 2370037534712184905}
   - component: {fileID: 3727529660450433821}
+  - component: {fileID: 1099728873260847778}
   m_Layer: 3
   m_Name: Player 1
   m_TagString: Player
@@ -2682,6 +2717,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 3727529660450433821}
   - {fileID: 8085688440492758205}
+  - {fileID: 1099728873260847778}
   - {fileID: 9168301364674135390}
   - {fileID: 7401780588546069248}
   - {fileID: 7538473669355263676}
@@ -2794,6 +2830,18 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &1099728873260847778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5394159356429554557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d459ccd4ffe4d8eab4ac083cc5cf204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.ResetCharacter
 --- !u!1 &5700361591020074492
 GameObject:
   m_ObjectHideFlags: 0
@@ -3195,9 +3243,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
   animatedBone: {fileID: 4887433854330299346}
   strengthMultiplier: 1
-  dampingRatio: 0.4
-  springPerKg: 120
-  maxTorque: 5000
+  dampingRatio: 0.9
+  springPerKg: 450
+  maxTorque: 8000
   followRate: 0.35
 --- !u!114 &3628071776612522681
 MonoBehaviour:
@@ -3415,9 +3463,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PuppetJoint
   animatedBone: {fileID: 7722158019954105509}
   strengthMultiplier: 1
-  dampingRatio: 0.7
-  springPerKg: 500
-  maxTorque: 5000
+  dampingRatio: 1.1
+  springPerKg: 800
+  maxTorque: 120000
   followRate: 0.35
 --- !u!114 &8120796228235623423
 MonoBehaviour:

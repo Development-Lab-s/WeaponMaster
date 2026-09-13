@@ -38,7 +38,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void FixedUpdate()
         {
-            if (_swordRb.linearVelocity.sqrMagnitude > 200)
+            if (_swordRb.linearVelocity.sqrMagnitude > 150)
             {
                 _isEnabled = true;
             }
@@ -53,16 +53,16 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void OnCollisionEnter(Collision collision)
         {
-            if (_owner == null || !_owner.HasInputAuthority) return;
+            if (_owner == null || !_owner.HasInputAuthority || !_isEnabled) return;
             var contact = collision.contacts[0];
             if (collision.transform.CompareTag("Player") && contact.thisCollider.CompareTag("Weapon"))
             {
                 if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
                 {
                     DamageData data = new DamageData();
-                    data.Damage = (int)(_swordRb.linearVelocity.magnitude * _swordRb.mass * hitBox.Part.DamageMultiplier);
+                    data.Damage = (int)(hitBox.Part.DamageMultiplier * 4f + _swordRb.linearVelocity.magnitude);
                     hitBox.Damageable.RpcTakeDamage(data);
-                    _damagables.Add(hitBox.Damageable);
+                    _damagables.Add(hitBox.Damageable); 
                 }
             }
         }
