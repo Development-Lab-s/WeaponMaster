@@ -13,7 +13,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
                 return;
             }
             Quaternion baseRot = Quaternion.FromToRotation(Vector3.up,dir);
-            target.localRotation = baseRot * Quaternion.Euler(-25f, 0, 0);
+            target.localRotation = baseRot; 
         }
     }
 }

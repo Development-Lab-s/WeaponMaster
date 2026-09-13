@@ -1759,6 +1759,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2303997721685729075, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+      propertyPath: SortKey
+      value: 3868651152
+      objectReference: {fileID: 0}
     - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: SortKey
       value: 1800436736
@@ -1811,10 +1815,17 @@ PrefabInstance:
       propertyPath: vignette
       value: 
       objectReference: {fileID: 384655615}
+    - target: {fileID: 7521852917333474440, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+      propertyPath: SortKey
+      value: 4153946700
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4626633200378969288, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1880205708}
   m_SourcePrefab: {fileID: 100100000, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
 --- !u!1 &1581257072
 GameObject:
@@ -1940,7 +1951,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b4fb52b4b60c74469834f9d7083c174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawner
-  PlayerPrefab: {fileID: 5394159356429554557, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
 --- !u!1 &1817160299
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,6 +2052,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1880205705 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4626633200378969288, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+  m_PrefabInstance: {fileID: 1492278850}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1880205708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880205705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca11dd960334dabb00fcb15c3239cb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.Health.HealthInput
 --- !u!114 &127577880384735752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3137,7 +3164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08030a3e813f4cd4898c55a6585d6c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.WeaponCollideModule
-  visualRoot: {fileID: 282858328377866589}
 --- !u!136 &2159288388667457544
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3803,7 +3829,6 @@ MonoBehaviour:
   - {fileID: 9168301364717816463}
   - {fileID: 7401780588504816849}
   - {fileID: 7538473669380790637}
-  - {fileID: 2070649224174699517}
   - {fileID: 6809949852241093782}
   - {fileID: 8087249015210610600}
   ForceRemoteRenderTimeframe: 0
@@ -6012,7 +6037,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 7722158019845411700}
-  targetPartData: {fileID: 11400000, guid: 45935f4733bf0f947a9fe3edd72d8045, type: 2}
   zCurve:
     serializedVersion: 2
     m_Curve: []

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85d1b8c913bb7d94896f368c68df8db0, type: 3}
+  m_Name: Flail
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  displayName: "\uCCA0\uD1F4"
+  icon: {fileID: 8400000, guid: 8ad47bdd7b6094c49b18cda62244ee51, type: 2}
+  PrefabId: 0
+  ItemPrefab: {fileID: 6732451604105544912, guid: 490c23f7ba248a44a98ca367403c3aa7, type: 3}
