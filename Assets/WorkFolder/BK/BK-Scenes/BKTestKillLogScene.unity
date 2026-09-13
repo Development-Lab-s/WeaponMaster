@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646a89a078cee4a4287504e7f6c3e101, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestSpwandKillLog
+  testKill: 
 --- !u!1 &696280275
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +435,7 @@ GameObject:
   - component: {fileID: 1747046299}
   - component: {fileID: 1747046298}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: KillLogCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
