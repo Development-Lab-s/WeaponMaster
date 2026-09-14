@@ -20,18 +20,6 @@ namespace WorkFolder.KJS._01.Scripts.Health
             _slider = GetComponent<Slider>();
         }
 
-        private void Start()
-        {
-            _slider.value = HealthBar.Instance._healthSystem.Health;
-        }
-
-        public void ChangeBar()
-        {
-            float health = HealthBar.Instance._healthSystem.Health;
-            _slider.value = health;
-            _damageTween?.Kill();
-            _damageTween = _slider.DOValue(health, _duration).SetDelay(_delay).SetEase(Ease.OutQuad);
-        }
     }
     
     
