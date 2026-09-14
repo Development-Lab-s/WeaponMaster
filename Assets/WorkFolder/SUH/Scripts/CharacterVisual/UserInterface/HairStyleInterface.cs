@@ -1,5 +1,6 @@
 ﻿using DevLib.ModuleSystem;
 using UnityEngine;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
@@ -14,9 +15,12 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
             service = DevLib.ServiceLocator.ServiceLocator.Get<IDataStoreService>();
         }
         
-        public void HairStyleTextChange()
+        public async void HairStyleTextChange()
         {
             AfterInit();
+
+            uint currentHairStyle = await service.GetAsync<uint>(nameof(PlayerDataStore.HairStyle));
+            
         }
         
     }

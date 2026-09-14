@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 
-namespace WorkFolder.SUH.Scripts.Leaderboard
+namespace WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.Server
 {
     public class LeaderboardServerInterface : NetworkBehaviour
     {
@@ -16,7 +15,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard
         }
 
         private void UpdateLeaderboardUI(
-            IReadOnlyList<LeaderboardEntry> topPlayers)
+            IReadOnlyList<LocalLeaderboardEntry> topPlayers)
         {
             
         }

@@ -5,7 +5,9 @@ using Unity.Services.Authentication;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface;
 using Unity.Services.CloudSave;
+using Unity.Services.CloudSave.Models.Data.Player;
 using Unity.Services.Core;
+using SaveOptions = Unity.Services.CloudSave.Models.Data.Player.SaveOptions;
 
 namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
 {
@@ -38,7 +40,8 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
 
             try
             {
-                var result = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { fullKey });
+                var result = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> { fullKey },
+                    new LoadOptions(new PublicReadAccessClassOptions()));
                 if (result.TryGetValue(fullKey, out var item))
                 {
                     return item.Value.GetAs<T>();
@@ -62,7 +65,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
             try
             {
                 var data = new Dictionary<string, object> { { fullKey, value } };
-                await CloudSaveService.Instance.Data.Player.SaveAsync(data);
+                await CloudSaveService.Instance.Data.Player.SaveAsync(data, new SaveOptions(new PublicWriteAccessClassOptions()));
             }
             catch (Exception ex)
             {

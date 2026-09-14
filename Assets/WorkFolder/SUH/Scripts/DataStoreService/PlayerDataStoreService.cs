@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DevLib.ServiceLocator;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using System.Reflection;
+using Unity.Services.CloudSave;
+using Unity.Services.CloudSave.Models.Data.Player;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -77,6 +80,21 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
             );
 
             return value;
+        }
+
+        public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
+        {
+            var keys = new HashSet<string> { valueName };
+            var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
+
+            var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys, options);
+
+            if (playerData.TryGetValue(valueName, out var item))
+            {
+                return item.Value.GetAs<TValue>(); 
+            }
+
+            return default;
         }
 
         public async Task SaveAsync()
