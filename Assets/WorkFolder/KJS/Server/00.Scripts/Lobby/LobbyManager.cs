@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using DevLib.ServiceLocator;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
-using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 
 namespace _00.Scripts.Lobby
 {
@@ -62,7 +59,6 @@ namespace _00.Scripts.Lobby
             if (result.Ok)
             {
                 Debug.Log($"방 생성 성공: {roomName}");
-                ILeaderboardState service = ServiceLocator.Get<ILeaderboardState>();
             }
             else
             {

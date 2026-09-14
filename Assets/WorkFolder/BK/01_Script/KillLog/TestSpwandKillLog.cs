@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Fusion;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,10 +13,11 @@ public class TestSpwandKillLog : MonoBehaviour
    {
       if (Keyboard.current.tKey.wasPressedThisFrame)
       {
-         Spwan("대식가");
+         Spwan("테스트");
       }
    }
 
+   [Rpc(RpcSources.All , RpcTargets.StateAuthority)]
    public void Spwan(string kill) //대충 사용할려면 킬로그 띄우고 싶을때 이 Spwan에 죽은 사람 이름 넘겨주면 됨
    {
       foreach (GameObject v in KillLogPoolManger.instance.killLogList)

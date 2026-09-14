@@ -1,4 +1,5 @@
 ﻿using System;
+using DevLib.ModuleSystem;
 using UnityEditor;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
@@ -13,7 +14,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
 
         private void Start()
         {
-            _damageable = GetComponentInParent<IDamageable>();
+            _damageable = GetComponentInParent<NetworkOwner>().GetComponentInChildren<IDamageable>();
         }
 
         public BodyPartDataSO Part => part;

@@ -97,7 +97,8 @@
         "ModuleSystem_Assembly",
         "HashDataSystem_assembly",
         "FsmSystem_assembly",
-        "SoundSystem_assembly"
+        "SoundSystem_assembly",
+        "PhotonVoice.Fusion"
     ],
     "UseSerializableDictionary": true,
     "NullChecksForNetworkedProperties": true,
