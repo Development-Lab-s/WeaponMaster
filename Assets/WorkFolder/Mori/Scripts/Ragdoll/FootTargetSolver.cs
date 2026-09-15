@@ -1,0 +1,215 @@
+using UnityEngine;
+
+[DefaultExecutionOrder(20)]
+public sealed class FootTargetSolver : MonoBehaviour
+{
+    private const int MaximumGroundHits = 32;
+
+    [Header("Targets")]
+    [SerializeField] private Transform goal;
+    [SerializeField] private Transform ikTarget;
+    [SerializeField] private Transform solePoint;
+
+    [Header("Driver Leg")]
+    [SerializeField] private Transform upperLeg;
+    [SerializeField] private Transform lowerLeg;
+    [SerializeField] private Transform foot;
+
+    [Header("Ground Probe")]
+    [SerializeField] private LayerMask groundLayers = ~0;
+    [SerializeField] private float sphereRadius = 0.1f;
+    [SerializeField] private float castUpDistance = 0.45f;
+    [SerializeField] private float castDownDistance = 0.85f;
+    [SerializeField] private float groundClearance = 0.02f;
+    [SerializeField, Min(0f)] private float groundedDistance = 0.08f;
+    [SerializeField, Min(0f)] private float supportDistance = 0.2f;
+    [SerializeField] private float maximumSlope = 50f;
+    [SerializeField] private bool alignToGround = true;
+
+    [Header("IK Safety")]
+    [SerializeField] private float maximumReachRatio = 0.98f;
+
+    [Header("Smoothing")]
+    [SerializeField] private float positionResponse = 30f;
+    [SerializeField] private float rotationResponse = 30f;
+
+    private Vector3 _targetToSoleLocal;
+    private Quaternion _goalToTargetRotation;
+    private readonly RaycastHit[] _groundHits = new RaycastHit[MaximumGroundHits];
+    private Transform _characterRoot;
+    private bool _hasGroundHit;
+    private bool _isGrounded;
+    private Vector3 _groundNormal = Vector3.up;
+    private Vector3 _groundPoint;
+    private float _groundDistance = float.PositiveInfinity;
+
+    public bool GroundSnapEnabled { get; set; } = true;
+    public bool HasGroundHit => _hasGroundHit;
+    public bool IsGrounded => _isGrounded;
+    public bool IsSupportingGround =>
+        GroundSnapEnabled
+        && _hasGroundHit
+        && _groundDistance <= supportDistance;
+    public Vector3 GroundNormal => _groundNormal;
+    public Vector3 GroundPoint => _groundPoint;
+    public float GroundDistance => _groundDistance;
+
+    private void Awake()
+    {
+        _characterRoot = upperLeg.root;
+        _targetToSoleLocal = ikTarget.InverseTransformPoint(solePoint.position);
+        _goalToTargetRotation = Quaternion.Inverse(goal.rotation)
+                              * ikTarget.rotation;
+    }
+
+    private void OnEnable()
+    {
+        Solve(true);
+    }
+
+    private void FixedUpdate()
+    {
+        Solve(false);
+    }
+
+    private void Solve(bool snap)
+    {
+        Vector3 position = goal.position;
+        Quaternion rotation = goal.rotation * _goalToTargetRotation;
+
+        _hasGroundHit = ProbeGround(position, rotation, out RaycastHit hit);
+        if (_hasGroundHit && GroundSnapEnabled)
+        {
+            if (alignToGround)
+                rotation = Quaternion.FromToRotation(Vector3.up, hit.normal)
+                         * rotation;
+
+            position = hit.point
+                     + hit.normal * groundClearance
+                     - rotation * _targetToSoleLocal;
+        }
+
+        position = ClampToLegReach(position);
+        float positionBlend = snap ? 1f : GetBlend(positionResponse);
+        float rotationBlend = snap ? 1f : GetBlend(rotationResponse);
+
+        ikTarget.SetPositionAndRotation(
+            Vector3.Lerp(ikTarget.position, position, positionBlend),
+            Quaternion.Slerp(ikTarget.rotation, rotation, rotationBlend));
+    }
+
+    private bool ProbeGround(
+        Vector3 goalPosition,
+        Quaternion targetRotation,
+        out RaycastHit hit)
+    {
+        Vector3 solePosition = goalPosition
+                             + targetRotation * _targetToSoleLocal;
+        Vector3 origin = solePosition + Vector3.up * castUpDistance;
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            sphereRadius,
+            Vector3.down,
+            _groundHits,
+            castUpDistance + castDownDistance,
+            groundLayers,
+            QueryTriggerInteraction.Ignore);
+
+        hit = default;
+        float nearestDistance = float.PositiveInfinity;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit candidate = _groundHits[i];
+            if (!IsGroundCandidate(candidate.collider)
+                || Vector3.Angle(candidate.normal, Vector3.up) > maximumSlope
+                || candidate.distance >= nearestDistance)
+                continue;
+
+            hit = candidate;
+            nearestDistance = candidate.distance;
+        }
+
+        if (float.IsPositiveInfinity(nearestDistance))
+        {
+            _isGrounded = false;
+            _groundNormal = Vector3.up;
+            _groundPoint = default;
+            _groundDistance = float.PositiveInfinity;
+            return false;
+        }
+
+        Vector3 currentSolePosition = ikTarget.position
+                                    + ikTarget.rotation * _targetToSoleLocal;
+        float soleHeight = Vector3.Dot(
+            currentSolePosition - hit.point,
+            hit.normal);
+        _groundDistance = Mathf.Max(0f, soleHeight);
+        _isGrounded = _groundDistance <= groundedDistance;
+        _groundNormal = hit.normal;
+        _groundPoint = hit.point;
+        return true;
+    }
+
+    private bool IsGroundCandidate(Collider candidate)
+    {
+        if (candidate == null)
+            return false;
+
+        if (_characterRoot != null
+            && candidate.transform.IsChildOf(_characterRoot))
+            return false;
+
+        // The physics puppet detaches from the character root at runtime, so
+        // hierarchy filtering alone is not enough. Dynamic bodies must never
+        // become a foot's ground reference.
+        Rigidbody body = candidate.attachedRigidbody;
+        return body == null || body.isKinematic;
+    }
+
+    private Vector3 ClampToLegReach(Vector3 targetPosition)
+    {
+        float reach = (
+            Vector3.Distance(upperLeg.position, lowerLeg.position)
+          + Vector3.Distance(lowerLeg.position, foot.position))
+          * maximumReachRatio;
+        Vector3 offset = targetPosition - upperLeg.position;
+
+        return offset.sqrMagnitude > reach * reach
+            ? upperLeg.position + offset.normalized * reach
+            : targetPosition;
+    }
+
+    private static float GetBlend(float response)
+    {
+        return 1f - Mathf.Exp(-response * Time.deltaTime);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Vector3 soleOffset = solePoint.position - ikTarget.position;
+        Vector3 solePosition = goal.position + soleOffset;
+        Vector3 origin = solePosition + Vector3.up * castUpDistance;
+        Vector3 end = origin
+                    + Vector3.down * (castUpDistance + castDownDistance);
+
+        Gizmos.color = IsSupportingGround
+            ? Color.green
+            : _hasGroundHit
+                ? Color.yellow
+                : Color.red;
+        Gizmos.DrawWireSphere(origin, sphereRadius);
+        Gizmos.DrawWireSphere(end, sphereRadius);
+        Gizmos.DrawLine(origin, end);
+
+        float legLength = Vector3.Distance(
+            upperLeg.position,
+            lowerLeg.position)
+            + Vector3.Distance(lowerLeg.position, foot.position);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(
+            upperLeg.position,
+            legLength * maximumReachRatio);
+    }
+}
