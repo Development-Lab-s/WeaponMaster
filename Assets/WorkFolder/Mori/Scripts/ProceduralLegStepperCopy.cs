@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class ProceduralLegStepperCoppy : MonoBehaviour
+public class ProceduralLegStepperCopy : MonoBehaviour
 {
     [Header("Move Target")]
     [SerializeField] private Transform leftFootTarget;
