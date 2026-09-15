@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Head
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SO.DataFolder.BodyPartDataSO
   Name: Head
-  DamageMultiplier: 1.7
+  DamageMultiplier: 3

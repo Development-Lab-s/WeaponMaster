@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class DropText : MonoBehaviour
@@ -12,10 +13,16 @@ public class DropText : MonoBehaviour
     }
 
     [SerializeField] private Entry[] entries;
+    [SerializeField] private TextMeshProUGUI deathText;
 
     private Coroutine dropRoutine;
 
     private void Awake()
+    {
+        DisableUis();
+    }
+
+    public void DisableUis()
     {
         for (int i = 0; i < entries.Length; i++)
         {
@@ -24,11 +31,11 @@ public class DropText : MonoBehaviour
         }
     }
 
-    public void Drop() // 떨굴때 부르기
+    public void Dead(string deathMent)
     {
         if (dropRoutine != null)
             StopCoroutine(dropRoutine);
-
+        deathText.SetText(deathMent);
         dropRoutine = StartCoroutine(DropRoutine());
     }
 

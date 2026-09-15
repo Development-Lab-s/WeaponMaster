@@ -66,10 +66,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (IsEquipped)
             {
                 float x = Mathf.Clamp(
-                    CurrentDirection.x + _cameraController.AimDirection.x * 0.075f *
+                    CurrentDirection.x + _cameraController.AimDirection.x * 0.025f *
                     _player.SettingValue.WeaponSensitivityX * Runner.DeltaTime, -1f, 1f);
                 float y = Mathf.Clamp(
-                    CurrentDirection.y + _cameraController.AimDirection.y * 0.075f *
+                    CurrentDirection.y + _cameraController.AimDirection.y * 0.025f *
                     _player.SettingValue.WeaponSensitivityY * Runner.DeltaTime, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
                 float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
@@ -84,11 +84,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public override void FixedUpdateNetwork()
         {
             if (!HasInputAuthority) return; 
-            //부위별로 돌아가는거 다르게 할 예정임. 
+            // 부위별로 돌아가는거 다르게 할 예정임.
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
             _partData.ChangePart(rotTargetTrm, CurrentDirection);
-            //해결 해 시발 이거 왜 해결이 안돼
         } 
 
         private void OnDrawGizmos()

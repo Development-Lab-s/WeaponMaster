@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using DevLib.ModuleSystem;
 using Fusion;
+using S2;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
 using WorkFolder.PAP.Scripts.Agent.Player;
+using WorkFolder.PAP.Scripts.Effects;
+using Random = UnityEngine.Random;
 
 namespace WorkFolder.PAP.Scripts.WeaponSystem
 {
     public class WeaponCollideModule : MonoBehaviour
     {
+        [SerializeField] private string[] deathMents;
         private Rigidbody _swordRb;
         private Collider[] _swordCol;
         private HashSet<IDamageable> _damagables = new HashSet<IDamageable>();
@@ -38,7 +42,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void FixedUpdate()
         {
-            if (_swordRb.linearVelocity.sqrMagnitude > 150)
+            if (_swordRb.linearVelocity.sqrMagnitude > 250)
             {
                 _isEnabled = true;
             }
@@ -59,10 +63,18 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             {
                 if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
                 {
+                    _damagables.Add(hitBox.Damageable);
                     DamageData data = new DamageData();
+                    data.DeathMent = deathMents[Random.Range(0, deathMents.Length)];
                     data.Damage = (int)(hitBox.Part.DamageMultiplier * 4f + _swordRb.linearVelocity.magnitude);
+                    data.Owner = _owner.Runner.LocalPlayer;
                     hitBox.Damageable.RpcTakeDamage(data);
-                    _damagables.Add(hitBox.Damageable); 
+                    
+                    if (data.Damage >= 15)
+                    {
+                        CritEffectSpawnRequest request = new CritEffectSpawnRequest(collision.contacts[0].otherCollider.transform.position, data.Damage/10f);
+                        Factories.GetFactory<CritEffect, CritEffectSpawnRequest>().Create(request);
+                    }
                 }
             }
         }
