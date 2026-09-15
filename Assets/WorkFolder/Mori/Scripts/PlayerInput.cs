@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerMovementInput : MonoBehaviour
 {
     public Vector2 MoveDirection { get; private set; }
-    public bool IsForwardOnly { get; private set; }
+    public bool HasForwardInput { get; private set; }
+    public bool IsSprintPressed { get; private set; }
 
     private void Update()
     {
@@ -24,7 +25,9 @@ public class PlayerMovementInput : MonoBehaviour
             (dPressed ? 1f : 0f) - (aPressed ? 1f : 0f),
             (wPressed ? 1f : 0f) - (sPressed ? 1f : 0f)).normalized;
 
-        IsForwardOnly = wPressed && !aPressed && !sPressed && !dPressed;
+        HasForwardInput = wPressed && !sPressed;
+        IsSprintPressed = keyboard.leftShiftKey.isPressed ||
+                          keyboard.rightShiftKey.isPressed;
     }
 
     private void OnDisable()
@@ -35,6 +38,7 @@ public class PlayerMovementInput : MonoBehaviour
     private void ClearInput()
     {
         MoveDirection = Vector2.zero;
-        IsForwardOnly = false;
+        HasForwardInput = false;
+        IsSprintPressed = false;
     }
 }

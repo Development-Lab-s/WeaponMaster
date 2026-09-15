@@ -19,7 +19,7 @@ public class FreeLookMouseCamera : MonoBehaviour
         _orbitalFollow = GetComponent<CinemachineOrbitalFollow>();
         _inputAxisController = GetComponent<CinemachineInputAxisController>();
 
-        // 이 스크립트와 Cinemachine 입력이 동시에 축을 조작하지 않도록 막는다.
+        // 이 스크립트와 Cinemachine 입력이 동시에 축을 조작하지 않도록 막는다
         if (_inputAxisController != null)
         {
             _inputAxisControllerWasEnabled = _inputAxisController.enabled;
