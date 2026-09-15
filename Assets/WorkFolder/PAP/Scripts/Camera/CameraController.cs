@@ -50,6 +50,8 @@ namespace WorkFolder.PAP.Scripts.Camera
             _weaponModule = Owner.GetModule<IWeaponModule>();
             _lockOn = _mainCam.GetComponent<LockOnCameraController>();
             
+            _lockOn.ExitLookOn(transform.position,transform.rotation);
+            
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             CinemachineCore.GetVirtualCamera(0).Follow = transform;

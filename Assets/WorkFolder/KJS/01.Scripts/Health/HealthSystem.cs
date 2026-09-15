@@ -12,6 +12,7 @@ namespace WorkFolder.KJS._01.Scripts
     {
         public int Health { get;}
         public event Action OnDamaged;
+        public void Die(string ment);
     }
 
     public interface IDamageable
@@ -32,12 +33,15 @@ namespace WorkFolder.KJS._01.Scripts
         private bool _isDead = false;
 
         [SerializeField] private ResetCharacter resetModule;
-
+        
+        
+        
         public override void Spawned()
         {
             if (!Object.HasStateAuthority) return;
             Health = 100;
             _maxHealth = Health;
+            HealthBar.Instance.ChangeBar(Health, _maxHealth);
             _iFeedable = gameObject.GetComponentInChildren<IFeedable>();
         }
 
@@ -53,19 +57,22 @@ namespace WorkFolder.KJS._01.Scripts
             HealthBar.Instance.ChangeBar(Health, _maxHealth);
             if (_iFeedable != null)
                 _iFeedable.PlayAllFeedBacks();
-            if(Health <= 0 && !_isDead)
-                Die();
+            if (Health <= 0 && !_isDead)
+            {
+                Die(data.DeathMent.ToString());
+                KillLog.Instance.RPC_Kill(data.Owner, "엄준식");
+            }
         }
-
+        
         private void OnHealthChanged()
         {
             OnDamaged?.Invoke();
         }
 
-        private void Die()
+        public void Die(string ment = null)
         {
             if(_isDead && !HasStateAuthority) return;
-            resetModule.TryReset();
+            resetModule.TryReset(ment);
             _isDead = true;
             OnDied?.Invoke();
         }

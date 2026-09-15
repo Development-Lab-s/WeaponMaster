@@ -2,10 +2,11 @@
 
 namespace WorkFolder.PAP.Scripts.MainSystems
 {
-    public class SelectStartUI : MonoBehaviour
+    public class UIManager : MonoBehaviour
     {
-        public static SelectStartUI Instance;
+        public static UIManager Instance;
         [SerializeField] private GameObject selectUI;
+        [SerializeField] private DropText dropUI;
 
         private void Start()
         {
@@ -14,6 +15,8 @@ namespace WorkFolder.PAP.Scripts.MainSystems
             else
                 Destroy(gameObject);
         }
+
+        public void DropDeathUI(string deathMent) => dropUI.Dead(deathMent);
 
         public void OpenSelectUI()
         {

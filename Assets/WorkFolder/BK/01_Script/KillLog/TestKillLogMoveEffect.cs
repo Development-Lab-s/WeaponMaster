@@ -26,7 +26,7 @@ public class TestKillLogMoveEffect : MonoBehaviour
         s.Append(gameObject.transform.DOLocalMove(new Vector3(-2,2,-6),0.3f)).SetEase(Ease.OutExpo); //화면까지 옴
         s.Append(gameObject.transform.DOShakePosition(0.5f,new Vector3(0f,0f,0.5f),10,150,false,true));
         //s.Append(gameObject.transform.DOShakeScale(0.5f,new Vector3(0.5f,0,0.5f),10,90,true));
-        s.AppendInterval(1f);
+        s.AppendInterval(2f);
         s.Append(gameObject.transform.DOLocalMove(new Vector3(-2, 2, -12), 0.2f));
         s.AppendCallback(() =>
         {
