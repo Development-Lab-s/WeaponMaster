@@ -146,7 +146,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private void OnPartDataIdChanged()
         {
             if (NetPartDataId == -1) return;
-
+            
             AbstractPartDataSO localSO = DataManager.Instance.GetSOById(NetPartDataId);
 
             if (localSO != null && WeaponModule != null)
