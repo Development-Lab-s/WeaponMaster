@@ -1838,7 +1838,6 @@ GameObject:
   - component: {fileID: 1581257075}
   - component: {fileID: 1581257074}
   - component: {fileID: 1581257073}
-  - component: {fileID: 1581257076}
   m_Layer: 0
   m_Name: Prototype Runner
   m_TagString: Untagged
@@ -1939,18 +1938,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1581257076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1581257072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b4fb52b4b60c74469834f9d7083c174, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawner
 --- !u!1 &1817160299
 GameObject:
   m_ObjectHideFlags: 0
