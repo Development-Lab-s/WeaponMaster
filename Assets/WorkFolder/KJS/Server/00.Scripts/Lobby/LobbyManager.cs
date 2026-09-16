@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using UnityPipeline.Microsoft.CodeAnalysis.Diagnostics;
 
 namespace _00.Scripts.Lobby
 {
@@ -19,6 +20,7 @@ namespace _00.Scripts.Lobby
         [SerializeField] private SessionItem sessionItemPrefab;
         [SerializeField] private PrivateRoomJoin privateRoomJoin;
         [SerializeField] private GameObject loading;
+        [SerializeField] private GameObject loadingFailed;
 
         private void Awake()
         {
@@ -51,7 +53,7 @@ namespace _00.Scripts.Lobby
             {
                 GameMode = GameMode.Shared,
                 SessionName = roomName,
-                Scene = SceneRef.FromIndex(1),
+                Scene = SceneRef.FromIndex(0),
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>(),
                 SessionProperties = properties
             });
@@ -112,7 +114,9 @@ namespace _00.Scripts.Lobby
         
         public async void JoinLobby()
         {
+            loadingFailed.SetActive(false);
             loading.SetActive(true);
+            
             var result = await runner.JoinSessionLobby(SessionLobby.Shared);
             
             if (result.Ok)
@@ -124,6 +128,7 @@ namespace _00.Scripts.Lobby
             else
             {
                 Debug.LogError($"Lobby 참가 실패: {result.ShutdownReason}");
+                loadingFailed.SetActive(true);
             }
         }
         
