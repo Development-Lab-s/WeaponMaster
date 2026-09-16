@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +8,10 @@ namespace WorkFolder.KJS._01.Scripts.Health
 {
     public class HealthBar : MonoBehaviour
     {
-        [SerializeField] private Slider _healthSlider;
-        [SerializeField] private Slider _damageSlider;
+        [SerializeField] private Image _healthSlider;
+        [SerializeField] private Image _damageSlider;
+        [SerializeField] private TextMeshProUGUI healthText;
+        
 
         [Header("Animation")]
         [SerializeField] private float _delay = 0.15f;
@@ -33,16 +36,21 @@ namespace WorkFolder.KJS._01.Scripts.Health
 
         private void Start()
         {
-            _healthSlider.value = 1;
-            _damageSlider.value = 1;
+            _healthSlider.fillAmount = 1;
+            _damageSlider.fillAmount = 1;
         }
 
         public void ChangeBar(int currentHealth, int maxHealth)
         {
             float health = (float)currentHealth/maxHealth;
-            _healthSlider.value = health;
+            _healthSlider.fillAmount = health;
+            healthText.SetText(currentHealth.ToString());
+            Sequence colorSeq = DOTween.Sequence();
+            colorSeq.Append(healthText.DOColor(new Color(1,1,0,1), 0.25f));
+            colorSeq.Append(healthText.DOColor(new Color(1,1,1,1), 0.25f));
             _damageTween?.Kill();
-            _damageTween = _damageSlider.DOValue(health, _duration).SetDelay(_delay).SetEase(Ease.OutQuad);
+            _damageTween = DOTween.To(() => _damageSlider.fillAmount, x => _damageSlider.fillAmount = x, health,
+                _duration);
         }
 
         private void OnDisable()
