@@ -5027,6 +5027,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &500152166
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 500152168}
+  - component: {fileID: 500152167}
+  m_Layer: 0
+  m_Name: VoicePlayerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &500152167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500152166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394a0ca11db88424091e269f59698439, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VivoxManager
+  audibleDistance: 15
+  conversationalDistance: 2
+  fadeIntensity: 4.3
+  updateInterval: 0.3
+  minMoveDistance: 0.05
+  minRotationAngle: 1
+--- !u!4 &500152168
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500152166}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.25976, y: 0.90305, z: -6.89636}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &503385562
 GameObject:
   m_ObjectHideFlags: 0
@@ -26281,3 +26331,4 @@ SceneRoots:
   - {fileID: 1556907750}
   - {fileID: 844247863}
   - {fileID: 3651081942530759659}
+  - {fileID: 500152168}
