@@ -18,6 +18,8 @@ GameObject:
   - component: {fileID: -7740153921827256075}
   - component: {fileID: -2975183020302356813}
   - component: {fileID: 6495066277448918046}
+  - component: {fileID: 2568263142680696068}
+  - component: {fileID: 642552285432565912}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -267,3 +269,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_00.Scripts.PlayerColor
   MeshRenderer: {fileID: 670975221333287751}
   _NetWorkedColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!54 &2568263142680696068
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6825086146705350833}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &642552285432565912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6825086146705350833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e8c3d6f90a47b2a45d73c81e6f2a09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementInput

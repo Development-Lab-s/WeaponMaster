@@ -29,7 +29,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
         }
         
 
-        public async void HairStyleInterfaceChange(ushort index)
+        public async void HairStyleInterfaceChange(uint index)
         {
             AfterInit();
             

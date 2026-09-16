@@ -1519,7 +1519,7 @@ Transform:
   m_GameObject: {fileID: 1133144854}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13238096, y: -0.0000000033351548, z: 4.4543125e-10, w: 0.9911989}
-  m_LocalPosition: {x: 2.5, y: 2.8048062, z: -3.5990298}
+  m_LocalPosition: {x: 1.87, y: 2.8048062, z: -3.1390297}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2171,7 +2171,7 @@ Transform:
   m_GameObject: {fileID: 1408642729}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13238098, y: 0, z: 0, w: 0.99119896}
-  m_LocalPosition: {x: 2.5, y: 2.8048062, z: -3.5990298}
+  m_LocalPosition: {x: 1.87, y: 2.8048062, z: -3.1390297}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2948,7 +2948,7 @@ Transform:
   m_GameObject: {fileID: 5097940143400841794}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0.826, z: 0}
+  m_LocalPosition: {x: 1.37, y: 0.826, z: 0.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4105,13 +4105,9 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   rotationSpeed: 720
   modelYawOffset: 0
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  groundProbeInset: 0.02
-  groundProbeDistance: 0.35
+  puppetYawResponse: 20
+  pelvisLiftAcceleration: 4
   maximumSlope: 15
-  groundStickSpeed: 1
   airborneGravity: 20
 --- !u!114 &2195781084596716174
 MonoBehaviour:
@@ -4343,7 +4339,6 @@ MonoBehaviour:
   castDownDistance: 0.85
   groundClearance: 0.02
   groundedDistance: 0.08
-  supportDistance: 0.2
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98
@@ -5021,7 +5016,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4082308673996535300
 Transform:
   m_ObjectHideFlags: 0
@@ -6863,7 +6858,6 @@ MonoBehaviour:
   castDownDistance: 0.85
   groundClearance: 0.02
   groundedDistance: 0.08
-  supportDistance: 0.2
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98
