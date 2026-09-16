@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,9 +10,16 @@ namespace _00.Scripts.Lobby
         [SerializeField] private TextMeshProUGUI roomNameText;
         [SerializeField] private TextMeshProUGUI playerCountText;
         [SerializeField] private Button joinButton;
+        [SerializeField] private Image LockImage;
 
         private string _roomName;
         private bool _isPrivate;
+
+
+        private void Awake()
+        {
+            LockImage.gameObject.SetActive(false);
+        }
 
         public void SetSession( string roomName, int playerCount, int maxPlayers, bool isPrivate)
         {
@@ -23,6 +31,12 @@ namespace _00.Scripts.Lobby
 
             joinButton.onClick.RemoveAllListeners();
             joinButton.onClick.AddListener(OnJoinButtonClicked);
+
+            if (isPrivate)
+            {
+                LockImage.gameObject.SetActive(true);
+            }
+            
         }
 
         private void OnJoinButtonClicked()
