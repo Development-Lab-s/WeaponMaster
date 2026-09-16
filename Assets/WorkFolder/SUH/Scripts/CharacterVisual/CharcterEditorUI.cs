@@ -68,7 +68,7 @@
 
             private void HairStyleUserInterfaceChange()
             {
-                
+                hairStyleTextLabel.SetText(HairStyleIndex.ToString());
             }
 
             public void BodyColorIndexChange(string bodyColorIndex)

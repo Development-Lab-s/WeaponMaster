@@ -22,6 +22,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
     public class Player : NetworkOwner
     {
+        [SerializeField] private Material[] playerBodyColor;
         [SerializeField] private PlayerInputSO playerInput;
         [field:SerializeField] public SettingValueSO SettingValue;
 
@@ -40,9 +41,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked] public NetworkString<_32> playerId { get; set; }
         [Networked , OnChangedRender(nameof(ColorChanged))]
-        public Color NetWorkedColor{ get; set;}
+        public uint NetWorkedColor{ get; set;}
         
-        private Color loadedColor { get; set; }
+        private uint loadedColor { get; set; }
         
         private uint HairStyleIndex { get; set; }
         
@@ -104,7 +105,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         void ColorChanged()
         {
-            MeshRenderer.material.color = NetWorkedColor;
+            MeshRenderer.material = playerBodyColor[NetWorkedColor];
         }
         
         private void AttachWeaponLocal()
@@ -147,10 +148,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-        public void RPC_SetColor(Color newColor)
+        public void RPC_SetColor(uint newColor)
         {
             if (!HasStateAuthority) return;
-            newColor.a = 1f;
             NetWorkedColor = newColor;
             
         }
@@ -166,7 +166,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             
             playerId = AuthenticationService.Instance.PlayerId;
             _service = ServiceLocator.Get<IDataStoreService>();
-            loadedColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
+            loadedColor = await _service?.GetAsync<uint>(nameof(PlayerDataStore.BodyColor))!;
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
             
             RPC_SetColor(loadedColor);
