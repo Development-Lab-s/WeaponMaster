@@ -1,16 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using UnityPipeline.Microsoft.CodeAnalysis.Diagnostics;
 
 namespace _00.Scripts.Lobby
 {
     public sealed class LobbyManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         public NetworkRunner runner;
-        [SerializeField]private TextMeshProUGUI log;
 
         private List<SessionInfo> _realSessionList;
         public static LobbyManager instance;
@@ -19,7 +20,13 @@ namespace _00.Scripts.Lobby
         [SerializeField] private SessionItem sessionItemPrefab;
         [SerializeField] private PrivateRoomJoin privateRoomJoin;
         [SerializeField] private GameObject loading;
-
+        [SerializeField] private GameObject loadingFailed;
+        [SerializeField]private TextMeshProUGUI logText;
+        
+        private Coroutine _textCorutine;
+        
+        #region LifeCycle
+        
         private void Awake()
         {
             instance = this;
@@ -30,13 +37,15 @@ namespace _00.Scripts.Lobby
         private void Start()
         {
             JoinLobby();
-            
         }
+        
+        #endregion
         
         #region MakeRoom
         
         public async void CreateRoom(string roomName, bool isPrivate, string passWord)
         {
+            loading.SetActive(true);
             var properties = new Dictionary<string, SessionProperty>()
             {
                 { "private", isPrivate ? 1 : 0 }
@@ -51,7 +60,7 @@ namespace _00.Scripts.Lobby
             {
                 GameMode = GameMode.Shared,
                 SessionName = roomName,
-                Scene = SceneRef.FromIndex(1),
+                Scene = SceneRef.FromIndex(0),
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>(),
                 SessionProperties = properties
             });
@@ -62,7 +71,9 @@ namespace _00.Scripts.Lobby
             }
             else
             {
+                TextChange($"방 생성 실패: {result.ShutdownReason}");
                 Debug.LogError($"방 생성 실패: {result.ShutdownReason}");
+                loading.SetActive(false);
             }
         }
         
@@ -103,7 +114,7 @@ namespace _00.Scripts.Lobby
                 }
                 else
                 {
-                    privateRoomJoin.ShowError();
+                   TextChange("비밀번호가 일치하지 않습니다.");
                 }
 
                 return;
@@ -112,7 +123,9 @@ namespace _00.Scripts.Lobby
         
         public async void JoinLobby()
         {
+            loadingFailed.SetActive(false);
             loading.SetActive(true);
+            
             var result = await runner.JoinSessionLobby(SessionLobby.Shared);
             
             if (result.Ok)
@@ -124,6 +137,7 @@ namespace _00.Scripts.Lobby
             else
             {
                 Debug.LogError($"Lobby 참가 실패: {result.ShutdownReason}");
+                loadingFailed.SetActive(true);
             }
         }
         
@@ -138,21 +152,39 @@ namespace _00.Scripts.Lobby
 
             if (result.Ok)
             {
-                log.text = "joined room";
                 Debug.Log("Joined room");
             }
             else
             {
-                log.text = "failed to join room";
                 Debug.Log($"Failed : {result.ShutdownReason}");
             }
         }
+        
         #endregion
+        #region Etc
+        public void TextChange(string text)
+        {
+            _textCorutine =  StartCoroutine(TextCorutine(text));
+        }
+        
+        private IEnumerator TextCorutine(string text)
+        {
+            if (_textCorutine != null)
+            {
+                StopCoroutine(_textCorutine);
+            }
+            logText.text = text;
+            yield return new WaitForSeconds(1.5f);
+            logText.text = "";
+        }
         
         public void OpenPasswordPopup(string roomName)
         {
             privateRoomJoin.Open(roomName);
         }
+        
+        #endregion
+        
 
         public void OnSessionListUpdated( NetworkRunner runner, List<SessionInfo> sessionList)
         {
@@ -190,6 +222,7 @@ namespace _00.Scripts.Lobby
             }
         }
     
+        #region Useless
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
         {
             
@@ -284,5 +317,6 @@ namespace _00.Scripts.Lobby
         {
             
         }
+        #endregion
     }
 }

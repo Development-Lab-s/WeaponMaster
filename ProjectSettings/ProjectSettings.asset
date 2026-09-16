@@ -950,11 +950,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: c263517b-b2bb-44bd-ad4f-51eefef82599
+  cloudProjectId: dcfea10f-89ce-4221-b965-13d1adcac519
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Test3D
-  organizationId: projectpaper11
+  projectName: DickSlayer
+  organizationId: zizonhyunjun
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
