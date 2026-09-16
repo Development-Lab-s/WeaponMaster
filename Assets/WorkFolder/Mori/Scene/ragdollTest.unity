@@ -4105,13 +4105,9 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   rotationSpeed: 720
   modelYawOffset: 0
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  groundProbeInset: 0.02
-  groundProbeDistance: 0.35
+  puppetYawResponse: 20
+  pelvisLiftAcceleration: 4
   maximumSlope: 15
-  groundStickSpeed: 1
   airborneGravity: 20
 --- !u!114 &2195781084596716174
 MonoBehaviour:
@@ -4343,7 +4339,6 @@ MonoBehaviour:
   castDownDistance: 0.85
   groundClearance: 0.02
   groundedDistance: 0.08
-  supportDistance: 0.2
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98
@@ -5021,7 +5016,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4082308673996535300
 Transform:
   m_ObjectHideFlags: 0
@@ -6863,7 +6858,6 @@ MonoBehaviour:
   castDownDistance: 0.85
   groundClearance: 0.02
   groundedDistance: 0.08
-  supportDistance: 0.2
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98

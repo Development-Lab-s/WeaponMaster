@@ -179,7 +179,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private void Update()
         {
             if (!HasInputAuthority) return;
-            AgentMover.SetMovementDirection(playerInput.MoveDirection);
             CameraController.SetAimDirection(playerInput.AimDirection);
             WeaponModule.SetWeaponMoveDirection(playerInput.WeaponMoveDirection);
         }

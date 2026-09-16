@@ -22,7 +22,6 @@ public sealed class FootTargetSolver : MonoBehaviour
     [SerializeField] private float castDownDistance = 0.85f;
     [SerializeField] private float groundClearance = 0.02f;
     [SerializeField, Min(0f)] private float groundedDistance = 0.08f;
-    [SerializeField, Min(0f)] private float supportDistance = 0.2f;
     [SerializeField] private float maximumSlope = 50f;
     [SerializeField] private bool alignToGround = true;
 
@@ -41,18 +40,13 @@ public sealed class FootTargetSolver : MonoBehaviour
     private bool _isGrounded;
     private Vector3 _groundNormal = Vector3.up;
     private Vector3 _groundPoint;
-    private float _groundDistance = float.PositiveInfinity;
 
     public bool GroundSnapEnabled { get; set; } = true;
     public bool HasGroundHit => _hasGroundHit;
     public bool IsGrounded => _isGrounded;
-    public bool IsSupportingGround =>
-        GroundSnapEnabled
-        && _hasGroundHit
-        && _groundDistance <= supportDistance;
+    public bool IsSupportingGround => GroundSnapEnabled && _hasGroundHit;
     public Vector3 GroundNormal => _groundNormal;
     public Vector3 GroundPoint => _groundPoint;
-    public float GroundDistance => _groundDistance;
 
     private void Awake()
     {
@@ -135,7 +129,6 @@ public sealed class FootTargetSolver : MonoBehaviour
             _isGrounded = false;
             _groundNormal = Vector3.up;
             _groundPoint = default;
-            _groundDistance = float.PositiveInfinity;
             return false;
         }
 
@@ -144,8 +137,7 @@ public sealed class FootTargetSolver : MonoBehaviour
         float soleHeight = Vector3.Dot(
             currentSolePosition - hit.point,
             hit.normal);
-        _groundDistance = Mathf.Max(0f, soleHeight);
-        _isGrounded = _groundDistance <= groundedDistance;
+        _isGrounded = soleHeight <= groundedDistance;
         _groundNormal = hit.normal;
         _groundPoint = hit.point;
         return true;

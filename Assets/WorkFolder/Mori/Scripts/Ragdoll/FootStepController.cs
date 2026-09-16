@@ -37,7 +37,7 @@ public sealed class FootStepController : MonoBehaviour
     private FootState _right;
     private FootState _steppingFoot;
     private Rigidbody _movementBody;
-    private PlayerMovement _movementController;
+    private RagdollPlayerMovement _movementController;
     private Vector3 _landingOffset;
     private Vector3 _movementDirection;
     private Vector3 _stepDirection;
@@ -57,41 +57,9 @@ public sealed class FootStepController : MonoBehaviour
     private void Awake()
     {
         _movementBody = movementRoot.GetComponent<Rigidbody>();
-        _movementController = movementRoot.GetComponent<PlayerMovement>();
-        IgnoreInternalMovementCollisions();
+        _movementController = movementRoot.GetComponent<RagdollPlayerMovement>();
         _left = new FootState(leftFootGoal, movementRoot);
         _right = new FootState(rightFootGoal, movementRoot);
-    }
-
-    private void IgnoreInternalMovementCollisions()
-    {
-        Collider movementCollider = movementRoot.GetComponent<Collider>();
-        if (movementCollider == null)
-            return;
-
-        var puppetRoots = new System.Collections.Generic.HashSet<Transform>();
-        foreach (StablePuppetJoint puppetJoint
-                 in FindObjectsByType<StablePuppetJoint>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
-        {
-            Transform animatedBone = puppetJoint.AnimatedBone;
-            if (animatedBone == null
-                || !animatedBone.IsChildOf(movementRoot)
-                || !puppetRoots.Add(puppetJoint.transform.root))
-                continue;
-
-            foreach (Collider puppetCollider
-                     in puppetJoint.transform.root
-                         .GetComponentsInChildren<Collider>(true))
-            {
-                if (puppetCollider != movementCollider)
-                    Physics.IgnoreCollision(
-                        movementCollider,
-                        puppetCollider,
-                        true);
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -234,7 +202,7 @@ public sealed class FootStepController : MonoBehaviour
             rotationBlend);
         float toeLiftWeight = Mathf.Sin(time * Mathf.PI);
         Quaternion toeLiftRotation = Quaternion.AngleAxis(
-            swingToeLiftAngle * toeLiftWeight,
+            -swingToeLiftAngle * toeLiftWeight,
             movementRoot.right);
         _steppingFoot.Rotation = toeLiftRotation * baseRotation;
 
