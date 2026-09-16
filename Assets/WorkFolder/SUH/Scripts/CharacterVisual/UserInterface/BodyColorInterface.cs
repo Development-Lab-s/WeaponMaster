@@ -33,7 +33,11 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
                 Debug.LogError("BodyColorInterface의 bodyColors 팔레트에 해당 인덱스가 없습니다.", this);
                 return;
             }
-            await service.SetAsync(nameof(PlayerDataStore.BodyColor), bodyColors[index]);
+            Color selectedColor = bodyColors[index];
+            // Unity Color의 기본 alpha는 0이므로, 팔레트에 alpha를 지정하지 않아도
+            // 캐릭터가 투명해지지 않도록 항상 불투명 색상으로 저장합니다.
+            selectedColor.a = 1f;
+            await service.SetAsync(nameof(PlayerDataStore.BodyColor), selectedColor);
             if (textLabel_CurrentIndex != null) textLabel_CurrentIndex.SetText(index.ToString());
         }
 
