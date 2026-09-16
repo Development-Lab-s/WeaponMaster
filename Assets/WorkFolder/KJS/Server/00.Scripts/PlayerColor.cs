@@ -20,14 +20,14 @@ namespace _00.Scripts
             ColorChanged();
         }
 
-        private void Update()
+        /*private void Update()
         {
             if (HasStateAuthority && Input.GetKeyDown(KeyCode.E))
             {
 
                 NetWorkedColor = new Color(Random.Range(0f,1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
             }
-        }
+        }*/
 
         void ColorChanged()
         {
