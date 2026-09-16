@@ -275,7 +275,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394a0ca11db88424091e269f59698439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VivoxManager
-  positionTarget: {fileID: 2092274521}
+  audibleDistance: 15
+  conversationalDistance: 2
+  fadeIntensity: 4.3
+  updateInterval: 0.3
+  minMoveDistance: 0.05
+  minRotationAngle: 1
 --- !u!4 &1345088676
 Transform:
   m_ObjectHideFlags: 0
