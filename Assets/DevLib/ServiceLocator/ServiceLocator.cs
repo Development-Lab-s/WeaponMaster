@@ -23,17 +23,35 @@ namespace DevLib.ServiceLocator
 
         public static void UnRegister<T>(T service)
         {
+            if (!_services.TryGetValue(typeof(T), out object registered) || !ReferenceEquals(registered, service))
+                return;
             _services.Remove(typeof(T));
             Debug.Log($"[Service Loader] UnRegister - {typeof(T).Name}");
         }
 
         public static T Get<T>()
         {
-            if (_services.TryGetValue(typeof(T), out object service))
-                return (T)service;
+            if (TryGet<T>(out T service))
+                return service;
             
             Debug.LogWarning($"[Service Locator] {typeof(T).Name} 이 등록되지 않음");
             return default;
+        }
+
+        public static bool TryGet<T>(out T service)
+        {
+            if (_services.TryGetValue(typeof(T), out object registered))
+            {
+                if (registered is UnityEngine.Object unityObject && unityObject == null)
+                    _services.Remove(typeof(T));
+                else if (registered is T value)
+                {
+                    service = value;
+                    return true;
+                }
+            }
+            service = default;
+            return false;
         }
     }
 }

@@ -1,15 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DevLib.ModuleSystem;
+using DevLib.ServiceLocator;
 using Fusion;
-using Unity.Cinemachine;
+using Unity.Services.Authentication;
 using UnityEngine;
-using UnityEngine.Serialization;
+using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
 using WorkFolder.PAP.Scripts.SO.DataFolder;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
 {
+    // 포톤 퓨전 동기화를 위한 파트 데이터 구조체 (INetworkStruct 필수)
+    public struct NetworkedPartData : INetworkStruct
+    {
+        public Vector2 DriveX;
+        public Vector3 Offset;
+        public Vector3 EulerAngles;
+    }
+
     public class Player : NetworkOwner
     {
         [SerializeField] private PlayerInputSO playerInput;
@@ -19,18 +29,35 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public IAgentMovement AgentMover { get; private set; }
         public IWeaponModule WeaponModule { get; private set; }
         public ICameraController CameraController { get; private set; }
+        
+        public SkinnedMeshRenderer MeshRenderer;
+        
+        // 퓨전 2 방식의 네트워크 동기화 변수들
+        [Networked] private NetworkBool NetCanInitialize { get; set; }
+        [Networked] private NetworkedPartData NetPartData { get; set; }
+        [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
+        [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
+
+        [Networked] public NetworkString<_32> playerId { get; set; }
+        [Networked , OnChangedRender(nameof(ColorChanged))]
+        public Color NetWorkedColor{ get; set;}
+        
+        private Color loadedColor { get; set; }
+        
+        private uint HairStyleIndex { get; set; }
+        
+        private MaterialPropertyBlock _mpb;
+        private IDataStoreService _service;
+        
+        private GameObject _weaponPrefab;
 
         private void Start()
         {
-            if (All == null) 
-                All = new List<Player>();
+            if (All == null) All = new List<Player>();
             All.Add(this);
         }
 
-        private void OnDestroy()
-        {
-            All.Remove(this);
-        }
+        private void OnDestroy() => All.Remove(this);
 
         protected override void InitializeModules()
         {
@@ -40,16 +67,114 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             CameraController = GetModule<ICameraController>();
         }
 
-        public override void Spawned()
+        public void SetInitialize(PartOffsetDataSO partData, NetworkObject targetPartNetObj, GameObject weaponPrefab)
         {
-            if (!HasInputAuthority) return;
-            playerInput.OnAttackKeyPressed += HandleAttack;
+            if (!HasStateAuthority) return;
+
+            _weaponPrefab = weaponPrefab;
+            NetTargetPartId = targetPartNetObj.Id;
+
+            NetPartDataId = DataManager.Instance.GetIdBySO(partData.bodyPartData);
+
+            NetPartData = new NetworkedPartData 
+            { 
+                DriveX = partData.driveX, 
+                Offset = partData.offset, 
+                EulerAngles = partData.eulerAngles 
+            };
+            NetTargetPartId = targetPartNetObj.Id;
+            NetCanInitialize = true;
         }
 
-        private void HandleAttack(bool isAttack)
+        public override void FixedUpdateNetwork()
         {
-            WeaponModule.EquipWeapon(isAttack);
+            if (HasStateAuthority && NetCanInitialize && NetSpawnedWeapon == null)
+            {
+                NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+            }
         }
+
+        public override void Render()
+        {
+            if (NetSpawnedWeapon != null && NetSpawnedWeapon.transform.parent == null)
+            {
+                AttachWeaponLocal();
+            }
+        }
+
+        void ColorChanged()
+        {
+            MeshRenderer.material.color = NetWorkedColor;
+        }
+        
+        private void AttachWeaponLocal()
+        {
+            NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
+            NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
+            NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
+            
+            Transform rotPart = FindChildHelper(transform, "spine");
+            if (rotPart != null && rotPart.TryGetComponent<ConfigurableJoint>(out var joint))
+            {
+                if (NetPartData.DriveX == Vector2.zero)
+                {
+                    joint.angularXMotion = ConfigurableJointMotion.Free;
+                }
+                joint.lowAngularXLimit = new SoftJointLimit { limit = NetPartData.DriveX.x };
+                joint.highAngularXLimit = new SoftJointLimit { limit = NetPartData.DriveX.y };
+            }
+
+            if (Runner.TryFindObject(NetTargetPartId, out var targetNetObj))
+            {
+                if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
+                {
+                    weaponJoint.connectedBody = targetNetObj.GetComponent<Rigidbody>();
+                }
+            }
+
+            WeaponModule.AttachWeapon();
+        }
+
+        Transform FindChildHelper(Transform current, string targetName)
+        {
+            if (current.name == targetName) return current;
+            foreach (Transform child in current)
+            {
+                Transform found = FindChildHelper(child, targetName);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SetColor(Color newColor)
+        {
+            if (!HasStateAuthority) return;
+            newColor.a = 1f;
+            NetWorkedColor = newColor;
+            
+        }
+        
+        public async override void Spawned()
+        {
+            // 원격 플레이어도 Spawned가 호출되므로, 권한 검사 전에
+            // 이미 동기화되어 있는 색상을 먼저 적용합니다.
+            ColorChanged();
+
+            if (!HasInputAuthority) return;
+            playerInput.OnAttackKeyPressed += HandleAttack;
+            
+            playerId = AuthenticationService.Instance.PlayerId;
+            _service = ServiceLocator.Get<IDataStoreService>();
+            loadedColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
+            HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            
+            RPC_SetColor(loadedColor);
+            
+        }
+
+
+        private void HandleAttack(bool isAttack) => WeaponModule.EquipWeapon(isAttack);
 
         private void Update()
         {
@@ -58,5 +183,21 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             CameraController.SetAimDirection(playerInput.AimDirection);
             WeaponModule.SetWeaponMoveDirection(playerInput.WeaponMoveDirection);
         }
+        
+        [Networked] 
+        [OnChangedRender(nameof(OnPartDataIdChanged))]
+        private int NetPartDataId { get; set; } = -1;
+        private void OnPartDataIdChanged()
+        {
+            if (NetPartDataId == -1) return;
+            
+            AbstractPartDataSO localSO = DataManager.Instance.GetSOById(NetPartDataId);
+
+            if (localSO != null && WeaponModule != null)
+            {
+                WeaponModule.SetPartData(localSO);
+            }
+        }
+
     }
 }
