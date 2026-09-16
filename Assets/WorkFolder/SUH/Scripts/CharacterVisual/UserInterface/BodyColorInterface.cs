@@ -22,18 +22,13 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
 
         [SerializeField] private TextMeshProUGUI textLabel_CurrentIndex;
         private IDataStoreService service;
-        [SerializeField] private Color[] bodyColors = Array.Empty<Color>();
+        [SerializeField] private uint[] bodyColors = Array.Empty<uint>();
 
-        public async void BodyColorInterfaceChange(ushort index)
+        public async void BodyColorInterfaceChange(uint index)
         {
             AfterInit();
             if (service == null) return;
-            if (index >= bodyColors.Length)
-            {
-                Debug.LogError("BodyColorInterface의 bodyColors 팔레트에 해당 인덱스가 없습니다.", this);
-                return;
-            }
-            await service.SetAsync(nameof(PlayerDataStore.BodyColor), bodyColors[index]);
+            await service.SetAsync(nameof(PlayerDataStore.BodyColor), index);
             if (textLabel_CurrentIndex != null) textLabel_CurrentIndex.SetText(index.ToString());
         }
 
@@ -49,8 +44,8 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
             AfterInit();
             
             if (service == null || textLabel_CurrentIndex == null) return;
-            Color value = await service.GetAsync<Color>(nameof(PlayerDataStore.BodyColor));
-            textLabel_CurrentIndex.SetText(ColorUtility.ToHtmlStringRGBA(value));
+            uint value = await service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+            textLabel_CurrentIndex.SetText(value.ToString());
         }
     }
 }
