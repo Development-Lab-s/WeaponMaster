@@ -2301,6 +2301,7 @@ MonoBehaviour:
     delay: 0.5
   - target: {fileID: 424905286}
     delay: 0.2
+  deathText: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
