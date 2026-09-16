@@ -2738,6 +2738,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 978c26d87ad04c8eab022189f24947a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.PlayerController
+  playerBodyColor:
+  - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
+  - {fileID: 2100000, guid: 7640522a6eec417498e8709927fe28c4, type: 2}
+  - {fileID: 2100000, guid: 5fc5e68fc26df4b44b9a617606509076, type: 2}
+  - {fileID: 2100000, guid: e22f7d25c1d694741a79fc0926b2a033, type: 2}
+  - {fileID: 2100000, guid: d9a25cc07e30a5442a4b43d1bc3f1c0f, type: 2}
+  - {fileID: 2100000, guid: 45c575f64482cd0429d7250699d48e82, type: 2}
   playerInput: {fileID: 11400000, guid: c27951549d373b54794465388cdc4186, type: 2}
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   MeshRenderer: {fileID: 2881108173329407248}
@@ -2745,7 +2752,7 @@ MonoBehaviour:
     _length: 0
     _data:
       Data: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-  _NetWorkedColor: {r: 0, g: 0, b: 0, a: 0}
+  _NetWorkedColor: 0
 --- !u!54 &7453622829213636101
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3884,7 +3891,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5782ac05750a46c48772bf26c9aabde3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.PlayerRenderer
-  waistTrm: {fileID: 7722158019954105509}
 --- !u!1 &8119161442897978137
 GameObject:
   m_ObjectHideFlags: 0
