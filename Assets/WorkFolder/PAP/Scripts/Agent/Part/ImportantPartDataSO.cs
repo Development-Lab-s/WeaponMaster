@@ -6,7 +6,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
     public class ImportantPartDataSO : AbstractPartDataSO
     {
         [SerializeField] private AnimationCurve zCurve;
-        public override void ChangePart(Transform target, Vector3 dir)
+        public override void ChangePart(Transform target, Vector3 dir,Transform moveTarget, float strength)
         {
             if (dir == Vector3.zero)
             {
@@ -14,6 +14,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
                 return;
             }
             Quaternion baseRot = Quaternion.FromToRotation(Vector3.forward,dir);
+            
+            moveTarget.localPosition = new Vector3(0, -strength * 1f, 0);
             target.localRotation = baseRot * Quaternion.Euler(-25f, 0, 0);
         }
     }

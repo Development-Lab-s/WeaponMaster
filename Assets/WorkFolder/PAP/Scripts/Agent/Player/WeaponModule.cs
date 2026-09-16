@@ -11,6 +11,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         [Header("References")]
         [SerializeField] private Transform rotTargetTrm;
+        [SerializeField] private Transform moveTargetTrm;
         
         [Header("Debug")] 
         [SerializeField] private AnimationCurve zCurve;
@@ -20,6 +21,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private float _force;
         private Rigidbody _weaponRigid;
         private ConfigurableJoint _joint;
+        private float _currentWeaponMove;
         
         public bool IsEquipped { get; private set; }
         public GameObject GameObject => gameObject;
@@ -30,7 +32,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             _partData = partData;
         }
 
-        public Vector2 WeaponMoveDirection { get; private set; }
+        public float WeaponMoveDirection { get; private set; }
 
         public override void Initialize(NetworkOwner owner)
         {
@@ -55,9 +57,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             IsEquipped = isEquip;
         }
 
-        public void SetWeaponMoveDirection(Vector2 dir)
+        public void SetWeaponMoveDirection(float strength)
         {
-            WeaponMoveDirection = dir;
+            WeaponMoveDirection = strength;
         }
 
         public override void Render()
@@ -72,7 +74,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     CurrentDirection.y + _cameraController.AimDirection.y * 0.075f *
                     _player.SettingValue.WeaponSensitivityY * Runner.DeltaTime, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
-                float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val) );
+                float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val));
+                _currentWeaponMove = Mathf.Clamp(_currentWeaponMove + WeaponMoveDirection * 10f * Runner.DeltaTime,-1f,1f);
                 CurrentDirection = new Vector3(x, y, z);
             }
             else 
@@ -87,7 +90,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             // 부위별로 돌아가는거 다르게 할 예정임.
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
-            _partData.ChangePart(rotTargetTrm, CurrentDirection);
+            
+            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _currentWeaponMove);
         } 
 
         private void OnDrawGizmos()

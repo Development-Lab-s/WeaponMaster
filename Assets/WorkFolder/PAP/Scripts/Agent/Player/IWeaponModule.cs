@@ -10,8 +10,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public GameObject GameObject { get; }
         public void SetPartData(AbstractPartDataSO partData);
         public void AttachWeapon();
-        public Vector2 WeaponMoveDirection { get; }
+        public float WeaponMoveDirection { get; }
         void EquipWeapon(bool isEquip);
-        public void SetWeaponMoveDirection(Vector2 dir);
+        public void SetWeaponMoveDirection(float strength);
     }
 }

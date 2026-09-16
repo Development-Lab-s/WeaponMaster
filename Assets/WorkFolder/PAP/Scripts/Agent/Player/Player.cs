@@ -24,6 +24,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     {
         [SerializeField] private PlayerInputSO playerInput;
         [field:SerializeField] public SettingValueSO SettingValue;
+        [SerializeField]private Transform targetPuppet;
 
         public static List<Player> All { get; private set; }
         public IAgentMovement AgentMover { get; private set; }
@@ -39,7 +40,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
 
         [Networked] public NetworkString<_32> playerId { get; set; }
-        [Networked , OnChangedRender(nameof(ColorChanged))]
+        
+
+        [Networked, OnChangedRender(nameof(ColorChanged))] 
         public Color NetWorkedColor{ get; set;}
         
         private Color loadedColor { get; set; }
@@ -51,13 +54,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         private GameObject _weaponPrefab;
 
-        private void Start()
+        private void OnEnable()
         {
             if (All == null) All = new List<Player>();
             All.Add(this);
         }
 
-        private void OnDestroy() => All.Remove(this);
+        private void OnDisable() => All.Remove(this);
 
         protected override void InitializeModules()
         {
@@ -84,6 +87,23 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             };
             NetTargetPartId = targetPartNetObj.Id;
             NetCanInitialize = true;
+        }
+
+        public void TeleportTo(Vector3 position, Quaternion rotation)
+        {
+            transform.SetPositionAndRotation(position, rotation);
+
+            foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>(true))
+            {
+                rb.position = rb.transform.position;
+                rb.rotation = rb.transform.rotation;
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+            Physics.SyncTransforms();
+            
+            foreach (FootStepController stepper in GetComponentsInChildren<FootStepController>(true))
+                stepper.ResetFootPlacement();
         }
 
         public override void FixedUpdateNetwork()
@@ -113,7 +133,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
             NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
             
-            Transform rotPart = FindChildHelper(transform, "spine");
+            Transform rotPart = FindChildHelper(targetPuppet, "spine");
             if (rotPart != null && rotPart.TryGetComponent<ConfigurableJoint>(out var joint))
             {
                 if (NetPartData.DriveX == Vector2.zero)
@@ -123,7 +143,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 joint.lowAngularXLimit = new SoftJointLimit { limit = NetPartData.DriveX.x };
                 joint.highAngularXLimit = new SoftJointLimit { limit = NetPartData.DriveX.y };
             }
-
+            
             if (Runner.TryFindObject(NetTargetPartId, out var targetNetObj))
             {
                 if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
@@ -169,6 +189,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             loadedColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
             
+            TeleportTo(transform.position, transform.rotation);
             RPC_SetColor(loadedColor);
             
         }
@@ -180,7 +201,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             if (!HasInputAuthority) return;
             CameraController.SetAimDirection(playerInput.AimDirection);
-            WeaponModule.SetWeaponMoveDirection(playerInput.WeaponMoveDirection);
+            WeaponModule.SetWeaponMoveDirection(playerInput.WeaponMoveDirection.y);
         }
         
         [Networked] 

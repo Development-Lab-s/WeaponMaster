@@ -72,8 +72,8 @@ namespace WorkFolder.KJS._01.Scripts
         public void Die(string ment = null)
         {
             if(_isDead && !HasStateAuthority) return;
-            resetModule.TryReset(ment);
             _isDead = true;
+            resetModule.TryReset(ment);
             OnDied?.Invoke();
         }
     }
