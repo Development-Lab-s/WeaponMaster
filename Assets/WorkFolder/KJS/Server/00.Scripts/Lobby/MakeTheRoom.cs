@@ -30,19 +30,31 @@ namespace _00.Scripts.Lobby
             string _password = password.text.Trim();
             string _roomName = roomName.text.Trim();
 
-            if (string.IsNullOrEmpty(_password))
+            if (string.IsNullOrEmpty(_roomName) && string.IsNullOrEmpty(_password))
             {
-                Debug.Log("비밀번호를 입력해주세요.");
+                LobbyManager.instance.TextChange("비밀번호와 방이름을 입력해주세요.");
                 return;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(_password))
+                {
+                    Debug.Log("비밀번호를 입력해주세요.");
+                    LobbyManager.instance.TextChange("비밀번호를 입력해주세요.");
+                    return;
+                }
+            
+                if (string.IsNullOrEmpty(_roomName))
+                {
+                    Debug.Log("방 이름을 입력해주세요.");
+                    LobbyManager.instance.TextChange("방을 입력해주세요.");
+                    return;
+                }
             }
             
-            if (string.IsNullOrEmpty(_roomName))
-            {
-                Debug.Log("방 이름을 입력해주세요.");
-                return;
-            }
-
+            
             LobbyManager.instance.MakePrivate(_roomName, _password);
+           
         }
     }
 }
