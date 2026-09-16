@@ -3,7 +3,7 @@ using _00.Scripts;
 using Fusion;
 using UnityEngine;
 
-public class PlayerMovement : NetworkBehaviour
+public class PlayerMovementKJS : NetworkBehaviour
 {
     private Vector3 _velocity;
     private bool _jumpPressed;
