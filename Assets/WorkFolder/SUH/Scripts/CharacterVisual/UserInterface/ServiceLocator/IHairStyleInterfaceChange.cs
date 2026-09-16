@@ -2,6 +2,6 @@
 {
     public interface IHairStyleInterfaceChange
     {
-        void IHairStyleInterfaceChange(ushort index);
+        void HairStyleInterfaceChange(ushort index);
     }
 }

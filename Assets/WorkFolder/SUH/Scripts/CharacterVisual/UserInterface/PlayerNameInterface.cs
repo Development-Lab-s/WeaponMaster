@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
-using UnityEditor.UIElements;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
@@ -10,17 +10,34 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
 {
     public class PlayerNameInterface : MonoBehaviour, IPlayerNameInterfaceChange, IAfterInitModule
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<IPlayerNameInterfaceChange>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<IPlayerNameInterfaceChange>(this);
+        }
+
         private IDataStoreService service;
-        
+
+        private void Start()
+        {
+            AfterInit();
+        }
+
         public void AfterInit()
         {
             service = DevLib.ServiceLocator.ServiceLocator.Get<IDataStoreService>();
-            if (DevLib.ServiceLocator.ServiceLocator.Get<IPlayerNameInterfaceChange>() == null)
-                DevLib.ServiceLocator.ServiceLocator.Register(this);
+
         }
         
         public async Task<bool> PlayerNameChange(string playerName)
         {
+            AfterInit();
+            if (service == null)
+                throw new InvalidOperationException("IDataStoreService가 등록되지 않았습니다.");
             var result = await service.SetPlayerName<string>(playerName);
 
             if (result == "dupe")

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +16,19 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 {
     public class LocalLeaderboard : MonoBehaviour, ILeaderboardGiver, IAfterInitModule
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<ILeaderboardGiver>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<ILeaderboardGiver>(this);
+        }
+
         private LeaderboardSettingSO leaderboardSettingSO;
         
-        private List<LocalLeaderboardEntry> entries;
+        private readonly List<LocalLeaderboardEntry> entries = new List<LocalLeaderboardEntry>();
 
         private IDataStoreService service;
         
@@ -30,7 +40,9 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         public async Task MakePlayer(string playerId)
         {
-            service.GetIdAsync<uint>(playerId, nameof(PlayerDataStore.KillCount));
+            AfterInit();
+            if (service == null) return;
+            await service.GetIdAsync<uint>(playerId, nameof(PlayerDataStore.KillCount));
             
             LeaderboardChanged?.Invoke();
         }

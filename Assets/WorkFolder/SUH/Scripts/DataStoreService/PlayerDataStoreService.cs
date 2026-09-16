@@ -24,7 +24,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
         
         private void Awake()
         {
-            IDataStoreService registeredService = ServiceLocator.Get<IDataStoreService>();
+            ServiceLocator.TryGet<IDataStoreService>(out var registeredService);
             if (registeredService != null && !ReferenceEquals(registeredService, this))
             {
                 Destroy(gameObject);
@@ -42,8 +42,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         private void OnDestroy()
         {
-            if (ReferenceEquals(ServiceLocator.Get<IDataStoreService>(), this))
-                ServiceLocator.UnRegister<IDataStoreService>(this);
+            ServiceLocator.UnRegister<IDataStoreService>(this);
         }
 
         public Task AsyncInit()
@@ -74,6 +73,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
                 data =>
                 {
                     data ??= new PlayerDataStore();
+                    data.PlayerName = playerDataStore.PlayerName;
                     field.SetValue(data, boxedValue);
 
                     return data;
@@ -85,6 +85,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
         {
+            await EnsureInitializedAsync();
             var keys = new HashSet<string> { valueName };
             var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
 
@@ -100,29 +101,26 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         public async Task<string> SetPlayerName<TValue>(string playerName)
         {
-            try
-            {
-                await EnsureInitializedAsync();
+            if (string.IsNullOrWhiteSpace(playerName))
+                throw new ArgumentException("닉네임을 입력해주세요.", nameof(playerName));
+            playerName = playerName.Trim();
+            await EnsureInitializedAsync();
+            var arguments = new Dictionary<string, object> { { "requestedName", playerName } };
+            var response = await CloudCodeService.Instance.CallEndpointAsync<PlayerNameResponse>(
+                "SetUniquePlayerName", arguments);
+            if (response?.result == "Conflict") return "dupe";
+            if (response?.result != "Success")
+                throw new InvalidOperationException("닉네임 서버에서 올바르지 않은 응답을 받았습니다.");
 
-                var arguments = new Dictionary<string, object>
-                {
-                    { "requestedName", playerName }
-                };
+            playerDataStore.PlayerName = response.playerName ?? playerName;
+            return playerDataStore.PlayerName;
+        }
 
-                await CloudCodeService.Instance.CallEndpointAsync("SetUniquePlayerName", arguments);                
-               
-                FieldInfo field = GetField<string>("PlayerName");
-                field.SetValue(playerDataStore, playerName);
-
-                Debug.Log($"닉네임 설정 완료: {playerName}");
-                return playerName; 
-            }
-            catch (CloudCodeException e)
-            {
-                Debug.LogError($"닉네임 설정 실패 (중복 또는 서버오류): {e.Message}");
-                throw new Exception("DuplicatedName");
-                return "dupe";
-            }
+        [Serializable]
+        public class PlayerNameResponse
+        {
+            public string result;
+            public string playerName;
         }
 
 
@@ -149,7 +147,11 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
             playerDataStore = await _store.GetAsync(AuthenticationService.Instance.PlayerId)
                               ?? new PlayerDataStore();
             
-            await _store.SetAsync(AuthenticationService.Instance.PlayerId, playerDataStore);
+            // Cloud Code owns the canonical nickname; the public V1 profile is a display copy.
+            var names = await CloudSaveService.Instance.Data.Player.LoadAsync(
+                new HashSet<string> { nameof(PlayerDataStore.PlayerName) });
+            if (names.TryGetValue(nameof(PlayerDataStore.PlayerName), out var name))
+                playerDataStore.PlayerName = name.Value.GetAs<string>();
         }
 
         private static FieldInfo GetField<TValue>(string valueName)
