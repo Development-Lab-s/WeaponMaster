@@ -1,28 +1,56 @@
-﻿using System;
+using System;
 using DevLib.ModuleSystem;
 using TMPro;
 using UnityEngine;
+using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
 {
-    public class BodyColorInterface : MonoBehaviour, IAfterInitModule
+    public class BodyColorInterface : MonoBehaviour, IAfterInitModule, IBodyColorInterfaceChange
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<IBodyColorInterfaceChange>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<IBodyColorInterfaceChange>(this);
+        }
+
         [SerializeField] private TextMeshProUGUI textLabel_CurrentIndex;
         private IDataStoreService service;
+        [SerializeField] private Color[] bodyColors = Array.Empty<Color>();
+
+        public async void BodyColorInterfaceChange(ushort index)
+        {
+            AfterInit();
+            if (service == null) return;
+            if (index >= bodyColors.Length)
+            {
+                Debug.LogError("BodyColorInterface의 bodyColors 팔레트에 해당 인덱스가 없습니다.", this);
+                return;
+            }
+            await service.SetAsync(nameof(PlayerDataStore.BodyColor), bodyColors[index]);
+            if (textLabel_CurrentIndex != null) textLabel_CurrentIndex.SetText(index.ToString());
+        }
 
         public void AfterInit()
         {
             service = DevLib.ServiceLocator.ServiceLocator.Get<IDataStoreService>();
+            
+
         }
 
         public async void BodyColorTextChange()
         {
             AfterInit();
             
-            uint value = await service?.GetAsync<uint>(nameof(PlayerDataStore.BodyType))!;
-            textLabel_CurrentIndex.SetText(value.ToString());
+            if (service == null || textLabel_CurrentIndex == null) return;
+            Color value = await service.GetAsync<Color>(nameof(PlayerDataStore.BodyColor));
+            textLabel_CurrentIndex.SetText(ColorUtility.ToHtmlStringRGBA(value));
         }
     }
 }

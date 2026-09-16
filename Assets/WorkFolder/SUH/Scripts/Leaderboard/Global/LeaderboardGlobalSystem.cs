@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Unity.Services.Leaderboards;
 using Unity.Services.Leaderboards.Models;
 using UnityEngine;
@@ -9,6 +9,16 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
     public class LeaderboardGlobalSystem : MonoBehaviour, ILeaderboardGlobalMaker
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<ILeaderboardGlobalMaker>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<ILeaderboardGlobalMaker>(this);
+        }
+
           public Action<LocalLeaderboardEntry> OnLeaderboardUpdated;
         
         [SerializeField] private LeaderboardSettingSO leaderboardSettingSO;

@@ -1284,6 +1284,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08030a3e813f4cd4898c55a6585d6c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.WeaponCollideModule
+  deathMents:
+  - "\uB1CC\uC9C4\uD0D5!"
+  - "\uB204\uAC00 \uAE30\uCE68\uC18C\uB9AC\uB97C \uB0B4\uC5C8\uB294\uAC00?"
+  - "\uB454\uAE30\uB85C \uB9DE\uC544\uC8FD\uC74C!"
 --- !u!59 &3117468835469573381
 HingeJoint:
   m_ObjectHideFlags: 0

@@ -1655,8 +1655,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da432944f724ca2ac34166d3de73de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
-  targetWeapon: {fileID: 1452525835899171521}
-  moveRadius: 1
+  rotTargetTrm: {fileID: 0}
+  zCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &6017709433660146154
 GameObject:
   m_ObjectHideFlags: 0
@@ -1871,7 +1876,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1667453426891062364, guid: 13b367737328ddd498aa4c941787273d, type: 3}
+  - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2224,6 +2229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.PlayerController
   playerInput: {fileID: 11400000, guid: c27951549d373b54794465388cdc4186, type: 2}
+  SettingValue: {fileID: 0}
 --- !u!54 &2584831647821773726
 Rigidbody:
   m_ObjectHideFlags: 0

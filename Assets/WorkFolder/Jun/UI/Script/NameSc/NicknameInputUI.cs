@@ -1,7 +1,9 @@
 using System;
+using DevLib.ServiceLocator;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using Random = UnityEngine.Random;
 
 public class NicknameInputUI : MonoBehaviour
@@ -48,13 +50,32 @@ public class NicknameInputUI : MonoBehaviour
         inputRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width + horizontalPadding);
     }
 
-    private void NameChange(string text)
+    private async void NameChange(string text)
     {
         text = text.Trim();
         if (!LengthCheck(text)) return;
         if (!BannedCheck(text)) return;
-        
-        
+
+        try
+        {
+            var service = ServiceLocator.Get<IPlayerNameInterfaceChange>();
+            if (service == null)
+            {
+                ShowWarning("닉네임 서비스를 준비하지 못했습니다.");
+                return;
+            }
+            bool result = await service.PlayerNameChange(text);
+            if (this == null) return;
+            if (result)
+                warningText.gameObject.SetActive(false);
+            else
+                ShowWarning("이미 있는 닉네임 입니다.");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            if (this != null) ShowWarning("닉네임 저장에 실패했습니다. 다시 시도해주세요.");
+        }
     }
     private bool LengthCheck(string nickname)
     {

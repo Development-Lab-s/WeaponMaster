@@ -1,4 +1,4 @@
-﻿using DevLib.ServiceLocator;
+using DevLib.ServiceLocator;
 using Unity.Services.Authentication;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
@@ -8,6 +8,16 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 {
     public class ServerServiceData : MonoBehaviour, IServerToPlayerSender
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<IServerToPlayerSender>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<IServerToPlayerSender>(this);
+        }
+
         public async void PlayerNameTextReceived(string playerName)
         {
             IDataStoreService service = ServiceLocator.Get<IDataStoreService>();
