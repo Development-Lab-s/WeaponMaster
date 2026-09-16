@@ -41,7 +41,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] public NetworkString<_32> playerId { get; set; }
         [Networked , OnChangedRender(nameof(ColorChanged))]
         public Color NetWorkedColor{ get; set;}
-        private Color NetworkColor { get; set; }
+        
+        private Color loadedColor { get; set; }
+        
         private uint HairStyleIndex { get; set; }
         
         private MaterialPropertyBlock _mpb;
@@ -144,17 +146,31 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             return null;
         }
 
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SetColor(Color newColor)
+        {
+            if (!HasStateAuthority) return;
+            newColor.a = 1f;
+            NetWorkedColor = newColor;
+            
+        }
+        
         public async override void Spawned()
         {
+            // 원격 플레이어도 Spawned가 호출되므로, 권한 검사 전에
+            // 이미 동기화되어 있는 색상을 먼저 적용합니다.
+            ColorChanged();
+
             if (!HasInputAuthority) return;
             playerInput.OnAttackKeyPressed += HandleAttack;
             
             playerId = AuthenticationService.Instance.PlayerId;
             _service = ServiceLocator.Get<IDataStoreService>();
-            NetworkColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
+            loadedColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
             
-            ColorChanged();
+            RPC_SetColor(loadedColor);
+            
         }
 
 
