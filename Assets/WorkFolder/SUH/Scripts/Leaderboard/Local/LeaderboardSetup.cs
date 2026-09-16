@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,16 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 {
     public class LeaderboardSetup : MonoBehaviour, ILeaderboardState, IAfterInitModule
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<ILeaderboardState>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<ILeaderboardState>(this);
+        }
+
         public Action<LocalLeaderboardEntry> OnLeaderboardUpdated;
         
         [SerializeField] private LeaderboardSettingSO leaderboardSettingSO;
@@ -123,8 +133,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         public void AfterInit()
         {
-            if (ServiceLocator.Get<ILeaderboardState>() == null)
-                ServiceLocator.Register<ILeaderboardState>(this);
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using DevLib.ModuleSystem;
+using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,8 +8,26 @@ using WorkFolder.SUH.Scripts.UserInterface.CharacterEditor.ServiceLoactor;
 
 namespace WorkFolder.SUH.Scripts.UserInterface.CharacterEditor
 {
-    public class CharacterEditorUserInterface : MonoBehaviour, IAfterInitModule
+    public class CharacterEditorUserInterface : MonoBehaviour, IAfterInitModule, IBodyColorSender
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<IBodyColorSender>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<IBodyColorSender>(this);
+        }
+
+        public async void BodyColorChange(string colorHex)
+        {
+            if (!ColorUtility.TryParseHtmlString(colorHex, out Color color)) return;
+            IDataStoreService service = ServiceLocator.Get<IDataStoreService>();
+            if (service == null) return;
+            await service.SetAsync(nameof(PlayerDataStore.BodyColor), color);
+        }
+
         public UnityEvent OnBodyColorFire;
         public UnityEvent OnFaceDrawFire;
         public UnityEvent OnSaveEnter;
@@ -39,9 +57,9 @@ namespace WorkFolder.SUH.Scripts.UserInterface.CharacterEditor
             if (dataStoreService == null)
                 return;
 
-            await dataStoreService.SetAsync(
-                nameof(PlayerDataStore.BodyColor),
-                (uint)index);
+            var colorService = ServiceLocator.Get<WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator.IBodyColorInterfaceChange>();
+            if (colorService == null || index > ushort.MaxValue) return;
+            colorService.BodyColorInterfaceChange((ushort)index);
             
             OnBodyColorChanged?.Invoke(index);
         }
@@ -56,10 +74,7 @@ namespace WorkFolder.SUH.Scripts.UserInterface.CharacterEditor
         }
         public void AfterInit()
         {
-            if (ServiceLocator.Get<IBodyColorSender>() != null)
-                return;
-            
-            ServiceLocator.Register(this);
+
         }
         #endregion
     }

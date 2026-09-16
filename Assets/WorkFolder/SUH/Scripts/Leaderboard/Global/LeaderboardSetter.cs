@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using UnityEngine;
@@ -10,10 +10,20 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
     public class LeaderboardSetter : MonoBehaviour,
         IAfterInitModule, ILeaderboardSender
     {
+        private void Awake()
+        {
+            DevLib.ServiceLocator.ServiceLocator.Register<ILeaderboardSender>(this);
+        }
+
+        private void OnDestroy()
+        {
+            DevLib.ServiceLocator.ServiceLocator.UnRegister<ILeaderboardSender>(this);
+        }
+
         
         public void AfterInit()
         {
-            //if (ServiceLocator.Get<ILeaderboardSender>() != null) 
+
 
         }
 

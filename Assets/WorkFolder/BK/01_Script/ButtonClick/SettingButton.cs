@@ -30,16 +30,6 @@ public class SettingButton : MonoBehaviour, IButton
        settingMove.SettingOffMove();
     }
 
-    public void SettingSclseUpClick()
-    {
-        settingMove.ScaleUpSetting();
-    }
-
-    public void SettingSclseDownClick()
-    {
-        settingMove.ScaleDownSetting();
-    }
-
     public void OnSetting()
     {
         gameSettingObject.SetActive(true);

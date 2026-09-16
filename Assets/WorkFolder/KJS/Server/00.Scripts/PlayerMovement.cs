@@ -3,8 +3,7 @@ using _00.Scripts;
 using Fusion;
 using UnityEngine;
 
-
-namespace _00.Scripts
+namespace KJS
 {
     public class PlayerMovement : NetworkBehaviour
     {
@@ -80,5 +79,5 @@ namespace _00.Scripts
             _jumpPressed = false;
         }
     }
-}
 
+}

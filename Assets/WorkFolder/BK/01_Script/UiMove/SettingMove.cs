@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.InputSystem;
+
 public class SettingMove : MonoBehaviour
 {
  [Header("Setting")]
@@ -68,17 +70,15 @@ public class SettingMove : MonoBehaviour
      debugSetting.transform.DOLocalMoveX(500, 1.2f);
  }
 
-
- public void ScaleUpSetting()
+ private void Update()
  {
-    
+     if (Keyboard.current.escapeKey.wasPressedThisFrame)
+     {
+         SettingOffMove();
+     }
  }
 
- public void ScaleDownSetting()
- {
 
- }
-
-//아무래도 난 노가다 체질인가... 이게 레전드 하드 코딩이지 뭐긴 뭐야
+ //아무래도 난 노가다 체질인가... 이게 레전드 하드 코딩이지 뭐긴 뭐야
 
 }
