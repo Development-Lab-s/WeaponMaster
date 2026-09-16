@@ -1,7 +1,8 @@
+using Fusion;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(PlayerMovementInput))]
-public class RagdollPlayerMovement : MonoBehaviour
+public class RagdollPlayerMovement : NetworkBehaviour
 {
     [Header("Speed")]
     [SerializeField, Min(0f)] private float walkSpeed = 2.8f;
@@ -47,8 +48,9 @@ public class RagdollPlayerMovement : MonoBehaviour
             cameraTransform = Camera.main.transform;
     }
 
-    private void FixedUpdate()
+    public override void FixedUpdateNetwork()
     {
+        if (!HasInputAuthority) return;
         Vector2 moveInput = _input.MoveDirection;
         Quaternion cameraYawRotation = RotateTowardCamera();
         Vector3 localDirection = new Vector3(moveInput.x, 0f, moveInput.y);

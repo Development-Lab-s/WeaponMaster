@@ -2322,7 +2322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SelectUIScene.PlayerSpawner
   container: {fileID: 718419871}
-  playerPrefab: {fileID: 5394159356429554557, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
+  playerPrefab: {fileID: 7473313050840739683, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
   partDataList:
   - {fileID: 11400000, guid: 99c751fb38f6b0e41ad96f85404ea050, type: 2}
   - {fileID: 11400000, guid: 1e3c9a0684a7d3a42a7e07d7585f7d4a, type: 2}
@@ -13377,10 +13377,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2303997721685729075, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: SortKey
-      value: 1269913631
-      objectReference: {fileID: 0}
     - target: {fileID: 3171967050076452735, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: SortKey
       value: 3496666511
@@ -13428,10 +13424,6 @@ PrefabInstance:
     - target: {fileID: 5777852339850430074, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7521852917333474440, guid: 24b98ddb7da54f44b863f1a4900d9b03, type: 3}
-      propertyPath: SortKey
-      value: 1555209179
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -21718,6 +21710,75 @@ CapsuleCollider:
   m_Height: 0.8926913
   m_Direction: 1
   m_Center: {x: 0, y: 0.44634566, z: 0}
+--- !u!1001 &3624096130799935683
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2222801831583946282, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: SortKey
+      value: 448245159
+      objectReference: {fileID: 0}
+    - target: {fileID: 2670897127267500768, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: SortKey
+      value: 3212066483
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.09
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676290508770591910, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4964134744355707561, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: SortKey
+      value: 2853370084
+      objectReference: {fileID: 0}
+    - target: {fileID: 7473313050840739683, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ac1ca21416a48a1418bd09d11c388047, type: 3}
 --- !u!4 &3636763578177736059
 Transform:
   m_ObjectHideFlags: 0
@@ -23911,7 +23972,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5782ac05750a46c48772bf26c9aabde3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.PlayerRenderer
-  waistTrm: {fileID: 7722158019845411700}
 --- !u!1 &6880604534359023532
 GameObject:
   m_ObjectHideFlags: 0
@@ -26218,3 +26278,4 @@ SceneRoots:
   - {fileID: 1862185084}
   - {fileID: 1556907750}
   - {fileID: 844247863}
+  - {fileID: 3624096130799935683}
