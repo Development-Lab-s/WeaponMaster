@@ -1,11 +1,9 @@
-﻿using System;
-using DevLib.ServiceLocator;
+﻿using DevLib.ServiceLocator;
 using UnityEngine;
-using WorkFolder.PAP.Scripts.GameSystem.KillSystem;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
-namespace WorkFolder.SUH.Scripts.CharacterVisual
+namespace WorkFolder.SUH.Scripts.CharacterVisual.CharacterVisual
 {
     public class BodyColorChange : MonoBehaviour
     {

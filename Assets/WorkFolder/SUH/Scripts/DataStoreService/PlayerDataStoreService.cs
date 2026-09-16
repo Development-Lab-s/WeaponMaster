@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DevLib.ServiceLocator;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using System.Reflection;
+using Unity.Services.CloudCode;
+using Unity.Services.CloudSave;
+using Unity.Services.CloudSave.Models.Data.Player;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -78,6 +82,49 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
             return value;
         }
+
+        public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
+        {
+            var keys = new HashSet<string> { valueName };
+            var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
+
+            var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys, options);
+
+            if (playerData.TryGetValue(valueName, out var item))
+            {
+                return item.Value.GetAs<TValue>(); 
+            }
+
+            return default;
+        }
+
+        public async Task<string> SetPlayerName<TValue>(string playerName)
+        {
+            try
+            {
+                await EnsureInitializedAsync();
+
+                var arguments = new Dictionary<string, object>
+                {
+                    { "requestedName", playerName }
+                };
+
+                await CloudCodeService.Instance.CallEndpointAsync("SetUniquePlayerName", arguments);                
+               
+                FieldInfo field = GetField<string>("PlayerName");
+                field.SetValue(playerDataStore, playerName);
+
+                Debug.Log($"닉네임 설정 완료: {playerName}");
+                return playerName; 
+            }
+            catch (CloudCodeException e)
+            {
+                Debug.LogError($"닉네임 설정 실패 (중복 또는 서버오류): {e.Message}");
+                throw new Exception("DuplicatedName");
+                return "dupe";
+            }
+        }
+
 
         public async Task SaveAsync()
         {
