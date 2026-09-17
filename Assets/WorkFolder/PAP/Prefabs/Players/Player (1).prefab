@@ -581,7 +581,7 @@ Transform:
   m_GameObject: {fileID: 1765509138975861536}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: -0.10506743, z: -0.009199142}
+  m_LocalPosition: {x: 0, y: 0.04, z: -0.009199142}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1352,7 +1352,7 @@ Transform:
   m_GameObject: {fileID: 3319391239983761472}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5250001, y: 1.54, z: -0.333}
+  m_LocalPosition: {x: 0.5250001, y: 2.64, z: -0.513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1395,7 +1395,7 @@ Transform:
   m_GameObject: {fileID: 3400876492797174577}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0.000000013144534, y: 0.006340207, z: -0.33589277}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3911,7 +3911,7 @@ Transform:
   m_GameObject: {fileID: 6185401857425533173}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.875, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8349999, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4007,7 +4007,7 @@ Transform:
   m_GameObject: {fileID: 6396835229918044420}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.875, z: 0}
+  m_LocalPosition: {x: 0, y: 1.835, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4119,6 +4119,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 4582562322287138860}
   moveTargetTrm: {fileID: 619375812927510110}
+  leftFoot: {fileID: 8245760924914041646}
+  rightFoot: {fileID: 4934329806405054431}
+  controller: {fileID: 5590528929850000761}
   zCurve:
     serializedVersion: 2
     m_Curve:
@@ -4382,7 +4385,7 @@ Transform:
   m_GameObject: {fileID: 7812187931769796207}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.875, z: 0}
+  m_LocalPosition: {x: 0, y: 1.98, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4499,7 +4502,7 @@ MonoBehaviour:
   movementRoot: {fileID: 675080623715004483}
   leftFootGoal: {fileID: 3518785642306097032}
   rightFootGoal: {fileID: 2964045422148540249}
-  stepDistance: 0.45
+  stepDistance: 0.2
   stepAngle: 35
   stepDuration: 0.3
   stepHeight: 0.45
@@ -5056,7 +5059,7 @@ MonoBehaviour:
   rotationSpeed: 720
   modelYawOffset: 0
   puppetYawResponse: 20
-  pelvisLiftAcceleration: 150
+  pelvisLiftAcceleration: 7
   maximumSlope: 15
   airborneGravity: 20
 --- !u!136 &5041765568768728514

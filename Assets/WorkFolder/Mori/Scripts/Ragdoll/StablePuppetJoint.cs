@@ -214,7 +214,8 @@ public sealed class StablePuppetJoint : MonoBehaviour
         float effectiveSpring = positionSpring * positionGain;
         float damper = 2f * positionDampingRatio * Mathf.Sqrt(effectiveSpring);
         Vector3 acceleration = effectiveSpring * positionError
-                             + damper * (targetVelocity - _body.linearVelocity);
+                               + damper * (targetVelocity - _body.linearVelocity)
+                               - Physics.gravity;
         acceleration *= _currentStrength;
         acceleration = Vector3.ClampMagnitude(
             acceleration,

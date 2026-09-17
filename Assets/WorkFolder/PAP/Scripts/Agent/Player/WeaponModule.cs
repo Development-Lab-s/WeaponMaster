@@ -12,6 +12,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Header("References")]
         [SerializeField] private Transform rotTargetTrm;
         [SerializeField] private Transform moveTargetTrm;
+        [SerializeField] private FootStepController controller;
         
         [Header("Debug")] 
         [SerializeField] private AnimationCurve zCurve;
@@ -22,6 +23,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private Rigidbody _weaponRigid;
         private ConfigurableJoint _joint;
         private float _currentWeaponMove;
+        private Vector3 _bindPosition;
         
         public bool IsEquipped { get; private set; }
         public GameObject GameObject => gameObject;
@@ -50,6 +52,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public void AfterInit()
         {
             _cameraController = Owner.GetModule<ICameraController>();
+            _bindPosition = moveTargetTrm.localPosition;
         }
 
         public void EquipWeapon(bool isEquip)
@@ -75,12 +78,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     _player.SettingValue.WeaponSensitivityY * Runner.DeltaTime, -1f, 1f);
                 float val = Mathf.Clamp01(new Vector2(Mathf.Abs(x), Mathf.Abs(y)).magnitude);
                 float z = Mathf.Lerp(1, 0f, zCurve.Evaluate(val));
-                _currentWeaponMove = Mathf.Clamp(_currentWeaponMove + WeaponMoveDirection * 10f * Runner.DeltaTime,-1f,1f);
+                _currentWeaponMove = Mathf.Clamp(_currentWeaponMove + WeaponMoveDirection * 20f * Runner.DeltaTime,-1f,1f);
                 CurrentDirection = new Vector3(x, y, z);
             }
-            else 
+            else
             {
                 CurrentDirection = Vector3.zero;
+                _currentWeaponMove = 0f;
             }
         }
 
@@ -90,8 +94,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             // 부위별로 돌아가는거 다르게 할 예정임.
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
-            
-            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _currentWeaponMove);
+
+            if (_currentWeaponMove != 0)
+            {
+                controller.SetStepDistance(100f);
+            }
+            else
+                controller.SetOriginStepDistance();
+            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _bindPosition,_currentWeaponMove);
         } 
 
         private void OnDrawGizmos()

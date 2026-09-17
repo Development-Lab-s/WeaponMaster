@@ -11,7 +11,7 @@ public sealed class FootStepController : MonoBehaviour
     [SerializeField] private Transform rightFootGoal;
 
     [Header("Step")]
-    [SerializeField] private float stepDistance = 0.45f;
+    [SerializeField] private float stepDistance = 0.2f;
     [SerializeField] private float stepAngle = 35f;
     [SerializeField] private float stepDuration = 0.3f;
     [SerializeField] private float stepHeight = 0.45f;
@@ -53,6 +53,7 @@ public sealed class FootStepController : MonoBehaviour
     private Vector3 _stepEndPosition;
     private Quaternion _stepStartRotation;
     private Quaternion _stepEndRotation;
+    private float _originFootstepDistance ;
 
     private void Awake()
     {
@@ -60,6 +61,7 @@ public sealed class FootStepController : MonoBehaviour
         _movementController = movementRoot.GetComponent<RagdollPlayerMovement>();
         _left = new FootState(leftFootGoal, movementRoot);
         _right = new FootState(rightFootGoal, movementRoot);
+        _originFootstepDistance = stepDistance;
     }
 
     private void FixedUpdate()
@@ -124,6 +126,16 @@ public sealed class FootStepController : MonoBehaviour
             || Quaternion.Angle(
                 foot.Rotation,
                 foot.GetHomeRotation(movementRoot)) > stepAngle;
+    }
+
+    public void SetStepDistance(float step)
+    {
+        stepDistance = step;
+    }
+
+    public void SetOriginStepDistance()
+    {
+        stepDistance = _originFootstepDistance;
     }
 
     private void BeginStep(FootState foot, bool directionChanged)

@@ -24654,6 +24654,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 7722158019845411700}
   moveTargetTrm: {fileID: 0}
+  leftFoot: {fileID: 0}
+  rightFoot: {fileID: 0}
+  controller: {fileID: 0}
   zCurve:
     serializedVersion: 2
     m_Curve: []
