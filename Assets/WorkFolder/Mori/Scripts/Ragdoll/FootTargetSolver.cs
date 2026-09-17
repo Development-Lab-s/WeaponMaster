@@ -44,7 +44,7 @@ public sealed class FootTargetSolver : MonoBehaviour
     public bool GroundSnapEnabled { get; set; } = true;
     public bool HasGroundHit => _hasGroundHit;
     public bool IsGrounded => _isGrounded;
-    public bool IsSupportingGround => GroundSnapEnabled && _hasGroundHit;
+    public bool IsSupportingGround => GroundSnapEnabled && _hasGroundHit && _isGrounded;
     public Vector3 GroundNormal => _groundNormal;
     public Vector3 GroundPoint => _groundPoint;
 
