@@ -5,7 +5,6 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
-using UnityPipeline.Microsoft.CodeAnalysis.Diagnostics;
 
 namespace _00.Scripts.Lobby
 {

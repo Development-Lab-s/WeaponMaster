@@ -53,7 +53,7 @@ public class RagdollPlayerMovement : NetworkBehaviour
         if (!HasInputAuthority) return;
         Vector2 moveInput = _input.MoveDirection;
         Quaternion cameraYawRotation = RotateTowardCamera();
-        Vector3 localDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
         bool hasWalkableGround = TryGetWalkableGround(
             out Vector3 groundNormal);
         ApplyPuppetPelvisLift(hasWalkableGround);
@@ -66,7 +66,7 @@ public class RagdollPlayerMovement : NetworkBehaviour
         {
             _currentForwardSpeed = walkSpeed;
             velocity = hasWalkableGround
-                ? Vector3.zero
+                ? new Vector3(0f, -0.5f, 0f)
                 : new Vector3(0f, airborneVerticalVelocity, 0f);
         }
         else
