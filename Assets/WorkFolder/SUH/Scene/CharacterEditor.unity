@@ -510,7 +510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -780,7 +780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1047,7 +1047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1968,6 +1968,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1724467846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1724467847}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724467847
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1724467846}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.001258388, y: 0.001416385, z: 0.0032122764, w: 0.9999931}
+  m_LocalPosition: {x: 6.08, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1424311629425326270}
+  m_Father: {fileID: 8832152168930771999}
+  m_LocalEulerAnglesHint: {x: -0.145, y: 0.162, z: 0.368}
 --- !u!1 &1739211265
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,7 +2149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2250,7 +2282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2462,7 +2494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.48235294}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2870,7 +2902,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -4974903464421335904, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: 7640522a6eec417498e8709927fe28c4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2925,12 +2957,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8603420249146775796}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70710695, y: -0.7071066, z: -0, w: 0.00000019949607}
-  m_LocalPosition: {x: 5.75162, y: 0.57610273, z: 0}
+  m_LocalRotation: {x: 0.70710695, y: -0.70710665, z: -0.0000000745058, w: 0.00000019371507}
+  m_LocalPosition: {x: -0.32837582, y: 0.57610106, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8832152168930771999}
+  m_Father: {fileID: 1724467847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1602858446464574760
 MeshRenderer:
@@ -3128,7 +3160,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5998259955797170312, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: 7414059b2cc0e5f4199ea7eec0945c36, type: 2}
   - {fileID: -1625583456123944320, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -3178,7 +3210,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5723329192619326990, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: e22f7d25c1d694741a79fc0926b2a033, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3269,7 +3301,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4543745837423363458, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: d9a25cc07e30a5442a4b43d1bc3f1c0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3318,7 +3350,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4855638414264437767, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3367,7 +3399,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4855638414264437767, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: 5fc5e68fc26df4b44b9a617606509076, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3539,7 +3571,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -7055792790354660207, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+  - {fileID: 2100000, guid: 45c575f64482cd0429d7250699d48e82, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3796,9 +3828,9 @@ Transform:
   m_Children:
   - {fileID: 2479905622330111022}
   - {fileID: 3629929502151917506}
-  - {fileID: 1424311629425326270}
   - {fileID: 2553399839690769384}
   - {fileID: 1511686357}
+  - {fileID: 1724467847}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0.414, y: -59.135, z: 29.128}
 --- !u!4 &8845379401243546400
