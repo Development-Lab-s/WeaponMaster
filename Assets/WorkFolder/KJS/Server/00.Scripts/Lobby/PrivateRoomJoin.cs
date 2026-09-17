@@ -6,7 +6,6 @@ namespace _00.Scripts.Lobby
     public class PrivateRoomJoin : MonoBehaviour
     {
         [SerializeField] private TMP_InputField passwordInput;
-        [SerializeField] private TextMeshProUGUI errorText;
         private string _roomName;
         
         public void Open(string roomName)
@@ -14,7 +13,6 @@ namespace _00.Scripts.Lobby
             _roomName = roomName;
 
             passwordInput.text = "";
-            errorText.text = "";
 
             gameObject.SetActive(true);
             passwordInput.ActivateInputField();
@@ -31,16 +29,10 @@ namespace _00.Scripts.Lobby
 
             if (string.IsNullOrEmpty(password))
             {
-                errorText.text = "password is empty.";
                 return;
             }
 
             LobbyManager.instance.TryJoinPrivateRoom( _roomName, password );
-        }
-
-        public void ShowError()
-        {
-            errorText.text = "password is incorrect.";
         }
     }
 }
