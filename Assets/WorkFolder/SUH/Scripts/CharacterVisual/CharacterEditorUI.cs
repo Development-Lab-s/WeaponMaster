@@ -7,15 +7,20 @@
 
     namespace WorkFolder.SUH.Scripts.CharacterVisual
     {
-        public class CharcterEditorUI : MonoBehaviour
+        public class CharacterEditorUI : MonoBehaviour
         {
             [SerializeField] private Transform bodyColorSelectButton;
             [SerializeField] private TextMeshProUGUI hairStyleTextLabel;
-            
+            [SerializeField] private TMP_Text warningText;
+            [SerializeField] private RectTransform warningRect;
+
+            [SerializeField] private NicknameInputUI NicknameInputUI;
             
             private uint HairStyleIndex = 0;
             private uint BodyColor;
             private string PlayerName;
+    private Vector2 originalPos;
+            
 
             public void ChangeBtnHair(string count)
             {
@@ -35,8 +40,34 @@
                 PlayerName = playerName;
             }
 
+            void ShowWarning(string text)
+            {
+                warningText.text = text;
+                warningText.gameObject.SetActive(true);
+
+                Color color = warningText.color;
+                color.a = 1f;
+                warningText.color = color;
+        
+                warningRect.anchoredPosition = originalPos + Vector2.down * 20f;
+
+                warningRect.DOKill();
+                Sequence seq = DOTween.Sequence();
+        
+                seq.Append(warningRect.DOAnchorPos(originalPos, 0.25f));
+                seq.AppendInterval(0.8f);
+                seq.Append(warningText.DOFade(0f, 0.5f));
+
+                seq.OnComplete(() => { warningText.gameObject.SetActive(false); });
+            }
+            
             public async void SaveButtonData()
             {
+                if (!NicknameInputUI._currentSaveNickname)
+                {
+                    ShowWarning("닉네임을 저장하지 않으셨습니다.");
+                    return; 
+                }
                 try
                 {
                     ServiceLocator.Get<IBodyColorInterfaceChange>()?.BodyColorInterfaceChange(BodyColor);
@@ -53,6 +84,7 @@
                 {
                     Debug.LogException(exception);
                     Debug.Log("닉네임에 변경에 오류뜸 텍스트 표시");
+                    ShowWarning("저장에 실패했습니다. 다시 시도해주세요.");
                 }
             }
             
@@ -68,7 +100,7 @@
 
             private void HairStyleUserInterfaceChange()
             {
-                hairStyleTextLabel.SetText(HairStyleIndex.ToString());
+                //hairStyleTextLabel.SetText(HairStyleIndex.ToString());
             }
 
             public void BodyColorIndexChange(string bodyColorIndex)
