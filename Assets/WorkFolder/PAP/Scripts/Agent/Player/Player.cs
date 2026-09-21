@@ -69,7 +69,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             WeaponModule = GetModule<IWeaponModule>();
             CameraController = GetModule<ICameraController>();
         }
-
+        
         public void SetInitialize(PartOffsetDataSO partData, NetworkObject targetPartNetObj, GameObject weaponPrefab)
         {
             if (!HasStateAuthority) return;
@@ -177,9 +177,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
-            // 원격 플레이어도 Spawned가 호출되므로, 권한 검사 전에
-            // 이미 동기화되어 있는 색상을 먼저 적용합니다.
             ColorChanged();
+            if (!HasStateAuthority && TryGetComponent(out Rigidbody body))
+            {
+                body.linearVelocity = Vector3.zero;
+                body.angularVelocity = Vector3.zero;
+                body.isKinematic = true;
+                body.interpolation = RigidbodyInterpolation.None;
+            }
 
             if (!HasInputAuthority) return;
             playerInput.OnAttackKeyPressed += HandleAttack;

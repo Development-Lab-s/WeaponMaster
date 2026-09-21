@@ -28,6 +28,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public bool IsEquipped { get; private set; }
         public GameObject GameObject => gameObject;
         private AbstractPartDataSO _partData;
+        private GameObject _weaponObject;
         public Vector3 CurrentDirection { get; private set; }
         public void SetPartData(AbstractPartDataSO partData)
         {
@@ -47,6 +48,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             _weaponRigid = GetComponentInChildren<Rigidbody>();
             _joint = _weaponRigid.transform.GetComponent<ConfigurableJoint>();
+            _weaponObject = transform.GetChild(0).gameObject;
         }
                 
         public void AfterInit()
@@ -94,14 +96,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             // 부위별로 돌아가는거 다르게 할 예정임.
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
-
-            if (_currentWeaponMove != 0)
-            {
-                controller.SetStepDistance(100f);
-            }
-            else
-                controller.SetOriginStepDistance();
-            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _bindPosition,_currentWeaponMove);
+            if (!_weaponObject) return;
+            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _bindPosition,_currentWeaponMove,_weaponObject.transform);
         } 
 
         private void OnDrawGizmos()

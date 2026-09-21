@@ -438,6 +438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4582562322287138860}
+  - component: {fileID: 5151058396874424126}
   m_Layer: 0
   m_Name: spine
   m_TagString: Untagged
@@ -461,6 +462,46 @@ Transform:
   - {fileID: 2667153766486678604}
   m_Father: {fileID: 619375812927510110}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5151058396874424126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951873739550882275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  ConfigFlags: 0
+  PhysicsSettings:
+    ForecastEnabled: 1
+    DebugPhysics: 0
+    GravityForecast: 2
+    MaxExtrapolationTime: 0.15
+    MinLinearDetectedError: 0.02
+    MinAngularDetectedError: 3
+    MaxLinearError: 0
+    MaxAngularError: 0
+    LowCorrectionProgressThreshold: 0.015
+    HighErrorSimilarityThreshold: 1
+    MaxErrorTotalTime: 0.5
+    MaxRemoteSleepIgnoreTime: 0.5
+    ErrorCorrectionType: 0
+    LinearVelCorrectionMul: 1
+    AngularVelCorrectionMul: 1
+    PositionCorrectionLerp: 0.15
+    RotationCorrectionLerp: 0.15
+    Spring: 75
+    Damper: 2
+    MinImpactfulCollisionAlignment: 0.3
+    ImpactStartCorrectionTime: 0.1
+    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &1070517921525277665
 GameObject:
   m_ObjectHideFlags: 0
@@ -1379,6 +1420,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 619375812927510110}
+  - component: {fileID: 3845525266371946999}
   m_Layer: 0
   m_Name: pelvis
   m_TagString: Untagged
@@ -1404,6 +1446,46 @@ Transform:
   - {fileID: 3798441126110803615}
   m_Father: {fileID: 7211491731126733659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3845525266371946999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3400876492797174577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  ConfigFlags: 0
+  PhysicsSettings:
+    ForecastEnabled: 1
+    DebugPhysics: 0
+    GravityForecast: 2
+    MaxExtrapolationTime: 0.15
+    MinLinearDetectedError: 0.02
+    MinAngularDetectedError: 3
+    MaxLinearError: 0
+    MaxAngularError: 0
+    LowCorrectionProgressThreshold: 0.015
+    HighErrorSimilarityThreshold: 1
+    MaxErrorTotalTime: 0.5
+    MaxRemoteSleepIgnoreTime: 0.5
+    ErrorCorrectionType: 0
+    LinearVelCorrectionMul: 1
+    AngularVelCorrectionMul: 1
+    PositionCorrectionLerp: 0.15
+    RotationCorrectionLerp: 0.15
+    Spring: 75
+    Damper: 2
+    MinImpactfulCollisionAlignment: 0.3
+    ImpactStartCorrectionTime: 0.1
+    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &3506529178025660042
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,7 +2124,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.KJS._01.Scripts.HealthSystem
   _Health: 100
+  __isDead: 0
   resetModule: {fileID: 791070000826183352}
+  killObject: {fileID: 6185401857425533173}
 --- !u!1 &4148037460300910680
 GameObject:
   m_ObjectHideFlags: 0
@@ -4119,8 +4203,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 4582562322287138860}
   moveTargetTrm: {fileID: 619375812927510110}
-  leftFoot: {fileID: 8245760924914041646}
-  rightFoot: {fileID: 4934329806405054431}
   controller: {fileID: 5590528929850000761}
   zCurve:
     serializedVersion: 2
@@ -4888,7 +4970,7 @@ GameObject:
   - component: {fileID: 7068866707602495005}
   - component: {fileID: 791070000826183352}
   - component: {fileID: 6583043841087276679}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player (1)
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -5053,7 +5135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 2.8
-  maxRunSpeed: 6
+  maxRunSpeed: 12
   forwardAcceleration: 2
   cameraTransform: {fileID: 0}
   rotationSpeed: 720
@@ -5109,6 +5191,8 @@ MonoBehaviour:
   - {fileID: 173528877312612209}
   - {fileID: 7068866707602495005}
   - {fileID: 791070000826183352}
+  - {fileID: 3845525266371946999}
+  - {fileID: 5151058396874424126}
   - {fileID: 5838107410379835690}
   - {fileID: 6210848895587913493}
   - {fileID: 7353999485657816813}
@@ -5148,7 +5232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d459ccd4ffe4d8eab4ac083cc5cf204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.ResetCharacter
-  killObject: {fileID: 6185401857425533173}
 --- !u!114 &6583043841087276679
 MonoBehaviour:
   m_ObjectHideFlags: 0

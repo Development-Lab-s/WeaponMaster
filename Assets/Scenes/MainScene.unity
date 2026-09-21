@@ -5056,9 +5056,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394a0ca11db88424091e269f59698439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VivoxManager
-  audibleDistance: 15
+  audibleDistance: 32
   conversationalDistance: 2
-  fadeIntensity: 4.3
+  fadeIntensity: 2.1
   updateInterval: 0.3
   minMoveDistance: 0.05
   minRotationAngle: 1
@@ -24654,8 +24654,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Agent.Player.WeaponModule
   rotTargetTrm: {fileID: 7722158019845411700}
   moveTargetTrm: {fileID: 0}
-  leftFoot: {fileID: 0}
-  rightFoot: {fileID: 0}
   controller: {fileID: 0}
   zCurve:
     serializedVersion: 2

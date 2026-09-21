@@ -9,7 +9,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 {
     public class ResetCharacter : NetworkModule
     {
-        [SerializeField] private GameObject killObject;
         private NetworkObject _obj;
         public override void Spawned()
         {
@@ -19,19 +18,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public void TryReset(string deathMent = "죽음!")
         {
             if (!HasStateAuthority) return;
-            foreach (MonoBehaviour behaviour in _obj.GetComponentsInChildren<MonoBehaviour>())
-            {
-                behaviour.enabled = false;
-            }
 
-            foreach (Rigidbody rb in _obj.GetComponentsInChildren<Rigidbody>())
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                rb.gameObject.layer = LayerMask.NameToLayer("Died");
-                rb.gameObject.tag = "Untagged";
-            }
-            Destroy(killObject);
             UIManager.Instance.DropDeathUI(deathMent);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
