@@ -524,9 +524,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 424905286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa026d53c6370fb4d9aef5061ff1745b, type: 3}
+  m_Script: {fileID: 11500000, guid: 854960662e6142b4d8cce6b35ce8a18b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ButtonSlide
+  m_EditorClassIdentifier: Assembly-CSharp::BKButtonSlide
   slideDistance: 800
   direction: {x: 1, y: 0}
   slideDuration: 0.5
@@ -617,8 +617,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2099126311}
-        m_TargetAssemblyTypeName: DropText, Assembly-CSharp
+      - m_Target: {fileID: 2099126310}
+        m_TargetAssemblyTypeName: BKDropText, Assembly-CSharp
         m_MethodName: Dead
         m_Mode: 5
         m_Arguments:
@@ -814,18 +814,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 772723839}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a74e47680f200a4ba89fbd468904575, type: 3}
+  m_Script: {fileID: 11500000, guid: a214e124f17160a4b9e4b92a1c2dbb87, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TextDropIn
-  startScaleMultiplier: 6
-  dropDuration: 0.35
+  m_EditorClassIdentifier: Assembly-CSharp::BKSlideText
+  slideDistance: 500
+  slideDuration: 0.5
   startDelay: 0
-  dropEase: 8
-  punchScale: 0.2
-  shakeStrength: 15
-  impactDuration: 0.25
+  slideEase: 9
   fadeGroup: {fileID: 0}
-  fadeFrom: 0
 --- !u!1 &830737673
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,7 +945,7 @@ GameObject:
   - component: {fileID: 1187533307}
   - component: {fileID: 1187533309}
   - component: {fileID: 1187533308}
-  - component: {fileID: 1187533310}
+  - component: {fileID: 1187533311}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -1011,7 +1007,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187533306}
   m_CullTransparentMesh: 1
---- !u!114 &1187533310
+--- !u!114 &1187533311
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1020,9 +1016,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1187533306}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa026d53c6370fb4d9aef5061ff1745b, type: 3}
+  m_Script: {fileID: 11500000, guid: 854960662e6142b4d8cce6b35ce8a18b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ButtonSlide
+  m_EditorClassIdentifier: Assembly-CSharp::BKButtonSlide
   slideDistance: 1920
   direction: {x: -1, y: 0}
   slideDuration: 0.5
@@ -1161,9 +1157,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1268718261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa026d53c6370fb4d9aef5061ff1745b, type: 3}
+  m_Script: {fileID: 11500000, guid: 854960662e6142b4d8cce6b35ce8a18b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ButtonSlide
+  m_EditorClassIdentifier: Assembly-CSharp::BKButtonSlide
   slideDistance: 800
   direction: {x: 1, y: 0}
   slideDuration: 0.5
@@ -1397,18 +1393,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1471541359}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a74e47680f200a4ba89fbd468904575, type: 3}
+  m_Script: {fileID: 11500000, guid: a214e124f17160a4b9e4b92a1c2dbb87, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TextDropIn
-  startScaleMultiplier: 6
-  dropDuration: 0.35
+  m_EditorClassIdentifier: Assembly-CSharp::BKSlideText
+  slideDistance: 500
+  slideDuration: 0.5
   startDelay: 0
-  dropEase: 8
-  punchScale: 0.2
-  shakeStrength: 15
-  impactDuration: 0.25
+  slideEase: 9
   fadeGroup: {fileID: 0}
-  fadeFrom: 0
 --- !u!1 &1492342565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2060,9 +2052,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1749364511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a74e47680f200a4ba89fbd468904575, type: 3}
+  m_Script: {fileID: 11500000, guid: 4d937863ba80a9246abd2744d72e4cd2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TextDropIn
+  m_EditorClassIdentifier: Assembly-CSharp::BKTextDropIn
   startScaleMultiplier: 6
   dropDuration: 0.35
   startDelay: 0
@@ -2083,7 +2075,7 @@ GameObject:
   - component: {fileID: 1812391141}
   - component: {fileID: 1812391144}
   - component: {fileID: 1812391143}
-  - component: {fileID: 1812391142}
+  - component: {fileID: 1812391145}
   m_Layer: 5
   m_Name: Score
   m_TagString: Untagged
@@ -2110,27 +2102,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 125}
   m_SizeDelta: {x: 689.791, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1812391142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1812391140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a74e47680f200a4ba89fbd468904575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TextDropIn
-  startScaleMultiplier: 6
-  dropDuration: 0.35
-  startDelay: 0
-  dropEase: 8
-  punchScale: 0.2
-  shakeStrength: 15
-  impactDuration: 0.25
-  fadeGroup: {fileID: 0}
-  fadeFrom: 0
 --- !u!114 &1812391143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2231,6 +2202,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812391140}
   m_CullTransparentMesh: 1
+--- !u!114 &1812391145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812391140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a214e124f17160a4b9e4b92a1c2dbb87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BKSlideText
+  slideDistance: 500
+  slideDuration: 0.5
+  startDelay: 0
+  slideEase: 9
+  fadeGroup: {fileID: 0}
 --- !u!1 &2099126308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2240,7 +2228,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2099126309}
-  - component: {fileID: 2099126311}
+  - component: {fileID: 2099126310}
   m_Layer: 5
   m_Name: UIParent
   m_TagString: Untagged
@@ -2274,7 +2262,7 @@ RectTransform:
   m_AnchoredPosition: {x: -555.1046, y: 125}
   m_SizeDelta: {x: 689.791, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2099126311
+--- !u!114 &2099126310
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2283,9 +2271,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2099126308}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d965a449bc37654b8010d7e25d1b9df, type: 3}
+  m_Script: {fileID: 11500000, guid: ed6a7ce99ab8e3248811160123cf3b76, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DropText
+  m_EditorClassIdentifier: Assembly-CSharp::BKDropText
   entries:
   - target: {fileID: 1187533306}
     delay: 0
@@ -2294,9 +2282,9 @@ MonoBehaviour:
   - target: {fileID: 1812391140}
     delay: 1
   - target: {fileID: 772723839}
-    delay: 0.5
+    delay: 0
   - target: {fileID: 1471541359}
-    delay: 0.5
+    delay: 0.1
   - target: {fileID: 1268718261}
     delay: 0.5
   - target: {fileID: 424905286}
