@@ -10,6 +10,7 @@ public class OpenPal : MonoBehaviour
     [SerializeField] private float playerTime;
     [SerializeField] float capTime;
     [SerializeField] float waitTime;
+    [SerializeField] private Vector3 capPosition;
     
     [SerializeField] GameObject canvas;
 
@@ -20,7 +21,7 @@ public class OpenPal : MonoBehaviour
 
     private void Start()
     {
-        player.transform.DOMove(transform.position, playerTime).SetEase(Ease.OutBack)
+        player.transform.DOLocalMove(capPosition, playerTime).SetEase(Ease.OutBack)
             .OnComplete(() => canvas.SetActive(true));
         DOVirtual.DelayedCall(waitTime, () => cap.transform.DORotate(new Vector3(-2, 120, 100), capTime).SetEase(Ease.OutQuart));
         
