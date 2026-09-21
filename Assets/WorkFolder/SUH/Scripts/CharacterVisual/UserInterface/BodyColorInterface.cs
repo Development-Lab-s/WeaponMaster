@@ -29,7 +29,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
             AfterInit();
             if (service == null) return;
             await service.SetAsync(nameof(PlayerDataStore.BodyColor), index);
-            if (textLabel_CurrentIndex != null) textLabel_CurrentIndex.SetText(index.ToString());
+            //if (textLabel_CurrentIndex != null) textLabel_CurrentIndex.SetText(index.ToString());
         }
 
         public void AfterInit()
