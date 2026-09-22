@@ -55,6 +55,9 @@ public sealed class FootStepController : MonoBehaviour
     private Quaternion _stepEndRotation;
     private float _originFootstepDistance ;
 
+    public Transform LeftFootGoal => leftFootGoal;
+    public Transform RightFootGoal => rightFootGoal;
+
     private void Awake()
     {
         _movementBody = movementRoot.GetComponent<Rigidbody>();
@@ -96,6 +99,14 @@ public sealed class FootStepController : MonoBehaviour
         _right.PlantAtHome(movementRoot, _landingOffset);
         _left.Apply();
         _right.Apply();
+    }
+
+    private Vector3 GetMovementVelocity()
+    {
+        if (_movementController != null)
+            return _movementController.CurrentVelocity;
+
+        return _movementBody != null ? _movementBody.linearVelocity : Vector3.zero;
     }
 
     private void TryStartStep()
@@ -150,7 +161,7 @@ public sealed class FootStepController : MonoBehaviour
         _stepEndPosition = foot.GetHomePosition(movementRoot, _landingOffset);
         _stepEndRotation = foot.GetHomeRotation(movementRoot);
         Vector3 localVelocity = movementRoot.InverseTransformDirection(
-            _movementBody.linearVelocity);
+            GetMovementVelocity());
         bool movingBackward = localVelocity.z < 0f
                            && Mathf.Abs(localVelocity.z)
                            >= Mathf.Abs(localVelocity.x);
@@ -229,7 +240,7 @@ public sealed class FootStepController : MonoBehaviour
     private void UpdateMovementPrediction()
     {
         Vector3 velocity = Vector3.ProjectOnPlane(
-            _movementBody.linearVelocity,
+            GetMovementVelocity(),
             movementRoot.up);
         _isMoving = velocity.sqrMagnitude > 0.01f;
         _movementDirection = velocity.normalized;

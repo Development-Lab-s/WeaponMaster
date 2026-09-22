@@ -29,6 +29,16 @@ public class RagdollPlayerMovement : NetworkBehaviour
     private float _puppetPelvisYawOffset;
     private float _currentForwardSpeed;
     public float MaximumSpeed => Mathf.Max(walkSpeed, maxRunSpeed);
+    public bool IsReadyWeapon = false;
+
+    [Networked] private Vector3 NetworkVelocity { get; set; }
+
+    // FixedUpdateNetwork는 InputAuthority에서만 돌기 때문에, 프록시의 Rigidbody는
+    // linearVelocity가 영원히 0으로 남는다. 그 값을 읽는 FootStepController는
+    // 보폭 예측(_landingOffset)을 0으로 잡고, 그래서 프록시에서는 발이 몸 아래에
+    // 착지하며 뒤로 끌린다. 소유자가 쓴 실제 속도를 그대로 받아 쓴다.
+    public Vector3 CurrentVelocity =>
+        HasInputAuthority ? _rigidbody.linearVelocity : NetworkVelocity;
 
     private void Awake()
     {
@@ -73,19 +83,17 @@ public class RagdollPlayerMovement : NetworkBehaviour
         {
             float speed;
 
-            if (_input.HasForwardInput && _input.IsSprintPressed)
+            if (IsReadyWeapon)
             {
-                _currentForwardSpeed = Mathf.MoveTowards(
-                    _currentForwardSpeed,
-                    Mathf.Max(walkSpeed, maxRunSpeed),
-                    forwardAcceleration * Time.fixedDeltaTime);
-                speed = _currentForwardSpeed;
+                speed = 2.4f;
+                _currentForwardSpeed = speed;
             }
             else
             {
                 _currentForwardSpeed = walkSpeed;
                 speed = walkSpeed;
             }
+
 
             Vector3 movementDirection =
                 cameraYawRotation * localDirection.normalized;
@@ -109,6 +117,7 @@ public class RagdollPlayerMovement : NetworkBehaviour
         }
 
         _rigidbody.linearVelocity = velocity;
+        NetworkVelocity = velocity;
     }
 
     private bool TryGetWalkableGround(out Vector3 groundNormal)

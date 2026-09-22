@@ -22782,6 +22782,7 @@ GameObject:
   - component: {fileID: 1955289913}
   - component: {fileID: 1955289914}
   - component: {fileID: 1955289917}
+  - component: {fileID: 1955289918}
   m_Layer: 0
   m_Name: Prototype Runner
   m_TagString: Untagged
@@ -22901,6 +22902,20 @@ MonoBehaviour:
   loading: {fileID: 1699778522}
   loadingFailed: {fileID: 367109485}
   logText: {fileID: 705403514}
+--- !u!114 &1955289918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955289912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a93abf1a391964a94e5c139605105b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Unity::Fusion.NetworkSceneManagerDefault
+  IsSceneTakeOverEnabled: 1
+  LogSceneLoadErrors: 1
 --- !u!1 &1960007266
 GameObject:
   m_ObjectHideFlags: 0

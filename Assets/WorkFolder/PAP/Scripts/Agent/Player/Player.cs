@@ -39,6 +39,11 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
         [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
 
+        [Networked] private Vector3 NetLeftGoalLocal { get; set; }
+        [Networked] private Vector3 NetRightGoalLocal { get; set; }
+        [Networked] private Quaternion NetLeftGoalLocalRotation { get; set; }
+        [Networked] private Quaternion NetRightGoalLocalRotation { get; set; }
+
         [Networked] public NetworkString<_32> playerId { get; set; }
         
 
@@ -53,6 +58,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private IDataStoreService _service;
         
         private GameObject _weaponPrefab;
+        private FootStepController _footStepper;
 
         private void OnEnable()
         {
@@ -112,6 +118,55 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             {
                 NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
             }
+
+            CaptureFootGoals();
+        }
+
+        private bool TryGetFootGoals(out Transform left, out Transform right)
+        {
+            left = null;
+            right = null;
+
+            if (_footStepper == null)
+            {
+                _footStepper = GetComponentInChildren<FootStepController>(true);
+                if (_footStepper == null) return false;
+            }
+
+            left = _footStepper.LeftFootGoal;
+            right = _footStepper.RightFootGoal;
+
+            return left != null && right != null;
+        }
+
+        private void CaptureFootGoals()
+        {
+            if (!HasStateAuthority) return;
+            if (!TryGetFootGoals(out Transform left, out Transform right)) return;
+
+            Quaternion inverseRoot = Quaternion.Inverse(transform.rotation);
+
+            NetLeftGoalLocal = transform.InverseTransformPoint(left.position);
+            NetLeftGoalLocalRotation = inverseRoot * left.rotation;
+            NetRightGoalLocal = transform.InverseTransformPoint(right.position);
+            NetRightGoalLocalRotation = inverseRoot * right.rotation;
+        }
+
+        private void ApplyFootGoals()
+        {
+            if (HasStateAuthority) return;
+            if (!TryGetFootGoals(out Transform left, out Transform right)) return;
+
+            if (_footStepper.enabled)
+                _footStepper.enabled = false;
+
+            left.SetPositionAndRotation(
+                transform.TransformPoint(NetLeftGoalLocal),
+                transform.rotation * NetLeftGoalLocalRotation);
+
+            right.SetPositionAndRotation(
+                transform.TransformPoint(NetRightGoalLocal),
+                transform.rotation * NetRightGoalLocalRotation);
         }
 
         public override void Render()
@@ -120,6 +175,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             {
                 AttachWeaponLocal();
             }
+            OnPartDataIdChanged();
+
+            ApplyFootGoals();
         }
 
         void ColorChanged()
@@ -178,12 +236,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public async override void Spawned()
         {
             ColorChanged();
-            if (!HasStateAuthority && TryGetComponent(out Rigidbody body))
+
+            if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
-                body.linearVelocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
-                body.isKinematic = true;
-                body.interpolation = RigidbodyInterpolation.None;
+                rootBody.linearVelocity = Vector3.zero;
+                rootBody.angularVelocity = Vector3.zero;
+                rootBody.isKinematic = true;
+                rootBody.interpolation = RigidbodyInterpolation.None;
             }
 
             if (!HasInputAuthority) return;

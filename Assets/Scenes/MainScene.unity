@@ -2246,7 +2246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88230848386761045af440d808ee3efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fusion.Unity::Fusion.FusionBootstrap
-  RunnerPrefab: {fileID: 276190744}
+  RunnerPrefab: {fileID: 276190742}
   StartMode: 0
   AutoStartAs: 2
   AutoHideGUI: 1
@@ -2282,11 +2282,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 276190740}
-  - component: {fileID: 276190744}
-  - component: {fileID: 276190743}
-  - component: {fileID: 276190742}
-  - component: {fileID: 276190745}
   - component: {fileID: 276190741}
+  - component: {fileID: 276190742}
+  - component: {fileID: 276190743}
   m_Layer: 0
   m_Name: PlayerSpanwer
   m_TagString: Untagged
@@ -2322,7 +2320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.SelectUIScene.PlayerSpawner
   container: {fileID: 718419871}
-  playerPrefab: {fileID: 8729207244763384829, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+  playerPrefab: {fileID: 430697068044884134, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
   partDataList:
   - {fileID: 11400000, guid: 99c751fb38f6b0e41ad96f85404ea050, type: 2}
   - {fileID: 11400000, guid: 1e3c9a0684a7d3a42a7e07d7585f7d4a, type: 2}
@@ -2335,9 +2333,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 276190739}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8edbe7108d8a43ab838cf8b8d9453df, type: 3}
+  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Fusion.Unity::Fusion.RunnerEnableVisibility
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkRunner
 --- !u!114 &276190743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2404,30 +2402,6 @@ MonoBehaviour:
   OnObjectExitAOI:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &276190744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276190739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkRunner
---- !u!114 &276190745
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 276190739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05df563ab9a94ac097a13ae829630f51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Network.RunnerProvider
 --- !u!1 &289714394
 GameObject:
   m_ObjectHideFlags: 0
@@ -4057,6 +4031,7 @@ GameObject:
   - component: {fileID: 398126037}
   - component: {fileID: 398126036}
   - component: {fileID: 398126035}
+  - component: {fileID: 398126039}
   m_Layer: 5
   m_Name: Start Canvas
   m_TagString: Untagged
@@ -4151,6 +4126,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &398126039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398126034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f924f42326234eb5b1693c74c81176fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.GameSystem.StartUIEnable
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -21852,6 +21839,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 430697068044884134, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 2056163982
+      objectReference: {fileID: 0}
+    - target: {fileID: 430697068044884134, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 439402688701810534, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 441727115
@@ -21900,9 +21895,105 @@ PrefabInstance:
       propertyPath: SortKey
       value: 3713841321
       objectReference: {fileID: 0}
-    - target: {fileID: 5049773290760746913, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+    - target: {fileID: 4875399403993044896, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 4875399403993044896, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
-      value: 968543609
+      value: 426976859
+      objectReference: {fileID: 0}
+    - target: {fileID: 4875399403993044896, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4875399403993044896, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4877509066077585339, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 4877509066077585339, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 1796696123
+      objectReference: {fileID: 0}
+    - target: {fileID: 4877509066077585339, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4877509066077585339, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044385035853222019, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044385035853222019, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 1096522674
+      objectReference: {fileID: 0}
+    - target: {fileID: 5044385035853222019, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822966420205995825, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 3306897900
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822966420205995825, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607164584675512580, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607164584675512580, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 1325307628
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607164584675512580, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607164584675512580, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6908295986261129180, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 2597529551
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954758458828442975, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954758458828442975, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 2092457810
+      objectReference: {fileID: 0}
+    - target: {fileID: 6954758458828442975, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7352685920395203660, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: Flags
+      value: 262402
+      objectReference: {fileID: 0}
+    - target: {fileID: 7352685920395203660, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: SortKey
+      value: 3988298764
+      objectReference: {fileID: 0}
+    - target: {fileID: 7352685920395203660, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NestedObjects.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7352685920395203660, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8729207244763384829, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: m_Name
@@ -24655,6 +24746,8 @@ MonoBehaviour:
   rotTargetTrm: {fileID: 7722158019845411700}
   moveTargetTrm: {fileID: 0}
   controller: {fileID: 0}
+  _NetworkDirection: {x: 0, y: 0, z: 0}
+  _NetworkWeaponMove: 0
   zCurve:
     serializedVersion: 2
     m_Curve: []
