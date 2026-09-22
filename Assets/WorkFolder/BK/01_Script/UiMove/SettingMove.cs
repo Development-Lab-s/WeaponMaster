@@ -28,6 +28,7 @@ public class SettingMove : MonoBehaviour
  
  [Header("DEBUG")]
  [SerializeField]private GameObject debugSetting;
+
  
 
  private void Start()

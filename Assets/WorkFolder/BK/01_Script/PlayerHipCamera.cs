@@ -46,6 +46,7 @@ public class PlayerHipCamera : MonoBehaviour
     private CursorLockMode savedCursorLock;
     private bool savedCursorVisible, sessionActive;
     private CinemachineBrain _brain;
+ public static bool IsCameraEnable = false;
 
     private Vector3 Up => playerRoot.up.normalized;
     private Vector3 Forward
@@ -94,8 +95,9 @@ public class PlayerHipCamera : MonoBehaviour
         _brain.enabled = false;
         originalPosition = playerRoot.InverseTransformPoint(transform.position);
         originalRotation = Quaternion.Inverse(playerRoot.rotation) * transform.rotation;
-        savedCursorLock = Cursor.lockState;
-        savedCursorVisible = Cursor.visible;
+        IsCameraEnable = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         sessionActive = true;
         controllerStates = new bool[cameraControllers == null ? 0 : cameraControllers.Length];
         for (int i = 0; i < controllerStates.Length; i++)
@@ -109,8 +111,7 @@ public class PlayerHipCamera : MonoBehaviour
             controllerStates[i] = control.enabled;
             control.enabled = false;
         }
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+
         // Keep only the initial horizontal direction, not the camera's distance
         // or height. Freeze the orbit plane so turning the player cannot add
         // extra rotation to the camera's one full revolution.
@@ -125,6 +126,9 @@ public class PlayerHipCamera : MonoBehaviour
     public void ReturnToNormal()
     {
         if (!sessionActive || state == State.Returning) return;
+        IsCameraEnable = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         bool wasHip = state == State.Hip;
         Begin(State.Returning);
         if (wasHip)
@@ -149,7 +153,10 @@ public class PlayerHipCamera : MonoBehaviour
         {
             bool wasHip = state == State.Hip;
             RestoreControl();
-            if (wasHip) onHipViewExited.Invoke();
+            if (wasHip)
+            {
+                onHipViewExited.Invoke();
+            }
             return;
         }
         elapsed += Time.unscaledDeltaTime;
@@ -231,7 +238,6 @@ public class PlayerHipCamera : MonoBehaviour
             rightLeg = selected.GetBoneTransform(HumanBodyBones.RightUpperLeg);
             head = selected.GetBoneTransform(HumanBodyBones.Head);
         }
-        // Generic rigs, including the supplied character (1).fbx.
         Transform searchRoot = selected != null ? selected.transform : playerRoot;
         Transform[] bones = searchRoot.GetComponentsInChildren<Transform>(true);
         if (hips == null) hips = FindBone(bones, "root", "hips", "hip");
