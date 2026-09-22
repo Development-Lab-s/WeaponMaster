@@ -11,6 +11,8 @@ public class NicknameInputUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private RectTransform inputRect;
+    [SerializeField] private TMP_Text infoText;
+    [SerializeField] private RectTransform infoRect;
     [SerializeField] private TMP_Text warningText;
     [SerializeField] private RectTransform warningRect;
     private Vector2 originalPos;
@@ -25,6 +27,9 @@ public class NicknameInputUI : MonoBehaviour
     
     [Header("Banned")]
     [SerializeField] private string[] bannedWords;
+
+    public bool _currentSaveNickname;
+    
     private void Awake()
     {
         inputField.onValueChanged.AddListener(SetUI);
@@ -50,7 +55,7 @@ public class NicknameInputUI : MonoBehaviour
         inputRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width + horizontalPadding);
     }
 
-    private async void NameChange(string text)
+    public async void NameChange(string text)
     {
         text = text.Trim();
         if (!LengthCheck(text)) return;
@@ -67,7 +72,11 @@ public class NicknameInputUI : MonoBehaviour
             bool result = await service.PlayerNameChange(text);
             if (this == null) return;
             if (result)
+            {
                 warningText.gameObject.SetActive(false);
+                _currentSaveNickname = true;
+                ShowInformation("닉네임이 성공적으로 저장되었습니다");
+            }
             else
                 ShowWarning("이미 있는 닉네임 입니다.");
         }
@@ -77,6 +86,28 @@ public class NicknameInputUI : MonoBehaviour
             if (this != null) ShowWarning("닉네임 저장에 실패했습니다. 다시 시도해주세요.");
         }
     }
+
+    private void ShowInformation(string info)
+    {
+        infoText.text = info;
+        infoText.gameObject.SetActive(true);
+
+        Color color = infoText.color;
+        color.a = 1f;
+        infoText.color = color;
+        
+        infoRect.anchoredPosition = originalPos + Vector2.down * 20f;
+
+        infoRect.DOKill();
+        Sequence seq = DOTween.Sequence();
+        
+        seq.Append(infoRect.DOAnchorPos(originalPos, 0.25f));
+        seq.AppendInterval(0.8f);
+        seq.Append(infoText.DOFade(0f, 0.5f));
+
+        seq.OnComplete(() => { infoText.gameObject.SetActive(false); });
+    }
+
     private bool LengthCheck(string nickname)
     {
         if (nickname.Length >= minLength && nickname.Length <= maxLength) return true;

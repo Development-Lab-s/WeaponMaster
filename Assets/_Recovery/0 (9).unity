@@ -2246,7 +2246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88230848386761045af440d808ee3efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fusion.Unity::Fusion.FusionBootstrap
-  RunnerPrefab: {fileID: 276190742}
+  RunnerPrefab: {fileID: 276190744}
   StartMode: 0
   AutoStartAs: 2
   AutoHideGUI: 1
@@ -2282,9 +2282,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 276190740}
-  - component: {fileID: 276190741}
-  - component: {fileID: 276190742}
+  - component: {fileID: 276190744}
   - component: {fileID: 276190743}
+  - component: {fileID: 276190742}
+  - component: {fileID: 276190745}
+  - component: {fileID: 276190741}
   m_Layer: 0
   m_Name: PlayerSpanwer
   m_TagString: Untagged
@@ -2333,9 +2335,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 276190739}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Script: {fileID: 11500000, guid: b8edbe7108d8a43ab838cf8b8d9453df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkRunner
+  m_EditorClassIdentifier: Fusion.Unity::Fusion.RunnerEnableVisibility
 --- !u!114 &276190743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2402,6 +2404,30 @@ MonoBehaviour:
   OnObjectExitAOI:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &276190744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276190739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkRunner
+--- !u!114 &276190745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276190739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05df563ab9a94ac097a13ae829630f51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Network.RunnerProvider
 --- !u!1 &289714394
 GameObject:
   m_ObjectHideFlags: 0
@@ -4031,7 +4057,6 @@ GameObject:
   - component: {fileID: 398126037}
   - component: {fileID: 398126036}
   - component: {fileID: 398126035}
-  - component: {fileID: 398126039}
   m_Layer: 5
   m_Name: Start Canvas
   m_TagString: Untagged
@@ -4126,18 +4151,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &398126039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 398126034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f924f42326234eb5b1693c74c81176fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.GameSystem.StartUIEnable
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -5043,9 +5056,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394a0ca11db88424091e269f59698439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VivoxManager
-  audibleDistance: 32
+  audibleDistance: 15
   conversationalDistance: 2
-  fadeIntensity: 2.1
+  fadeIntensity: 4.3
   updateInterval: 0.3
   minMoveDistance: 0.05
   minRotationAngle: 1

@@ -199,6 +199,7 @@ namespace _00.Scripts.Lobby
                 _realSessionList.Add(session);
 
                 Debug.Log($"방 발견: {session.Name}");
+                Debug.Log($"방 발견: {session.PlayerCount}");
 
                 bool isPrivate = false;
 
