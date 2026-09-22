@@ -129,7 +129,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
         public async void GetPlayerCustomData(string targetPlayerId)
         {
 
-        }
+        }   
 
         public void AfterInit()
         {

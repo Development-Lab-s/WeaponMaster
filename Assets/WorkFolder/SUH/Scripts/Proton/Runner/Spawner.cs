@@ -60,7 +60,7 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
             PartOffsetDataSO partData = partDataList[pack.Item1];
             
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);
-         
+            
             /*_playerId = AuthenticationService.Instance.PlayerId;
             
             _mpb = new MaterialPropertyBlock();
@@ -69,7 +69,8 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
             _service = ServiceLocator.Get<IDataStoreService>();
             NetworkColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
-                
+            
+        
             InitInfo();
             PlayerBodyColorChange();*/
         }
