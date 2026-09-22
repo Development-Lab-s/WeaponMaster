@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// V3.2: 짧은 보간으로 이동하며 미처리 이동량을 누적하지 않습니다. Grid 계층은 유지합니다.
 [DisallowMultipleComponent]
 [RequireComponent(typeof(RectTransform))]
 [DefaultExecutionOrder(200)]
-public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler //난 바이브 인간 입니다 V3
+public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler 
 {
     [Serializable]
     public class WeaponEntry

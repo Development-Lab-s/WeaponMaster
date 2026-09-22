@@ -149,6 +149,8 @@ namespace _00.Scripts.Lobby
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>()
             });
 
+            
+            
             if (result.Ok)
             {
                 Debug.Log("Joined room");
@@ -156,6 +158,7 @@ namespace _00.Scripts.Lobby
             else
             {
                 Debug.Log($"Failed : {result.ShutdownReason}");
+                TextChange($"예상치 못한 오류가 발생했습니다.{result.ShutdownReason}");
             }
         }
         
