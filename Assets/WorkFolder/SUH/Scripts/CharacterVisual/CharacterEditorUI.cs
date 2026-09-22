@@ -1,3 +1,4 @@
+    using System;
     using System.Threading;
     using DevLib.ServiceLocator;
     using DG.Tweening;
@@ -15,6 +16,11 @@
             [SerializeField] private RectTransform warningRect;
 
             [SerializeField] private NicknameInputUI NicknameInputUI;
+
+            [SerializeField] private ParticleSystem[] _particleSystem;
+            [SerializeField] private SkinnedMeshRenderer _meshRenderer;
+            [SerializeField] private Material[] _bodyMaterials;
+            
             
             private uint HairStyleIndex = 0;
             private uint BodyColor;
@@ -106,6 +112,8 @@
             public void BodyColorIndexChange(string bodyColorIndex)
             {
                 BodyColor = uint.Parse(bodyColorIndex);
+                _particleSystem[Convert.ToInt32(bodyColorIndex)].Play();
+                _meshRenderer.material = _bodyMaterials[Convert.ToInt32(bodyColorIndex)];
             }
         }
     }
