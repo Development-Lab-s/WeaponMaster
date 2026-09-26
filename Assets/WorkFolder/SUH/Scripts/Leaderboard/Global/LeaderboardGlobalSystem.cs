@@ -6,6 +6,7 @@ using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.Leaderboard.Global.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
