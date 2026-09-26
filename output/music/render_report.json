@@ -1,0 +1,21 @@
+{
+  "title": "Quiet Courtyard",
+  "bpm": 80,
+  "key": "D major",
+  "bars": 32,
+  "seconds": 96.0,
+  "sample_rate": 44100,
+  "channels": 2,
+  "bits": 16,
+  "note_events": 446,
+  "peak_dbfs": -5.201101323066398,
+  "rms_dbfs": -19.999999223420986,
+  "clipped_samples": 0,
+  "loop_boundary_delta": 0.0018658414483070374,
+  "local_sample_delta_rms": 0.002309849252924323,
+  "loop_boundary_delta_dbfs": -54.58250527235748,
+  "stereo_correlation": 0.9687515585703491,
+  "finite": true,
+  "master": "C:\\It's Trash\\DickSlayer\\Assets\\WorkFolder\\BK\\06_Audio\\BGM\\Lobby_Quiet_Courtyard_80BPM.wav",
+  "render_seed": 260926
+}
