@@ -7,6 +7,7 @@ using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
 using WorkFolder.PAP.Scripts.SO.DataFolder;
+using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
@@ -60,6 +61,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         private GameObject _weaponPrefab;
         private FootStepController _footStepper;
 
+        [SerializeField]private Material[] _bodyMaterials;
         private void OnEnable()
         {
             if (All == null) All = new List<Player>();
@@ -235,7 +237,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
-            ColorChanged();
+
 
             if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
@@ -250,7 +252,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             
             playerId = AuthenticationService.Instance.PlayerId;
             _service = ServiceLocator.Get<IDataStoreService>();
-            loadedColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
+            uint value = await ServiceLocator.Get<IDataStoreService>().GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+            NetWorkedColor = _bodyMaterials[value].color;
+            ColorChanged();
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
             
             TeleportTo(transform.position, transform.rotation);

@@ -18,6 +18,7 @@ public class LobbyTabManager : MonoBehaviour
     [Header("tab")]
     public RectTransform tabBar;
     public RectTransform upPosition;
+    public RectTransform originPosition;
     private static LobbyTabManager _instance;
     public static LobbyTabManager Instance => _instance;
     
@@ -52,7 +53,12 @@ public class LobbyTabManager : MonoBehaviour
             tabs[i].gameObject.SetActive(false);
             
         }
-        
+
+        if (clickedTab != 1)
+        {
+            tabBar.DOAnchorPos(originPosition.anchoredPosition, 0.2f);
+        }
+
         // for (int i = 0; i < tabs.Length; i++)
         // {
         //     if (i == _clickedTab)
