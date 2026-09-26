@@ -141,6 +141,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
                 await UnityServices.InitializeAsync();
 
             if (!AuthenticationService.Instance.IsSignedIn)
+
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
             _store = Lib.DataStoreService.GetDataStore<PlayerDataStore>(storeName);
