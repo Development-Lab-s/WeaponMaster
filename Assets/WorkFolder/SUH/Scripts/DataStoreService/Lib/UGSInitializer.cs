@@ -10,13 +10,8 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
     {
         public async Task AsyncInit()
         {
-            await UnityServices.InitializeAsync();
-
-            if (!AuthenticationService.Instance.IsSignedIn)
-            {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                Debug.Log($"게스트 로그인 {AuthenticationService.Instance.PlayerId}");
-            }
+            await UgsSignIn.EnsureSignedInAsync();
+            Debug.Log($"게스트 로그인 {AuthenticationService.Instance.PlayerId}");
         }
     }
 }

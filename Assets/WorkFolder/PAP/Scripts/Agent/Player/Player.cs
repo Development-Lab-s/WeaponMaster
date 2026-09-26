@@ -40,10 +40,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
         [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
 
-        [Networked] private Vector3 NetLeftGoalLocal { get; set; }
-        [Networked] private Vector3 NetRightGoalLocal { get; set; }
-        [Networked] private Quaternion NetLeftGoalLocalRotation { get; set; }
-        [Networked] private Quaternion NetRightGoalLocalRotation { get; set; }
+        [Networked] public Vector3 NetLeftGoalLocal { get; private set; }
+        [Networked] public Vector3 NetRightGoalLocal { get; private set; }
+        [Networked] public Quaternion NetLeftGoalLocalRotation { get; private set; }
+        [Networked] public Quaternion NetRightGoalLocalRotation { get; private set; }
+        [Networked] public NetworkBool NetLeftSwinging { get; private set; }
+        [Networked] public NetworkBool NetRightSwinging { get; private set; }
 
         [Networked] public NetworkString<_32> playerId { get; set; }
         
@@ -152,8 +154,20 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetLeftGoalLocalRotation = inverseRoot * left.rotation;
             NetRightGoalLocal = transform.InverseTransformPoint(right.position);
             NetRightGoalLocalRotation = inverseRoot * right.rotation;
+
+            // 스윙 중에는 FootStepController가 솔버의 지면 스냅을 끈다. 프록시는
+            // FootStepController를 끄므로 이 상태를 따로 보내지 않으면 스냅이 항상
+            // 켜진 채로 남아, 들어 올린 발까지 매 프레임 바닥으로 끌어내린다.
+            FootTargetSolver leftSolver = _footStepper.LeftSolver;
+            FootTargetSolver rightSolver = _footStepper.RightSolver;
+            if (leftSolver != null) NetLeftSwinging = !leftSolver.GroundSnapEnabled;
+            if (rightSolver != null) NetRightSwinging = !rightSolver.GroundSnapEnabled;
         }
 
+        // 프록시의 루트는 NetworkTransform이 remote time(보간된 과거 시점)으로 그린다.
+        // [Networked] 프로퍼티를 그냥 읽으면 보간되지 않은 최신 스냅샷이 나오므로,
+        // 몸은 과거인데 발은 현재가 되어 심어 둔 발이 속도에 비례해 뒤로 밀린다.
+        // 같은 NetworkObject의 스냅샷 버퍼로 보간해 루트와 같은 시간대를 맞춘다.
         private void ApplyFootGoals()
         {
             if (HasStateAuthority) return;
@@ -162,13 +176,47 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (_footStepper.enabled)
                 _footStepper.enabled = false;
 
+            Vector3 leftLocal;
+            Vector3 rightLocal;
+            Quaternion leftLocalRotation;
+            Quaternion rightLocalRotation;
+            bool leftSwinging;
+            bool rightSwinging;
+
+            NetworkBehaviourBufferInterpolator interpolator =
+                new NetworkBehaviourBufferInterpolator(this);
+
+            if (interpolator)
+            {
+                leftLocal = interpolator.Vector3(nameof(NetLeftGoalLocal));
+                rightLocal = interpolator.Vector3(nameof(NetRightGoalLocal));
+                leftLocalRotation = interpolator.Quaternion(nameof(NetLeftGoalLocalRotation));
+                rightLocalRotation = interpolator.Quaternion(nameof(NetRightGoalLocalRotation));
+                leftSwinging = interpolator.NetworkBool(nameof(NetLeftSwinging));
+                rightSwinging = interpolator.NetworkBool(nameof(NetRightSwinging));
+            }
+            else
+            {
+                leftLocal = NetLeftGoalLocal;
+                rightLocal = NetRightGoalLocal;
+                leftLocalRotation = NetLeftGoalLocalRotation;
+                rightLocalRotation = NetRightGoalLocalRotation;
+                leftSwinging = NetLeftSwinging;
+                rightSwinging = NetRightSwinging;
+            }
+
             left.SetPositionAndRotation(
-                transform.TransformPoint(NetLeftGoalLocal),
-                transform.rotation * NetLeftGoalLocalRotation);
+                transform.TransformPoint(leftLocal),
+                transform.rotation * leftLocalRotation);
 
             right.SetPositionAndRotation(
-                transform.TransformPoint(NetRightGoalLocal),
-                transform.rotation * NetRightGoalLocalRotation);
+                transform.TransformPoint(rightLocal),
+                transform.rotation * rightLocalRotation);
+
+            FootTargetSolver leftSolver = _footStepper.LeftSolver;
+            FootTargetSolver rightSolver = _footStepper.RightSolver;
+            if (leftSolver != null) leftSolver.GroundSnapEnabled = !leftSwinging;
+            if (rightSolver != null) rightSolver.GroundSnapEnabled = !rightSwinging;
         }
 
         public override void Render()
@@ -192,7 +240,15 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
             NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
             NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
-            
+
+            // 퍼펫과 같은 이유: 프록시 무기도 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 한다.
+            if (!HasStateAuthority)
+            {
+                foreach (Rigidbody weaponBody in
+                         NetSpawnedWeapon.GetComponentsInChildren<Rigidbody>(true))
+                    weaponBody.interpolation = RigidbodyInterpolation.None;
+            }
+
             Transform rotPart = FindChildHelper(targetPuppet, "spine");
             if (rotPart != null && rotPart.TryGetComponent<ConfigurableJoint>(out var joint))
             {
@@ -247,6 +303,33 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 rootBody.interpolation = RigidbodyInterpolation.None;
             }
 
+            // 프리팹은 저장된 위치에서 생성(Awake)된 뒤 Spawn 위치로 옮겨진다. 퍼펫 강체를
+            // 옮겨진 transform에 즉시 맞추고 속도를 지운다. 예전처럼 await 뒤에 하면
+            // 데이터를 받는 동안 퍼펫이 옛 위치를 향해 날뛰다가 나중에 한 번 더 튄다.
+            if (HasStateAuthority)
+                TeleportTo(transform.position, transform.rotation);
+
+            if (!HasStateAuthority)
+            {
+                Transform puppetRoot = targetPuppet != null ? targetPuppet : transform;
+                foreach (StablePuppetJoint joint in
+                         puppetRoot.GetComponentsInChildren<StablePuppetJoint>(true))
+                    joint.SetProxyMode(true);
+
+                // 프록시 퍼펫은 NetworkTransform이 Render에서 옮기는 루트에 끌려가며 이동한다.
+                // 보간이 켜져 있으면 물리 스텝이 없는 프레임마다 Unity가 이전 물리 포즈로
+                // transform을 되돌려 그 이동분을 버린다. 관절 추종이 없는 골반이 가장 많이
+                // 뒤처지고, 드라이버를 따라 앞으로 당겨지는 척추가 그 위에서 앞으로 꺾인다.
+                foreach (Rigidbody puppetBody in
+                         puppetRoot.GetComponentsInChildren<Rigidbody>(true))
+                    puppetBody.interpolation = RigidbodyInterpolation.None;
+            }
+
+            // OnChangedRender는 스폰 이후의 변경만 알린다. 나중에 들어온 클라이언트는
+            // 이미 정해진 색을 변경으로 받지 못하므로 스폰 시점 값을 한 번 적용한다.
+            if (!HasInputAuthority && NetWorkedColor.a > 0f)
+                ColorChanged();
+
             if (!HasInputAuthority) return;
             playerInput.OnAttackKeyPressed += HandleAttack;
             
@@ -256,10 +339,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetWorkedColor = _bodyMaterials[value].color;
             ColorChanged();
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
-            
-            TeleportTo(transform.position, transform.rotation);
-            RPC_SetColor(loadedColor);
-            
         }
 
 

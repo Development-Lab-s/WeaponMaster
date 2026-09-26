@@ -1051,7 +1051,7 @@ MonoBehaviour:
   castUpDistance: 0.45
   castDownDistance: 0.85
   groundClearance: 0.02
-  groundedDistance: 0.08
+  groundedDistance: 0.12
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98
@@ -2809,7 +2809,7 @@ MonoBehaviour:
   castUpDistance: 0.45
   castDownDistance: 0.85
   groundClearance: 0.02
-  groundedDistance: 0.08
+  groundedDistance: 0.12
   maximumSlope: 50
   alignToGround: 1
   maximumReachRatio: 0.98
@@ -4422,7 +4422,7 @@ Transform:
   m_GameObject: {fileID: 6185401857425533173}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8349999, z: 0}
+  m_LocalPosition: {x: 0, y: 1.70418, z: -0.00634}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5020,14 +5020,14 @@ MonoBehaviour:
   liftPhase: 0.45
   forwardApexProgress: 0.8
   sideApexProgress: 0.5
-  backwardApexProgress: 0.15
-  backwardStepHeightScale: 0.333
+  backwardApexProgress: 0.4
+  backwardStepHeightScale: 0.7
   swingToeLiftAngle: 12
   minimumStepDuration: 0.2
   speedForBaseDuration: 2.8
   landingLeadTime: 0.07
   strideLengthScale: 0.8
-  sideStrideScale: 1.15
+  sideStrideScale: 1
   backwardStrideScale: 1.2
   landingLimitScale: 0.5
 --- !u!1 &7849872694032200681
@@ -5564,7 +5564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 3.3
-  maxRunSpeed: 4
+  maxRunSpeed: 6
   forwardAcceleration: 2
   cameraTransform: {fileID: 0}
   rotationSpeed: 720
@@ -5613,11 +5613,26 @@ MonoBehaviour:
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   targetPuppet: {fileID: 3806932547755281271}
   MeshRenderer: {fileID: 5652856024669799113}
+  _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
+  _NetRightGoalLocal: {x: 0, y: 0, z: 0}
+  _NetLeftGoalLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+  _NetRightGoalLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+  _NetLeftSwinging:
+    RawValue: 0
+  _NetRightSwinging:
+    RawValue: 0
   _playerId:
     _length: 0
     _data:
       Data: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _NetWorkedColor: {r: 0, g: 0, b: 0, a: 0}
+  _bodyMaterials:
+  - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
+  - {fileID: 2100000, guid: 7640522a6eec417498e8709927fe28c4, type: 2}
+  - {fileID: 2100000, guid: 5fc5e68fc26df4b44b9a617606509076, type: 2}
+  - {fileID: 2100000, guid: e22f7d25c1d694741a79fc0926b2a033, type: 2}
+  - {fileID: 2100000, guid: d9a25cc07e30a5442a4b43d1bc3f1c0f, type: 2}
+  - {fileID: 2100000, guid: 45c575f64482cd0429d7250699d48e82, type: 2}
 --- !u!114 &791070000826183352
 MonoBehaviour:
   m_ObjectHideFlags: 0

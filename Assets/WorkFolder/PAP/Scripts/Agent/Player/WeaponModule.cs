@@ -45,6 +45,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             base.Initialize(owner);
             _player = owner as Player;
+            _movement = GetComponentInParent<RagdollPlayerMovement>();
             CurrentDirection = Vector3.zero;
         }
 
@@ -52,7 +53,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             _weaponRigid = GetComponentInChildren<Rigidbody>();
             _joint = _weaponRigid.transform.GetComponent<ConfigurableJoint>();
-            _movement = GetComponentInParent<RagdollPlayerMovement>();
             _weaponObject = transform.GetChild(0).gameObject;
         }
                 

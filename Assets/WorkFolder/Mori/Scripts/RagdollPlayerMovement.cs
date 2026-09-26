@@ -32,10 +32,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
     public bool IsReadyWeapon = false;
 
 
-    // FixedUpdateNetwork는 InputAuthority에서만 돌기 때문에, 프록시의 Rigidbody는
-    // linearVelocity가 영원히 0으로 남는다. 그 값을 읽는 FootStepController는
-    // 보폭 예측(_landingOffset)을 0으로 잡고, 그래서 프록시에서는 발이 몸 아래에
-    // 착지하며 뒤로 끌린다. 소유자가 쓴 실제 속도를 그대로 받아 쓴다.
+    // 소유자에서만 의미 있는 값이다. 프록시 루트는 kinematic이라 항상 0이지만,
+    // 프록시는 FootStepController를 끄고 Player가 동기화한 발 목표를 쓰므로 읽지 않는다.
     public Vector3 CurrentVelocity => _rigidbody.linearVelocity;
 
     private void Awake()
@@ -56,6 +54,23 @@ public class RagdollPlayerMovement : NetworkBehaviour
             cameraTransform = Camera.main.transform;
     }
 
+    // 퍼펫 골반은 조인트가 없는 래그돌 루트라 이 두 힘만이 높이와 방향을 잡아준다.
+    // FixedUpdateNetwork는 InputAuthority에서만 돌기 때문에 거기 두면 프록시의
+    // 골반은 받침도 회전도 받지 못해 처지고 비틀린다. 입력은 이미 모든 클라이언트에
+    // 있다: 루트 회전은 NetworkTransform이, 접지 여부는 동기화된 발 골로 로컬 계산.
+    private void FixedUpdate()
+    {
+        if (Runner == null || Object == null) return;
+
+        bool hasWalkableGround = TryGetWalkableGround(out _);
+        ApplyPuppetPelvisLift(hasWalkableGround);
+
+        Quaternion rootRotation = HasInputAuthority
+            ? _rigidbody.rotation
+            : transform.rotation;
+        RotatePuppetPelvis(rootRotation);
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable) return;
@@ -64,7 +79,6 @@ public class RagdollPlayerMovement : NetworkBehaviour
         Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
         bool hasWalkableGround = TryGetWalkableGround(
             out Vector3 groundNormal);
-        ApplyPuppetPelvisLift(hasWalkableGround);
         float airborneVerticalVelocity =
             _rigidbody.linearVelocity.y
             - airborneGravity * Time.fixedDeltaTime;
@@ -85,6 +99,14 @@ public class RagdollPlayerMovement : NetworkBehaviour
             {
                 speed = 2.4f;
                 _currentForwardSpeed = speed;
+            }
+            else if (_input.HasForwardInput && _input.IsSprintPressed)
+            {
+                _currentForwardSpeed = Mathf.MoveTowards(
+                    _currentForwardSpeed,
+                    Mathf.Max(walkSpeed, maxRunSpeed),
+                    forwardAcceleration * Time.fixedDeltaTime);
+                speed = _currentForwardSpeed;
             }
             else
             {
@@ -192,7 +214,6 @@ public class RagdollPlayerMovement : NetworkBehaviour
             rotationSpeed * Time.fixedDeltaTime);
 
         _rigidbody.MoveRotation(nextRotation);
-        RotatePuppetPelvis(nextRotation);
 
         return cameraYawRotation;
     }

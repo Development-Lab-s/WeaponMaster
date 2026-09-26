@@ -6,6 +6,7 @@
     using UnityEngine;
     using UnityEngine.Events;
     using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
+    using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
     namespace WorkFolder.SUH.Scripts.CharacterVisual
     {
@@ -41,6 +42,12 @@
                     HairStyleIndex--;
                 
                 HairStyleUserInterfaceChange();
+            }
+
+            private async void Start()
+            {
+                uint value = await ServiceLocator.Get<IDataStoreService>().GetAsync<uint>("BodyColor");
+                _meshRenderer.material = _bodyMaterials[value];
             }
 
             public void ChangePlayerName(string playerName)

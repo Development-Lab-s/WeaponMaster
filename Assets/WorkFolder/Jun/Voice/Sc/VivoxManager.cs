@@ -48,15 +48,7 @@ public sealed class VivoxManager : MonoBehaviour
 
     private async Task InitializeVivoxAsync()
     {
-        if (UnityServices.State == ServicesInitializationState.Uninitialized)
-        {
-            await UnityServices.InitializeAsync();
-        }
-
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
+        await WorkFolder.SUH.Scripts.DataStoreService.Lib.UgsSignIn.EnsureSignedInAsync();
 
         await VivoxService.Instance.InitializeAsync();
         await VivoxService.Instance.LoginAsync();
