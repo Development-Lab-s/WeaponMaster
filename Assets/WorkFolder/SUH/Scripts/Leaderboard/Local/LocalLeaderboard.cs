@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
-using Unity.Services.CloudSave;
-using Unity.Services.CloudSave.Models.Data.Player;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -82,23 +80,23 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         public bool RemovePlayer(string playerId)
         {
-            bool removed = false;
+            bool dbounce = false;
             lock (_lock)
             {
                 int index = entries.FindIndex(e => e.PlayerId == playerId);
                 if (index >= 0)
                 {
                     entries.RemoveAt(index);
-                    removed = true;
+                    dbounce = true;
                 }
             }
 
-            if (removed)
+            if (dbounce)
             {
                 LeaderboardChanged?.Invoke();
             }
 
-            return removed;
+            return dbounce;
         }
 
         public LocalLeaderboardEntry GetEntry(string playerId)
