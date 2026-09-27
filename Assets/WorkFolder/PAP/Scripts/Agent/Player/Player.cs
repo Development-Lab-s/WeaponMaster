@@ -7,6 +7,7 @@ using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
 using WorkFolder.PAP.Scripts.SO.DataFolder;
+using WorkFolder.PAP.Scripts.WeaponSystem;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -264,7 +265,18 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             {
                 if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
                 {
-                    weaponJoint.connectedBody = targetNetObj.GetComponent<Rigidbody>();
+                    Rigidbody partBody = targetNetObj.GetComponent<Rigidbody>();
+
+                    // 날 비틀림 축은 조인트가 연결되기 전에 설정해야 연결 시점의 기준에 반영된다.
+                    if (weaponJoint is ConfigurableJoint configurableJoint)
+                    {
+                        if (!NetSpawnedWeapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
+                            edgeAligner = NetSpawnedWeapon.gameObject.AddComponent<WeaponEdgeAligner>();
+
+                        edgeAligner.Bind(configurableJoint, partBody, GetComponent<Rigidbody>());
+                    }
+
+                    weaponJoint.connectedBody = partBody;
                 }
             }
 
