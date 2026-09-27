@@ -1,9 +1,14 @@
-﻿using System;
+﻿ using System;
 using DevLib.ServiceLocator;
 using Fusion;
+using Unity.Services.Authentication;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.MainSystems;
 using WorkFolder.PAP.Scripts.Network;
+using WorkFolder.SUH.Scripts.DataStoreService;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.GameSystem
 {
@@ -11,12 +16,24 @@ namespace WorkFolder.PAP.Scripts.GameSystem
     {        
         private ICameraService _service;
         private bool _isFirstTime = true;
+        NetworkRunner runner = null;
 
-        private void Start()
+        private async void Start()
         {
             _service = ServiceLocator.Get<ICameraService>();
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
+            foreach (NetworkRunner candidate in
+                     FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
+            {
+                if (candidate != null && candidate.IsRunning)
+                {
+                    runner = candidate;
+                    break;
+                }
+            }
+
+
         }
 
         private void OnEnable()
@@ -28,17 +45,8 @@ namespace WorkFolder.PAP.Scripts.GameSystem
             }
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
-            NetworkRunner runner = null;
 
-            foreach (NetworkRunner candidate in
-                     FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
-            {
-                if (candidate != null && candidate.IsRunning)
-                {
-                    runner = candidate;
-                    break;
-                }
-            }
+
 
             if (runner == null) return;
             

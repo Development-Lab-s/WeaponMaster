@@ -14,6 +14,7 @@ using WorkFolder.PAP.Scripts.WeaponSystem;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
 {
@@ -31,6 +32,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [field:SerializeField] public SettingValueSO SettingValue;
         [SerializeField]private Transform targetPuppet;
         [SerializeField] private TextMeshPro nameTag;
+        [SerializeField] private GameObject nameTitleObj;
 
         public static List<Player> All { get; private set; }
         public IAgentMovement AgentMover { get; private set; }
@@ -233,8 +235,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         void NameChanged()
         {
             nameTag.SetText(playerName.ToString());
+
         }
-        
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.ToString());
+        }
+
         private void AttachWeaponLocal()
         {
             NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
@@ -302,6 +310,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
+
+            
             if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
                 rootBody.linearVelocity = Vector3.zero;
@@ -309,9 +319,22 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 rootBody.isKinematic = true;
                 rootBody.interpolation = RigidbodyInterpolation.None;
             }
-            
+
             if (HasStateAuthority)
+            {
+                nameTitleObj.SetActive(false);
                 TeleportTo(transform.position, transform.rotation);
+                
+                playerInput.OnAttackKeyPressed += HandleAttack;
+            
+                playerId = AuthenticationService.Instance.PlayerId;
+                _service = ServiceLocator.Get<IDataStoreService>();
+                playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+                NetWorkedColor = _bodyMaterials[value].color;
+                ColorChanged();
+                HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            }
 
             if (!HasStateAuthority)
             {
@@ -324,17 +347,11 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                          puppetRoot.GetComponentsInChildren<Rigidbody>(true))
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
-
-            if (!HasInputAuthority) return;
-            playerInput.OnAttackKeyPressed += HandleAttack;
             
-            playerId = AuthenticationService.Instance.PlayerId;
-            _service = ServiceLocator.Get<IDataStoreService>();
-            playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
-            uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
-            NetWorkedColor = _bodyMaterials[value].color;
-            ColorChanged();
-            HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            string val = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+            await ServiceLocator.Get<ILeaderboardGiver>().MakePlayer(playerId.ToString(),val
+            );
         }
 
 

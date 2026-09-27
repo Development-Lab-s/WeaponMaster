@@ -3544,7 +3544,7 @@ Transform:
   m_GameObject: {fileID: 180451898}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -29.6, y: 0.311, z: 53}
+  m_LocalPosition: {x: -29.6, y: 4.5, z: 53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6716,7 +6716,7 @@ Transform:
   m_GameObject: {fileID: 365465316}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 42.6, y: 0.311, z: -53.8}
+  m_LocalPosition: {x: 42.6, y: 4.5, z: -53.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7025,7 +7025,7 @@ Transform:
   m_GameObject: {fileID: 386775962}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 46.3, y: 0.311, z: 42}
+  m_LocalPosition: {x: 46.3, y: 4.5, z: 42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7881,13 +7881,7 @@ MonoBehaviour:
   soundSet: {fileID: 683560505}
   mouseSet: {fileID: 834415063}
   debugSet: {fileID: 894208461}
-  select: {fileID: 1579664433}
-  selectPos1: {fileID: 694815042}
-  selectPos2: {fileID: 245291074}
-  selectPos3: {fileID: 1863211942}
-  previewSelect1: {fileID: 1969586819}
-  previewSelect2: {fileID: 871177138}
-  previewSelect3: {fileID: 1884381700}
+  mikeSet: {fileID: 0}
 --- !u!4 &425731170
 Transform:
   m_ObjectHideFlags: 0
@@ -8546,7 +8540,7 @@ Transform:
   m_GameObject: {fileID: 464950689}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -64.1, y: 0.311, z: 4.2}
+  m_LocalPosition: {x: -64.1, y: 4.5, z: 4.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9248,6 +9242,9 @@ MonoBehaviour:
   updateInterval: 0.3
   minMoveDistance: 0.05
   minRotationAngle: 1
+  microphoneEnabledByDefault: 1
+  inputDeviceVolume: 50
+  outputDeviceVolume: 50
 --- !u!4 &500152168
 Transform:
   m_ObjectHideFlags: 0
@@ -15711,13 +15708,7 @@ MonoBehaviour:
   soundSet: {fileID: 683560505}
   mouseSet: {fileID: 834415063}
   debugSet: {fileID: 894208461}
-  select: {fileID: 1579664433}
-  selectPos1: {fileID: 694815042}
-  selectPos2: {fileID: 245291074}
-  selectPos3: {fileID: 1863211942}
-  previewSelect1: {fileID: 1969586819}
-  previewSelect2: {fileID: 871177138}
-  previewSelect3: {fileID: 1884381700}
+  mikeSet: {fileID: 0}
 --- !u!4 &844247863
 Transform:
   m_ObjectHideFlags: 0
@@ -17581,7 +17572,7 @@ Transform:
   m_GameObject: {fileID: 943275847}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.311, z: 62.23}
+  m_LocalPosition: {x: -0.25, y: 4.5, z: 62.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20956,12 +20947,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -22748,7 +22739,7 @@ Transform:
   m_GameObject: {fileID: 1255708573}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -51, y: 0.311, z: 37.4}
+  m_LocalPosition: {x: -51, y: 4.5, z: 37.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28020,7 +28011,7 @@ Transform:
   m_GameObject: {fileID: 1576252737}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.4, y: 0.311, z: -69.8}
+  m_LocalPosition: {x: -2.4, y: 4.5, z: -69.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33223,7 +33214,7 @@ Transform:
   m_GameObject: {fileID: 1864260073}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -55.6, y: 0.311, z: -34.7}
+  m_LocalPosition: {x: -55.6, y: 4.5, z: -34.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37434,7 +37425,7 @@ Transform:
   m_GameObject: {fileID: 2100379046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 66.5, y: 0.311, z: -2.4}
+  m_LocalPosition: {x: 66.5, y: 4.5, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

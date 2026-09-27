@@ -8,6 +8,7 @@ using DevLib.ServiceLocator;
 using Unity.Services.Leaderboards;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Player;
+using WorkFolder.SUH.Scripts.DataStoreService;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
@@ -98,12 +99,14 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
             if (localLeaderboard == null) return;
 
-            var tasks = players.Select(plr => 
-                localLeaderboard.UpsertPlayerEntry(plr.playerId.ToString(), plr.name)
-            );
+            var tasks = players
+                .Where(plr => plr.Object != null && plr.Object.IsValid)
+                .Select(plr => (id: plr.playerId.ToString(), name: plr.playerName.ToString()))
+                .Where(p => !string.IsNullOrEmpty(p.id))
+                .Select(p => localLeaderboard.UpsertPlayerEntry(p.id, p.name))
+                .ToList();
 
             await Task.WhenAll(tasks);
-
             UpdateLeaderboard();
         }
 
@@ -142,17 +145,31 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
                     .ThenBy(entry => entry.PlayerName)
                     .Take(takeCount)
                     .ToList();
-
             UpdateLeaderboardUI(topPlayers);
         }
 
-        private void UpdateLeaderboardUI(IReadOnlyList<LocalLeaderboardEntry> topPlayers)
+        private async void UpdateLeaderboardUI(IReadOnlyList<LocalLeaderboardEntry> topPlayers)
         {
             ushort sum = 0;
+            foreach (var entry in rankingRow)
+            {
+                if (sum > 5) break;
+                entry.SetData(++sum,"",0,0);
+            }
+
+            sum = 0;
             foreach (var plr in topPlayers)
             {
-                rankingRow[sum].SetData(sum++, plr.PlayerName, Convert.ToInt32(plr.Score), Convert.ToInt32(plr.KillCount));
+                if (sum > 5) break;
+                rankingRow[sum].SetData(++sum, plr.PlayerName, Convert.ToInt32(plr.Score), Convert.ToInt32(plr.KillCount));
             }
+            if (_service == null)
+                _service = ServiceLocator.Get<IDataStoreService>();
+            string playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+            uint killCount = await _service.GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            uint score = await _service.GetAsync<uint>(nameof(PlayerDataStore.Score));
+
+            rankingRow[5].SetData(0, playerName,(int)score ,(int)killCount);
         }
         
         public async void AddScore(double score)

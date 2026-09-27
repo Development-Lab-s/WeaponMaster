@@ -5,14 +5,44 @@ using UnityEngine;
 
 public sealed class ProximityVoicePlayer : NetworkBehaviour
 {
+    [Header("Voice UI")]
+    [SerializeField]
+    private GameObject microphoneIcon;
+
+
+    [Networked, OnChangedRender(nameof(OnSpeakingChanged))]
+    public NetworkBool IsSpeaking { get; set; }
+
+
     public override void Spawned()
     {
+        // OnChangedRender는 최초 Spawn 때 호출되지 않으므로
+        // 최초 상태를 직접 반영한다.
+        ApplySpeakingVisual();
+
         if (!HasStateAuthority)
             return;
 
-        // 새 Local Player가 Spawn됐다는 것은
-        // 플레이 가능한 상태라고 본다.
-        VivoxManager.Instance?.SetPlayerAlive(true);
+        VivoxManager manager =
+            VivoxManager.Instance;
+
+        if (manager == null)
+        {
+            Debug.LogError(
+                "ProximityVoicePlayer: VivoxManager not found."
+            );
+
+            return;
+        }
+
+        manager.LocalSpeechDetectedChanged
+            += OnLocalSpeechDetectedChanged;
+
+        // 현재 상태를 한 번 직접 반영.
+        SetSpeaking(manager.IsLocalSpeaking);
+
+        // 새 Local Player는 살아있는 상태로 시작.
+        manager.SetPlayerAlive(true);
 
         _ = BindVoiceAsync();
     }
@@ -22,23 +52,19 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
     {
         try
         {
-            if (VivoxManager.Instance == null)
-            {
-                Debug.LogError(
-                    "VivoxManager not found."
-                );
+            VivoxManager manager =
+                VivoxManager.Instance;
 
+            if (manager == null)
                 return;
-            }
 
             string roomName =
                 Runner.SessionInfo.Name;
 
-            await VivoxManager.Instance
-                .BindToFusionRoomAsync(
-                    roomName,
-                    gameObject
-                );
+            await manager.BindToFusionRoomAsync(
+                roomName,
+                gameObject
+            );
         }
         catch (Exception exception)
         {
@@ -47,18 +73,65 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
     }
 
 
-    // 죽음 시스템에서 호출.
+    // -----------------------------
+    // Speaking
+    // -----------------------------
+
+    private void OnLocalSpeechDetectedChanged(
+        bool isSpeaking)
+    {
+        if (!HasStateAuthority)
+            return;
+
+        SetSpeaking(isSpeaking);
+    }
+
+
+    private void SetSpeaking(bool isSpeaking)
+    {
+        if (!HasStateAuthority)
+            return;
+
+        if (IsSpeaking == isSpeaking)
+            return;
+
+        IsSpeaking = isSpeaking;
+
+        ApplySpeakingVisual();
+    }
+
+
+    private void OnSpeakingChanged()
+    {
+        ApplySpeakingVisual();
+    }
+
+
+    private void ApplySpeakingVisual()
+    {
+        if (microphoneIcon == null)
+            return;
+
+        microphoneIcon.SetActive(IsSpeaking);
+    }
+
+
+    // -----------------------------
+    // Death / Respawn
+    // -----------------------------
+
     public void NotifyDeath()
     {
         if (!HasStateAuthority)
             return;
+
+        SetSpeaking(false);
 
         VivoxManager.Instance?
             .SetPlayerAlive(false);
     }
 
 
-    // 같은 NetworkObject를 재사용하는 리스폰 구조라면 호출.
     public void NotifyRespawn()
     {
         if (!HasStateAuthority)
@@ -69,10 +142,16 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
     }
 
 
+    // -----------------------------
+    // Despawn
+    // -----------------------------
+
     public override void Despawned(
         NetworkRunner runner,
         bool hasState)
     {
+        microphoneIcon?.SetActive(false);
+
         if (!hasState)
             return;
 
@@ -82,10 +161,13 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
         if (manager == null)
             return;
 
-        // Local Player 자체가 사라졌으면
-        // 마이크도 안전하게 차단.
+        manager.LocalSpeechDetectedChanged
+            -= OnLocalSpeechDetectedChanged;
+
         manager.SetPlayerAlive(false);
 
-        manager.UnbindLocalPlayer(gameObject);
+        manager.UnbindLocalPlayer(
+            gameObject
+        );
     }
 }
