@@ -1147,6 +1147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResolutionDropdown
   dropdown: {fileID: 2070139000}
   screenMode: 3
+  fullscreenToggle: {fileID: 0}
 --- !u!4 &119967625
 Transform:
   m_ObjectHideFlags: 0
@@ -2847,6 +2848,7 @@ MonoBehaviour:
   partDataList:
   - {fileID: 11400000, guid: 99c751fb38f6b0e41ad96f85404ea050, type: 2}
   - {fileID: 11400000, guid: 1e3c9a0684a7d3a42a7e07d7585f7d4a, type: 2}
+  playerSpawnPoints: []
 --- !u!114 &276190742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3260,6 +3262,9 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
+  OnPlay:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &323641081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5220,13 +5225,7 @@ MonoBehaviour:
   soundSet: {fileID: 683560505}
   mouseSet: {fileID: 834415063}
   debugSet: {fileID: 894208461}
-  select: {fileID: 1579664433}
-  selectPos1: {fileID: 694815042}
-  selectPos2: {fileID: 245291074}
-  selectPos3: {fileID: 1863211942}
-  previewSelect1: {fileID: 1969586819}
-  previewSelect2: {fileID: 871177138}
-  previewSelect3: {fileID: 1884381700}
+  mikeSet: {fileID: 0}
 --- !u!4 &425731170
 Transform:
   m_ObjectHideFlags: 0
@@ -8277,6 +8276,9 @@ MonoBehaviour:
   impactDuration: 0.25
   fadeGroup: {fileID: 0}
   fadeFrom: 0
+  OnPlay:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &735983677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9376,13 +9378,7 @@ MonoBehaviour:
   soundSet: {fileID: 683560505}
   mouseSet: {fileID: 834415063}
   debugSet: {fileID: 894208461}
-  select: {fileID: 1579664433}
-  selectPos1: {fileID: 694815042}
-  selectPos2: {fileID: 245291074}
-  selectPos3: {fileID: 1863211942}
-  previewSelect1: {fileID: 1969586819}
-  previewSelect2: {fileID: 871177138}
-  previewSelect3: {fileID: 1884381700}
+  mikeSet: {fileID: 0}
 --- !u!4 &844247863
 Transform:
   m_ObjectHideFlags: 0
@@ -12177,14 +12173,14 @@ RectTransform:
   m_GameObject: {fileID: 1188127469}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 398126038}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -479, y: -105}
+  m_AnchoredPosition: {x: -479, y: -154}
   m_SizeDelta: {x: -60, y: 1060}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1188127471
@@ -18655,8 +18651,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015259, y: 257}
-  m_SizeDelta: {x: 174.8342, y: 174.8342}
+  m_AnchoredPosition: {x: -13, y: 473}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1855615580
 MonoBehaviour:
@@ -20378,8 +20374,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015259, y: -139}
-  m_SizeDelta: {x: 188.4263, y: 188.4263}
+  m_AnchoredPosition: {x: -0.000015259, y: -226}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2051246889
 MonoBehaviour:
@@ -27619,6 +27615,8 @@ MonoBehaviour:
   rotTargetTrm: {fileID: 7722158019845411700}
   moveTargetTrm: {fileID: 0}
   controller: {fileID: 0}
+  _NetworkDirection: {x: 0, y: 0, z: 0}
+  _NetworkWeaponMove: 0
   zCurve:
     serializedVersion: 2
     m_Curve: []
@@ -28053,12 +28051,26 @@ MonoBehaviour:
   playerInput: {fileID: 11400000, guid: c27951549d373b54794465388cdc4186, type: 2}
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   targetPuppet: {fileID: 0}
+  nameTag: {fileID: 0}
   MeshRenderer: {fileID: 0}
+  _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
+  _NetRightGoalLocal: {x: 0, y: 0, z: 0}
+  _NetLeftGoalLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+  _NetRightGoalLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+  _NetLeftSwinging:
+    RawValue: 0
+  _NetRightSwinging:
+    RawValue: 0
   _playerId:
     _length: 0
     _data:
       Data: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _playerName:
+    _length: 0
+    _data:
+      Data: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _NetWorkedColor: {r: 0, g: 0, b: 0, a: 0}
+  _bodyMaterials: []
 --- !u!114 &8087249015210610600
 MonoBehaviour:
   m_ObjectHideFlags: 0
