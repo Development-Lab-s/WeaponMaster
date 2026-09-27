@@ -20,18 +20,24 @@ public sealed class FootStepController : MonoBehaviour
     [SerializeField] private float liftPhase = 0.45f;
     [SerializeField] private float forwardApexProgress = 0.8f;
     [SerializeField] private float sideApexProgress = 0.5f;
-    [SerializeField] private float backwardApexProgress = 0.15f;
-    [SerializeField] private float backwardStepHeightScale = 0.333f;
+    [SerializeField] private float backwardApexProgress = 0.4f;
+    [SerializeField] private float backwardStepHeightScale = 0.7f;
     [SerializeField, Range(0f, 30f)] private float swingToeLiftAngle = 12f;
 
     [Header("Movement Prediction")]
     [SerializeField] private float minimumStepDuration = 0.2f;
     [SerializeField] private float speedForBaseDuration = 2.8f;
-    [SerializeField] private float landingLeadTime = 0.07f;
-    [SerializeField] private float strideLengthScale = 1.3f;
-    [SerializeField, Min(1f)] private float sideStrideScale = 1.15f;
-    [SerializeField, Min(1f)] private float backwardStrideScale = 1.2f;
-    [SerializeField, Min(0f)] private float landingLimitScale = 0.5f;
+    // 착지 순간 발을 고관절보다 진행 방향으로 얼마나 앞에 둘지. 딛고 있는 동안
+    // 몸이 이동하는 거리의 비율이며, 0.5면 딛는 구간이 고관절을 중심으로 앞뒤 대칭이 된다.
+    [SerializeField, Range(0f, 1f)] private float touchdownLeadRatio = 0.5f;
+    [SerializeField, Min(0f)] private float maximumTouchdownLead = 0.6f;
+    // 방향 배율은 착지 선행 거리에만 곱한다. 스윙 동안의 이동 보정에는 곱하지 않는다.
+    [SerializeField, Min(0f)] private float sideStrideScale = 1f;
+    [SerializeField, Min(0f)] private float backwardStrideScale = 1.2f;
+
+    [Header("Teleport")]
+    // 한 물리 스텝에 루트가 이보다 멀리 움직이면 걷기가 아니라 순간이동으로 보고 발을 다시 심는다.
+    [SerializeField, Min(0.1f)] private float teleportDistance = 1f;
 
     private FootState _left;
     private FootState _right;
@@ -48,12 +54,20 @@ public sealed class FootStepController : MonoBehaviour
     private float _activeStepDuration;
     private float _activeStepHeight;
     private float _stepElapsed;
+    private float _stepForwardness;
     private Vector3 _stepStartPosition;
     private Vector3 _stepLiftPosition;
     private Vector3 _stepEndPosition;
     private Quaternion _stepStartRotation;
     private Quaternion _stepEndRotation;
     private float _originFootstepDistance ;
+    private Vector3 _lastRootPosition;
+    private bool _hasLastRootPosition;
+
+    public Transform LeftFootGoal => leftFootGoal;
+    public Transform RightFootGoal => rightFootGoal;
+    public FootTargetSolver LeftSolver => _left != null ? _left.Solver : null;
+    public FootTargetSolver RightSolver => _right != null ? _right.Solver : null;
 
     private void Awake()
     {
@@ -64,8 +78,25 @@ public sealed class FootStepController : MonoBehaviour
         _originFootstepDistance = stepDistance;
     }
 
+    private void OnEnable()
+    {
+        _hasLastRootPosition = false;
+    }
+
     private void FixedUpdate()
     {
+        // 발 목표는 월드 좌표로 저장된다. 프리팹은 저장된 위치에서 Awake한 뒤 Spawn
+        // 위치로 옮겨지므로, 그대로 두면 첫 걸음들이 옛 위치에서 날아와 다리가 뒤틀린다.
+        Vector3 rootPosition = movementRoot.position;
+        if (!_hasLastRootPosition
+            || (rootPosition - _lastRootPosition).sqrMagnitude
+               > teleportDistance * teleportDistance)
+        {
+            ResetFootPlacement();
+            return;
+        }
+
+        _lastRootPosition = rootPosition;
         UpdateMovementPrediction();
 
         bool stoppedDuringStep = _stepStartedMoving && !_isMoving;
@@ -96,6 +127,16 @@ public sealed class FootStepController : MonoBehaviour
         _right.PlantAtHome(movementRoot, _landingOffset);
         _left.Apply();
         _right.Apply();
+        _lastRootPosition = movementRoot.position;
+        _hasLastRootPosition = true;
+    }
+
+    private Vector3 GetMovementVelocity()
+    {
+        if (_movementController != null)
+            return _movementController.CurrentVelocity;
+
+        return _movementBody != null ? _movementBody.linearVelocity : Vector3.zero;
     }
 
     private void TryStartStep()
@@ -149,8 +190,18 @@ public sealed class FootStepController : MonoBehaviour
         _stepStartRotation = foot.Rotation;
         _stepEndPosition = foot.GetHomePosition(movementRoot, _landingOffset);
         _stepEndRotation = foot.GetHomeRotation(movementRoot);
+
+        // 발끝 들기는 진행 방향 앞쪽 성분에 비례시킨다. 방향과 상관없이 발끝만 들면
+        // 뒤로 걸을 때는 진행 방향의 선두인 뒤꿈치가 바닥을 파고, 옆으로 걸을 때는
+        // 이유 없이 발이 앞뒤로 기울어 뒤꿈치가 뒤로 튀어나온다.
+        Vector3 stepTravel = Vector3.ProjectOnPlane(
+            _stepEndPosition - _stepStartPosition,
+            movementRoot.up);
+        _stepForwardness = stepTravel.sqrMagnitude > 0.0001f
+            ? Vector3.Dot(stepTravel.normalized, movementRoot.forward)
+            : 0f;
         Vector3 localVelocity = movementRoot.InverseTransformDirection(
-            _movementBody.linearVelocity);
+            GetMovementVelocity());
         bool movingBackward = localVelocity.z < 0f
                            && Mathf.Abs(localVelocity.z)
                            >= Mathf.Abs(localVelocity.x);
@@ -214,7 +265,7 @@ public sealed class FootStepController : MonoBehaviour
             rotationBlend);
         float toeLiftWeight = Mathf.Sin(time * Mathf.PI);
         Quaternion toeLiftRotation = Quaternion.AngleAxis(
-            -swingToeLiftAngle * toeLiftWeight,
+            -swingToeLiftAngle * toeLiftWeight * _stepForwardness,
             movementRoot.right);
         _steppingFoot.Rotation = toeLiftRotation * baseRotation;
 
@@ -229,7 +280,7 @@ public sealed class FootStepController : MonoBehaviour
     private void UpdateMovementPrediction()
     {
         Vector3 velocity = Vector3.ProjectOnPlane(
-            _movementBody.linearVelocity,
+            GetMovementVelocity(),
             movementRoot.up);
         _isMoving = velocity.sqrMagnitude > 0.01f;
         _movementDirection = velocity.normalized;
@@ -237,23 +288,17 @@ public sealed class FootStepController : MonoBehaviour
         _predictedDuration = CalculateStepDuration(velocity.magnitude);
         float directionalStrideScale = GetDirectionalStrideScale(velocity);
 
-        float maximumLandingOffset = float.PositiveInfinity;
-        if (_movementController != null)
-        {
-            float maximumSpeed = _movementController.MaximumSpeed;
-            maximumLandingOffset = maximumSpeed
-                * (CalculateStepDuration(maximumSpeed) + landingLeadTime)
-                * strideLengthScale
-                * directionalStrideScale
-                * landingLimitScale;
-        }
+        // 착지점은 스윙을 시작할 때 한 번 정해지고, 스윙하는 동안 몸은 계속 이동한다.
+        // 그 이동 거리(velocity * 스윙 시간)를 착지점에 온전히 더해야 발이 닿는 순간
+        // 고관절 앞에 떨어진다. 예전 공식은 이 보정분까지 상한과 방향 배율로 깎아서,
+        // 걷는 속도에서는 발이 항상 몸 뒤에 착지했다. 앞으로 걸을 때는 다리가 뒤로
+        // 늘어진 모양이라 티가 덜 났지만, 뒤로 걸을 때는 다리가 몸 앞에 나와 보였다.
+        Vector3 swingTravel = velocity * _predictedDuration;
+        Vector3 touchdownLead = Vector3.ClampMagnitude(
+            velocity * (_predictedDuration * touchdownLeadRatio * directionalStrideScale),
+            maximumTouchdownLead);
 
-        _landingOffset = Vector3.ClampMagnitude(
-            velocity
-                * (_predictedDuration + landingLeadTime)
-                * strideLengthScale
-                * directionalStrideScale,
-            maximumLandingOffset);
+        _landingOffset = swingTravel + touchdownLead;
     }
 
     private float GetDirectionalStrideScale(Vector3 worldVelocity)

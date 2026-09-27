@@ -132,22 +132,21 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         private Task EnsureInitializedAsync()
         {
+            if (_initializationTask != null
+                && (_initializationTask.IsFaulted || _initializationTask.IsCanceled))
+                _initializationTask = null;
+
             return _initializationTask ??= InitializeCoreAsync();
         }
 
         private async Task InitializeCoreAsync()
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
-                await UnityServices.InitializeAsync();
-
-            if (!AuthenticationService.Instance.IsSignedIn)
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await UgsSignIn.EnsureSignedInAsync();
 
             _store = Lib.DataStoreService.GetDataStore<PlayerDataStore>(storeName);
             playerDataStore = await _store.GetAsync(AuthenticationService.Instance.PlayerId)
                               ?? new PlayerDataStore();
             
-            // Cloud Code owns the canonical nickname; the public V1 profile is a display copy.
             var names = await CloudSaveService.Instance.Data.Player.LoadAsync(
                 new HashSet<string> { nameof(PlayerDataStore.PlayerName) });
             if (names.TryGetValue(nameof(PlayerDataStore.PlayerName), out var name))

@@ -30,9 +30,12 @@ namespace WorkFolder.KJS._01.Scripts
 
         private IFeedable _iFeedable;
 
-        private bool _isDead = false;
+        [Networked] public bool _isDead { get; private set; }
+
+        private bool deadEffect = true;
 
         [SerializeField] private ResetCharacter resetModule;
+        [SerializeField] private GameObject killObject;
         
         
         
@@ -59,11 +62,37 @@ namespace WorkFolder.KJS._01.Scripts
                 _iFeedable.PlayAllFeedBacks();
             if (Health <= 0 && !_isDead)
             {
-                Die(data.DeathMent.ToString());
+                Die();
                 KillLog.Instance.RPC_Kill(data.Owner, "엄준식");
             }
         }
-        
+
+        public override void Render()
+        {
+            DeadEffect();
+        }
+
+        private void DeadEffect()
+        {
+            if (_isDead && deadEffect)
+            {
+                deadEffect = false;
+                foreach (MonoBehaviour behaviour in Owner.GetComponentsInChildren<MonoBehaviour>())
+                {
+                    behaviour.enabled = false;
+                }
+
+                foreach (Rigidbody rb in Owner.GetComponentsInChildren<Rigidbody>())
+                {
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                    rb.gameObject.layer = LayerMask.NameToLayer("Died");
+                    rb.gameObject.tag = "Untagged";
+                }
+                Destroy(killObject);
+            }
+        }
+
         private void OnHealthChanged()
         {
             OnDamaged?.Invoke();

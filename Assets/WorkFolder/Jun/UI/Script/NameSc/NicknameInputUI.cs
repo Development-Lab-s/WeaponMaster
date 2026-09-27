@@ -4,6 +4,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 using Random = UnityEngine.Random;
 
 public class NicknameInputUI : MonoBehaviour
@@ -30,7 +31,7 @@ public class NicknameInputUI : MonoBehaviour
 
     public bool _currentSaveNickname;
     
-    private void Awake()
+    private async void Start()
     {
         inputField.onValueChanged.AddListener(SetUI);
         inputField.onEndEdit.AddListener(NameChange);
@@ -39,8 +40,15 @@ public class NicknameInputUI : MonoBehaviour
                      Random.Range(0, 10) * 100 +
                      Random.Range(0, 10) * 10 +
                      Random.Range(0, 10);
-        inputField.text = $"{defaultNickname} {random}";
-    }private void LateUpdate()
+        string value = await ServiceLocator.Get<IDataStoreService>().GetAsync<string>("PlayerName");
+        if (value == null)
+            inputField.text = $"{defaultNickname} {random}";
+        else 
+            inputField.text = $"{value}";
+        NameChange(inputField.text);
+        _currentSaveNickname = true;
+    }
+    private void LateUpdate()
     {
         if (!inputField.isFocused) return;
 

@@ -12,6 +12,7 @@ public class ResolutionDropdown : MonoBehaviour
 
     private readonly List<Vector2Int> resolutions =
         new List<Vector2Int>();
+    [SerializeField] private UnityEngine.UI.Toggle fullscreenToggle;
 
     private void Start()
     {
@@ -58,6 +59,9 @@ public class ResolutionDropdown : MonoBehaviour
         dropdown.RefreshShownValue();
 
         dropdown.onValueChanged.AddListener(ApplyResolution);
+        
+        screenMode = Screen.fullScreenMode;
+        fullscreenToggle.SetIsOnWithoutNotify(Screen.fullScreen);
     }
 
     private void AddResolution(int width, int height)
@@ -84,5 +88,12 @@ public class ResolutionDropdown : MonoBehaviour
     {
         if (dropdown != null)
             dropdown.onValueChanged.RemoveListener(ApplyResolution);
+    }
+
+    public void SetFullscreen(bool value)
+    {
+        screenMode = value ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        ApplyResolution(dropdown.value);
+        
     }
 }

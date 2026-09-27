@@ -1,0 +1,19 @@
+Generated using the built-in image_gen tool.
+Final asset: esc-slider-circle-v1.png
+
+Initial generation prompt:
+Use case: ui-mockup
+Asset type: ONE isolated circular slider-handle sprite for a 2D game's mouse-sensitivity settings. Square PNG with genuine transparent alpha background.
+Primary request: a simple white filled circle with a slightly shaky black outline, in the same crude MS Paint mouse-drawn style as the provided rectangular UI reference.
+Input images: Image 1 is the STYLE reference: plain white fill and uneven hand-drawn black border. Image 2 is the FUNCTION reference: the two large circular slider handles in the screenshot. Create one reusable circle sprite that can be used for both sliders; do not reproduce the screenshot.
+Composition: exactly one front-facing white circular disc, centered on a square canvas, occupying about 84 percent of the width and height, with transparent padding on all sides. Keep the overall silhouette convincingly round and balanced. A very mildly wobbly black outline, about 1 percent of the circle diameter in thickness, with tiny natural unevenness from a computer mouse drawing. A largely clean solid white interior. It should remain legible when scaled down to a small slider knob.
+Style: intentionally simple, flat, imperfect Microsoft Paint artwork. Match the first reference's uneven black boundary and white fill. Sparse little irregularities only along the contour; no heavy distressing.
+Constraints: ONE CIRCLE ONLY. Outside the circle must be fully transparent alpha=0. White interior must be opaque. No square background, no checkerboard painted into the image, no gray canvas. No inner ring or smaller circle. No letters, no labels, no slider track, no arrows, no extra UI, no scene, no duplicate circles, no highlights, no glossy button effects, no bevel, no depth, no drop shadow, no glow, no gradients, no paper texture, no watermark. This is a usable cutout sprite, not a mockup presentation.
+
+Final correction prompt:
+Use case: precise-object-edit
+Edit target: the attached circular sprite.
+Make ONE correction: completely fill the entire interior of the circle with solid opaque pure white, including its center. Replace the transparent central hole and ALL gray radial gradients with a single continuous FLAT WHITE interior. Every pixel enclosed by the black outer circular contour must be white and opaque (RGBA 255,255,255,255), except the black outline itself.
+Preserve the existing outer circular silhouette, slightly shaky hand-drawn black outline, centered placement, scale, and transparent padding outside the circle.
+The result must be a filled white disc with a black outline, like a white circle filled using the paint-bucket tool in Microsoft Paint. It must NOT be a ring, donut, hollow circle, vignette, sphere, shaded button or gradient.
+Keep pixels OUTSIDE the circular black outline fully transparent. No transparency whatsoever inside the disc. No shadows, gray patches, glow, text or new elements. Export a true RGBA transparent PNG.

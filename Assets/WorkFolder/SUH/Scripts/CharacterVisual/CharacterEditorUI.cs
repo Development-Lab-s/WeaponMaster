@@ -4,7 +4,9 @@
     using DG.Tweening;
     using TMPro;
     using UnityEngine;
+    using UnityEngine.Events;
     using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
+    using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
     namespace WorkFolder.SUH.Scripts.CharacterVisual
     {
@@ -26,6 +28,7 @@
             private uint BodyColor;
             private string PlayerName;
     private Vector2 originalPos;
+    public UnityEvent OnFinishSave;
             
 
             public void ChangeBtnHair(string count)
@@ -39,6 +42,12 @@
                     HairStyleIndex--;
                 
                 HairStyleUserInterfaceChange();
+            }
+
+            private async void Start()
+            {
+                uint value = await ServiceLocator.Get<IDataStoreService>().GetAsync<uint>("BodyColor");
+                _meshRenderer.material = _bodyMaterials[value];
             }
 
             public void ChangePlayerName(string playerName)
@@ -83,8 +92,7 @@
                     {
                         if (!await names.PlayerNameChange(PlayerName)) Debug.LogWarning("이미 있는 닉네임입니다.");
                     }
-
-                    Debug.Log("씬 변경");
+                    OnFinishSave?.Invoke();
                 }
                 catch (System.Exception exception)
                 {

@@ -2,17 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
-using Unity.Services.CloudSave;
-using Unity.Services.CloudSave.Models.Data.Player;
 using Unity.Services.Leaderboards;
 using UnityEngine;
+using WorkFolder.PAP.Scripts.Agent.Player;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
-using LoadOptions = Unity.Services.CloudSave.Models.Data.Player.LoadOptions;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 {
@@ -25,82 +26,132 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         private void OnDestroy()
         {
+            LeaderboardStop();
             DevLib.ServiceLocator.ServiceLocator.UnRegister<ILeaderboardState>(this);
         }
 
         public Action<LocalLeaderboardEntry> OnLeaderboardUpdated;
+        public Action<IReadOnlyList<LocalLeaderboardEntry>> OnLeaderboardListUpdated;
         
         [SerializeField] private LeaderboardSettingSO leaderboardSettingSO;
-
-        private string leaderBoardId;
-        private ushort offset;
-        private ushort limit;
+        [SerializeField] private RankingRow[] rankingRow; 
+        
+        
+        private string leaderBoardId = "Global_Leaderboard";
+        private ushort offset = 0;
+        private ushort limit = 10;
         private Coroutine _coroutine;
         private WaitForSeconds _wait;
+        private IDataStoreService _service;
         
         private void Start()
         {
-            if (!leaderboardSettingSO)
-                return;
-            if (leaderboardSettingSO.RefreshIntervalSeconds == null)
-                return;
-            _coroutine = null;
-            _wait = new WaitForSeconds(leaderboardSettingSO.RefreshIntervalSeconds);
-            leaderBoardId = leaderboardSettingSO.LeaderboardId == null ? "Global_Leaderboard" : leaderboardSettingSO.LeaderboardId;
-            offset = (ushort)(leaderboardSettingSO.LeaderboardFindOffset == null ? 0 : leaderboardSettingSO.LeaderboardFindOffset);
-            limit = (ushort)(leaderboardSettingSO.MaxVisibleRank == null ? 0 : leaderboardSettingSO.MaxVisibleRank);
+            float interval = 1f;
+
+            if (leaderboardSettingSO != null)
+            {
+                if (!string.IsNullOrEmpty(leaderboardSettingSO.LeaderboardId))
+                    leaderBoardId = leaderboardSettingSO.LeaderboardId;
+
+                offset = (ushort)leaderboardSettingSO.LeaderboardFindOffset;
+                limit = (ushort)leaderboardSettingSO.MaxVisibleRank;
+
+                if (leaderboardSettingSO.RefreshIntervalSeconds > 0)
+                    interval = leaderboardSettingSO.RefreshIntervalSeconds;
+            }
+
+            _wait = new WaitForSeconds(interval);
+
+            LeaderboardStart();
         }
-        
+
         public void LeaderboardStart()
         {
-            _coroutine = StartCoroutine(LeaderboardUpdateState())!;
+            if (_coroutine != null)
+                LeaderboardStop();
+
+            _coroutine = StartCoroutine(LeaderboardUpdateState());
         }
 
         public void LeaderboardStop()
         {
-            StopCoroutine(_coroutine!);
-            _coroutine = null;
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+                _coroutine = null;
+            }
         }
 
-        IEnumerator LeaderboardUpdateState()
+        private IEnumerator LeaderboardUpdateState()
         {
-            yield return _wait;
+            while (true)
+            {
+                UpdateAllPlayersData();
+                yield return _wait;
+            }
+        }
+
+        private async void UpdateAllPlayersData()
+        {
+            var players = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var localLeaderboard = ServiceLocator.Get<ILeaderboardGiver>() as LocalLeaderboard;
+
+            if (localLeaderboard == null) return;
+
+            var tasks = players.Select(plr => 
+                localLeaderboard.UpsertPlayerEntry(plr.playerId.ToString(), plr.name)
+            );
+
+            await Task.WhenAll(tasks);
+
             UpdateLeaderboard();
         }
-        
+
+        public async void GetPlayerCustomData(string targetPlayerId)
+        {
+            if (_service == null)
+                _service = ServiceLocator.Get<IDataStoreService>();
+
+            if (_service == null)
+                return;
+
+            await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.KillCount));
+            await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.Score));
+        }
+
+        [ContextMenu("UpdateLeaderboardUI")]
         private void UpdateLeaderboard()
         {
-            ILeaderboardGiver giver =
-                ServiceLocator.Get<ILeaderboardGiver>();
+            ILeaderboardGiver giver = ServiceLocator.Get<ILeaderboardGiver>();
 
             if (giver == null)
                 return;
 
-            IReadOnlyList<LocalLeaderboardEntry> allPlayers =
-                giver.GetAllPlayers();
+            IReadOnlyList<LocalLeaderboardEntry> allPlayers = giver.GetAllPlayers();
+
+            if (allPlayers == null)
+                return;
+
+            int takeCount = (leaderboardSettingSO != null && leaderboardSettingSO.MaxVisibleRank > 0)
+                ? leaderboardSettingSO.MaxVisibleRank
+                : limit;
 
             List<LocalLeaderboardEntry> topPlayers =
                 allPlayers
-                    .OrderByDescending(
-                        entry => entry.KillCount
-                    )
-                    .ThenBy(
-                        entry => entry.PlayerName
-                    )
-                    .Take(
-                        leaderboardSettingSO.MaxVisibleRank
-                    )
+                    .OrderByDescending(entry => entry.KillCount)
+                    .ThenBy(entry => entry.PlayerName)
+                    .Take(takeCount)
                     .ToList();
 
             UpdateLeaderboardUI(topPlayers);
         }
 
-        private void UpdateLeaderboardUI(
-            IReadOnlyList<LocalLeaderboardEntry> topPlayers)
+        private void UpdateLeaderboardUI(IReadOnlyList<LocalLeaderboardEntry> topPlayers)
         {
+            ushort sum = 0;
             foreach (var plr in topPlayers)
             {
-                Debug.Log(plr.PlayerName);
+                rankingRow[sum].SetData(sum++, plr.PlayerName, Convert.ToInt32(plr.Score), Convert.ToInt32(plr.KillCount));
             }
         }
         
@@ -126,14 +177,9 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             }
         }
 
-        public async void GetPlayerCustomData(string targetPlayerId)
-        {
-
-        }   
-
         public void AfterInit()
         {
-
+            _service = ServiceLocator.Get<IDataStoreService>();
         }
     }
 }

@@ -5,24 +5,49 @@ using Random = UnityEngine.Random;
 
 public enum SfxSoundEnum
 {
-  sword,
-  lance,
-  ui
+  Sword,
+  Lance,
+  Walk,
+  ServerEntry,
+  GameStart,
+  Equipment,
+  Hit,
+  Clash
+}
+
+public enum BGMSoundEnum
+{
+  EquipmentScene,
 }
 
 public class BK_SoundManger : MonoBehaviour
 {
-  public SfxSoundEnum sfxSoundEnum;
-  
-  public Dictionary<SfxSoundEnum,AudioClip[]> sfxSoundClips;
-
-  public static BK_SoundManger instance;
-  public AudioSource source;
+  [Header("SFXSound")]
+  public AudioSource sfxSource;
   public AudioClip[] swordSoundClips;
   public AudioClip[] lanceSoundClips;
-  public AudioClip[] uiSoundClips;
-
-  public Action SoundState;
+  public AudioClip[] walkSoundClips;
+  public AudioClip[] serverEntrySoundClips;
+  public AudioClip[] gameStartSoundClips;
+  public AudioClip[] equipmentSoundClips;
+  public AudioClip[] hitSoundClips;
+  public AudioClip[] clashSoundClips;
+  
+  private SfxSoundEnum sfxSoundEnum;
+  public Dictionary<SfxSoundEnum,AudioClip[]> sfxSoundClips =  new();
+  public Action<SfxSoundEnum> SFXSoundOn;
+  
+  
+  [Header("BGMSound")]
+  public AudioSource bgmSource;
+  public AudioClip[] equipmentClips;
+  
+  private BGMSoundEnum bgmSoundEnum;
+  public Dictionary<BGMSoundEnum,AudioClip[]> bgmSoundClips =  new();
+  public Action<BGMSoundEnum> BGMSoundOn;
+  
+  public static BK_SoundManger instance;
+  
   private void Awake()
   {
     if (instance == null)
@@ -34,41 +59,50 @@ public class BK_SoundManger : MonoBehaviour
       Destroy(gameObject);
       return;
     }
+    
+    //sfx
+    sfxSoundClips[SfxSoundEnum.Sword] = swordSoundClips;
+    sfxSoundClips[SfxSoundEnum.Lance] = lanceSoundClips;
+    sfxSoundClips[SfxSoundEnum.Walk] = walkSoundClips;
+    sfxSoundClips[SfxSoundEnum.ServerEntry] = serverEntrySoundClips;
+    sfxSoundClips[SfxSoundEnum.GameStart] = gameStartSoundClips;
+    sfxSoundClips[SfxSoundEnum.Equipment] = equipmentSoundClips;
+    sfxSoundClips[SfxSoundEnum.Hit] = hitSoundClips;
+    sfxSoundClips[SfxSoundEnum.Clash] = clashSoundClips;
+    
+    //bgm
+    bgmSoundClips[BGMSoundEnum.EquipmentScene] =  equipmentClips;
   }
 
-  private void Start()
+  public void OnEnable()
   {
-    sfxSoundClips[SfxSoundEnum.sword] = swordSoundClips;
-    sfxSoundClips[SfxSoundEnum.lance] = lanceSoundClips;
-    sfxSoundClips[SfxSoundEnum.ui] = uiSoundClips;
+    SFXSoundOn+=UpdateSfxSoundState;
+    BGMSoundOn+=UpdateBGMSoundState;
   }
 
-  public void UpdateSfxSoundState(SfxSoundEnum sound)
+  public void UpdateSfxSoundState(SfxSoundEnum sfxSoundState)
   {
-    sfxSoundEnum = sound;
+    if(sfxSource.isPlaying && sfxSoundEnum == sfxSoundState) return;
+    sfxSoundEnum = sfxSoundState;
     AudioClip[] clips = sfxSoundClips[sfxSoundEnum];
     AudioClip clip = clips[Random.Range(0, clips.Length)];
 
-    source.PlayOneShot(clip);
+    sfxSource.PlayOneShot(clip);
   }
 
-  public void SwordSound()
+  public void UpdateBGMSoundState(BGMSoundEnum bgmSoundState)
   {
-    int index = Random.Range(0, swordSoundClips.Length);
-    AudioClip clip = swordSoundClips[index];
-    source.PlayOneShot(clip);
-  }
-  public void  LanceSound()
-  {
-    int index = Random.Range(0, lanceSoundClips.Length);
-    AudioClip clip = lanceSoundClips[index];
-    source.PlayOneShot(clip);
-  }
-  public void  UISound()
-  {
-    int index = Random.Range(0, uiSoundClips.Length);
-    AudioClip clip = uiSoundClips[index];
-    source.PlayOneShot(clip);
+    if (bgmSource.isPlaying && bgmSoundEnum == bgmSoundState)
+    {
+      return;
+    }
+
+    bgmSoundEnum = bgmSoundState;
+    AudioClip[] clips = bgmSoundClips[bgmSoundEnum];
+    AudioClip clip = clips[Random.Range(0, clips.Length)];
+    bgmSource.clip = clip;
+    bgmSource.loop = true;
+    bgmSource.Play();
   }
 
 }

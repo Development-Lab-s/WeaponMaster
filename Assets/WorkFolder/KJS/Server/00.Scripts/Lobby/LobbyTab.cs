@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace WorkFolder.KJS.Server._00.Scripts.Lobby
 {
@@ -6,11 +7,13 @@ namespace WorkFolder.KJS.Server._00.Scripts.Lobby
     {
         [SerializeField] private int step;
         [SerializeField] private GameObject tab;
+        public UnityEvent OnOpened;
     
         public void ClickTheFirst()
         {
             LobbyTabManager.Instance.CloseTheTabs(step);
             tab.SetActive(true);
+            OnOpened?.Invoke();
         }
     
     

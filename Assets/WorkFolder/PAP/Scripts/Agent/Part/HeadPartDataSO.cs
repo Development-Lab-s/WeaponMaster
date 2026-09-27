@@ -7,7 +7,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
     {
         public override void ChangePart(Transform target, Vector3 dir,Transform moveTarget,Vector3 bindPosition , float strength)
         {
-            moveTarget.localPosition = bindPosition + new Vector3(0, -strength * 1f, 0);
+            moveTarget.localPosition = bindPosition + new Vector3(0, -strength * 0.5f, 0);
             if (dir == Vector3.zero)
             {
                 target.localRotation = Quaternion.identity;
@@ -17,5 +17,5 @@ namespace WorkFolder.PAP.Scripts.Agent.Part
             
             target.localRotation = baseRot; 
         }
-    }
+    }   
 }

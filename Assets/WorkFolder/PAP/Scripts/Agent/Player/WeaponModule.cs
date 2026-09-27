@@ -1,4 +1,5 @@
 ﻿using DevLib.ModuleSystem;
+using Fusion;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
@@ -13,6 +14,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [SerializeField] private Transform rotTargetTrm;
         [SerializeField] private Transform moveTargetTrm;
         [SerializeField] private FootStepController controller;
+        [Networked] public Vector3 NetworkDirection { get; set; }
+        [Networked] public float NetworkWeaponMove { get; set; }
         
         [Header("Debug")] 
         [SerializeField] private AnimationCurve zCurve;
@@ -28,6 +31,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public bool IsEquipped { get; private set; }
         public GameObject GameObject => gameObject;
         private AbstractPartDataSO _partData;
+        private GameObject _weaponObject;
+        private RagdollPlayerMovement _movement;
         public Vector3 CurrentDirection { get; private set; }
         public void SetPartData(AbstractPartDataSO partData)
         {
@@ -40,6 +45,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             base.Initialize(owner);
             _player = owner as Player;
+            _movement = GetComponentInParent<RagdollPlayerMovement>();
             CurrentDirection = Vector3.zero;
         }
 
@@ -47,6 +53,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             _weaponRigid = GetComponentInChildren<Rigidbody>();
             _joint = _weaponRigid.transform.GetComponent<ConfigurableJoint>();
+            _weaponObject = transform.GetChild(0).gameObject;
         }
                 
         public void AfterInit()
@@ -86,22 +93,23 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 CurrentDirection = Vector3.zero;
                 _currentWeaponMove = 0f;
             }
+
+            _movement.IsReadyWeapon = IsEquipped;
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (!HasInputAuthority) return; 
             // 부위별로 돌아가는거 다르게 할 예정임.
             // rotTargetTrm.localRotation = Quaternion.FromToRotation(Vector3.up,CurrentDirection);
             // _joint.targetRotation = Quaternion.Euler(0,CurrentDirection.x * 90f,0);
-
-            if (_currentWeaponMove != 0)
-            {
-                controller.SetStepDistance(100f);
-            }
-            else
-                controller.SetOriginStepDistance();
-            _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _bindPosition,_currentWeaponMove);
+            // if (HasStateAuthority)
+            // {
+            //     NetworkDirection = CurrentDirection;
+            //     NetworkWeaponMove = _currentWeaponMove;
+            // } 
+            
+            if (_partData != null)
+                _partData.ChangePart(rotTargetTrm, CurrentDirection, moveTargetTrm, _bindPosition,_currentWeaponMove);
         } 
 
         private void OnDrawGizmos()
