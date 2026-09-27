@@ -1,10 +1,13 @@
 ﻿using System;
 using DevLib.ModuleSystem;
+using DevLib.ServiceLocator;
 using Fusion;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts.Feedback;
 using WorkFolder.KJS._01.Scripts.Health;
 using WorkFolder.PAP.Scripts.Agent.Player;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.KJS._01.Scripts
 {
@@ -12,7 +15,7 @@ namespace WorkFolder.KJS._01.Scripts
     {
         public int Health { get;}
         public event Action OnDamaged;
-        public void Die(string ment);
+        public void Die(string ment, string targetBy);
     }
 
     public interface IDamageable
@@ -27,6 +30,10 @@ namespace WorkFolder.KJS._01.Scripts
         private int _maxHealth;
         public event Action OnDied;
         public event Action OnDamaged;
+        public void Die(string ment)
+        {
+            throw new NotImplementedException();
+        }
 
         private IFeedable _iFeedable;
 
@@ -36,8 +43,8 @@ namespace WorkFolder.KJS._01.Scripts
 
         [SerializeField] private ResetCharacter resetModule;
         [SerializeField] private GameObject killObject;
-        
-        
+
+        private Player _player;
         
         public override void Spawned()
         {
@@ -46,6 +53,7 @@ namespace WorkFolder.KJS._01.Scripts
             _maxHealth = Health;
             HealthBar.Instance.ChangeBar(Health, _maxHealth);
             _iFeedable = gameObject.GetComponentInChildren<IFeedable>();
+            _player = Owner as Player;
         }
 
         [Rpc(RpcSources.All , RpcTargets.StateAuthority)]
@@ -54,7 +62,7 @@ namespace WorkFolder.KJS._01.Scripts
         public void TakeDamage(DamageData data)
         {
             if(data.Damage <= 0 || _isDead) return;
-            
+
             
             Health = Mathf.Clamp(Health - data.Damage, 0, _maxHealth);
             HealthBar.Instance.ChangeBar(Health, _maxHealth);
@@ -62,8 +70,15 @@ namespace WorkFolder.KJS._01.Scripts
                 _iFeedable.PlayAllFeedBacks();
             if (Health <= 0 && !_isDead)
             {
-                Die(data.DeathMent.ToString());
-                KillLog.Instance.RPC_Kill(data.Owner, "엄준식");
+
+                if (!data.IsNone)
+                {
+                    Player targetPlayer = Runner.GetPlayerObject(data.Owner).GetComponent<Player>();
+                    Die(data.DeathMent.ToString(),targetPlayer.playerName.ToString());
+                }
+                else
+                    Die(data.DeathMent.ToString(),"");
+                KillLog.Instance.RPC_Kill(data.Owner, _player.playerName);
             }
         }
 
@@ -98,11 +113,11 @@ namespace WorkFolder.KJS._01.Scripts
             OnDamaged?.Invoke();
         }
 
-        public void Die(string ment = null)
+        public void Die(string ment = null,string targetBy = "")
         {
             if(_isDead && !HasStateAuthority) return;
             _isDead = true;
-            resetModule.TryReset(ment);
+            resetModule.TryReset(ment,targetBy);
             OnDied?.Invoke();
         }
     }

@@ -46,6 +46,7 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
             
             (int, ItemData) pack = container.GetCurrentPartAndWeapon();
             NetworkObject player = runner.Spawn(playerPrefab, playerSpawnPoints[Random.Range(0,playerSpawnPoints.Length)].position + new Vector3(Random.Range(-3f,3f),0,Random.Range(-3f,3f)),Quaternion.identity,inputAuthority:runner.LocalPlayer);
+            runner.SetPlayerObject(runner.LocalPlayer, player);
             Player playerHandler = player.GetComponent<Player>();
             PartOffsetDataSO partData = partDataList[pack.Item1];
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
+using DevLib.ServiceLocator;
 using Fusion;
 using S2;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
 using WorkFolder.PAP.Scripts.Agent.Player;
 using WorkFolder.PAP.Scripts.Effects;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 using Random = UnityEngine.Random;
 
 namespace WorkFolder.PAP.Scripts.WeaponSystem
@@ -21,7 +25,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         private Collider[] _swordCol;
         private HashSet<IDamageable> _damagables = new HashSet<IDamageable>();
         private bool _isEnabled;
-        private NetworkOwner _owner;
+        private Player _owner;
 
         private void Awake()
         {
@@ -72,6 +76,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             {
                 if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
                 {
+
                     _damagables.Add(hitBox.Damageable);
                     DamageData data = new DamageData();
                     data.DeathMent = deathMents[Random.Range(0, deathMents.Length)];
@@ -87,8 +92,21 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                         if (_owner.HasInputAuthority)
                             BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
                     }
+                    if (((HealthSystem)hitBox.Damageable).Health - data.Damage <= 0)
+                    {
+                        _ = UpdateKillCountAsync();
+                    }
                 }
             }
+        }
+
+        private async Task UpdateKillCountAsync()
+        {
+            uint currentKill = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
+            await ServiceLocator.Get<IDataStoreService>().SaveAsync();       
         }
     }
 }

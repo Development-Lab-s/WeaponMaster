@@ -14,6 +14,7 @@ public class DropText : MonoBehaviour
 
     [SerializeField] private Entry[] entries;
     [SerializeField] private TextMeshProUGUI deathText;
+    [SerializeField] private TextMeshProUGUI targetByText;
 
     private Coroutine dropRoutine;
 
@@ -31,11 +32,12 @@ public class DropText : MonoBehaviour
         }
     }
 
-    public void Dead(string deathMent)
+    public void Dead(string deathMent,string targetBy)
     {
         if (dropRoutine != null)
             StopCoroutine(dropRoutine);
         deathText.SetText(deathMent);
+        targetByText.SetText($"처치자 : {targetBy}");
         dropRoutine = StartCoroutine(DropRoutine());
     }
 
