@@ -15,6 +15,7 @@ public class DropText : MonoBehaviour
     [SerializeField] private Entry[] entries;
     [SerializeField] private TextMeshProUGUI deathText;
     [SerializeField] private TextMeshProUGUI targetByText;
+    [SerializeField] private TextMeshProUGUI killstreakText;
 
     private Coroutine dropRoutine;
 
@@ -32,12 +33,13 @@ public class DropText : MonoBehaviour
         }
     }
 
-    public void Dead(string deathMent,string targetBy)
+    public void Dead(string deathMent,string targetBy,int streak)
     {
         if (dropRoutine != null)
             StopCoroutine(dropRoutine);
         deathText.SetText(deathMent);
         targetByText.SetText($"처치자 : {targetBy}");
+        killstreakText.SetText($"연속처치 : {streak.ToString()}");
         dropRoutine = StartCoroutine(DropRoutine());
     }
 

@@ -110,6 +110,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                 .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
             await ServiceLocator.Get<IDataStoreService>().SaveAsync();
             AddPlayerScoreOptions options = new AddPlayerScoreOptions();
+            _owner.KillStreak += 1;
         }
     }
 }

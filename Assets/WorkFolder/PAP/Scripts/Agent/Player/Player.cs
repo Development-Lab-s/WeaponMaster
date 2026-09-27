@@ -59,6 +59,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked, OnChangedRender(nameof(ColorChanged))] 
         public Color NetWorkedColor{ get; set;}
+
+        [Networked] public int KillStreak { get; set; }
         
         private uint HairStyleIndex { get; set; }
         
@@ -326,6 +328,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 TeleportTo(transform.position, transform.rotation);
                 
                 playerInput.OnAttackKeyPressed += HandleAttack;
+                KillStreak = 0;
             
                 playerId = AuthenticationService.Instance.PlayerId;
                 _service = ServiceLocator.Get<IDataStoreService>();
