@@ -35,6 +35,12 @@ public sealed class FootStepController : MonoBehaviour
     [SerializeField, Min(0f)] private float sideStrideScale = 1f;
     [SerializeField, Min(0f)] private float backwardStrideScale = 1.2f;
 
+    [Header("Terrain")]
+    // 착지 예정 지점의 지면을 찾을 때 루트 높이 기준으로 위아래 탐색 범위.
+    [SerializeField, Min(0f)] private float terrainSearchHeight = 1.5f;
+    // 한 걸음에 반영할 지면 높이 차의 상한. 이보다 크면 낭떠러지나 벽 윗면으로 보고 무시한다.
+    [SerializeField, Min(0f)] private float maximumTerrainStep = 0.9f;
+
     [Header("Teleport")]
     // 한 물리 스텝에 루트가 이보다 멀리 움직이면 걷기가 아니라 순간이동으로 보고 발을 다시 심는다.
     [SerializeField, Min(0.1f)] private float teleportDistance = 1f;
@@ -189,6 +195,8 @@ public sealed class FootStepController : MonoBehaviour
         _stepStartPosition = foot.Position;
         _stepStartRotation = foot.Rotation;
         _stepEndPosition = foot.GetHomePosition(movementRoot, _landingOffset);
+        _stepEndPosition += movementRoot.up
+                          * GetTerrainHeightOffset(foot, _stepEndPosition);
         _stepEndRotation = foot.GetHomeRotation(movementRoot);
 
         // 발끝 들기는 진행 방향 앞쪽 성분에 비례시킨다. 방향과 상관없이 발끝만 들면
@@ -236,6 +244,38 @@ public sealed class FootStepController : MonoBehaviour
 
         _stepLiftPosition = liftPosition;
         _activeStepDuration = _predictedDuration;
+    }
+
+    // 착지점은 루트 높이의 평면 위에서 계산된다. 경사에서는 그 평면과 실제 지면이
+    // 멀어지므로(걷기 착지점 약 1.4 m 앞, 20도면 0.5 m) 오르막에선 발이 경사면을 파고들고
+    // 내리막에선 허공에 딛는다. 발의 기본 위치 아래 지면과 착지점 아래 지면의 높이 차만큼
+    // 착지점을 옮겨 지형을 따르게 한다. 평지에서는 차이가 0이라 기존과 같다.
+    private float GetTerrainHeightOffset(FootState foot, Vector3 endPosition)
+    {
+        FootTargetSolver solver = foot.Solver;
+        if (solver == null)
+            return 0f;
+
+        Vector3 up = movementRoot.up;
+        Vector3 referencePosition = foot.GetHomePosition(movementRoot, Vector3.zero);
+
+        if (!solver.TrySampleGround(
+                referencePosition,
+                up,
+                terrainSearchHeight,
+                terrainSearchHeight,
+                out Vector3 referenceGround)
+            || !solver.TrySampleGround(
+                endPosition,
+                up,
+                terrainSearchHeight,
+                terrainSearchHeight,
+                out Vector3 endGround))
+            return 0f;
+
+        // 상한을 넘는 차이는 디딜 지형이 아니라 낭떠러지나 벽이므로 기존처럼 루트 높이를 쓴다.
+        float offset = Vector3.Dot(endGround - referenceGround, up);
+        return Mathf.Abs(offset) <= maximumTerrainStep ? offset : 0f;
     }
 
     private void UpdateStep()

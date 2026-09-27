@@ -12,6 +12,7 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
         [SerializeField] private EquipSocketContainer container;
         [SerializeField] private NetworkObject playerPrefab;
         [SerializeField] private PartOffsetDataSO[] partDataList;
+        [SerializeField] private Transform[] playerSpawnPoints;
         
         Transform FindChildHelper(Transform current, string targetName)
         {
@@ -43,7 +44,7 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
             if (runner == null) return;
             
             (int, ItemData) pack = container.GetCurrentPartAndWeapon();
-            NetworkObject player = runner.Spawn(playerPrefab, new Vector3(0,0,0),Quaternion.identity,inputAuthority:runner.LocalPlayer);
+            NetworkObject player = runner.Spawn(playerPrefab, playerSpawnPoints[Random.Range(0,playerSpawnPoints.Length)].position + new Vector3(Random.Range(-3f,3f),0,Random.Range(-3f,3f)),Quaternion.identity,inputAuthority:runner.LocalPlayer);
             Player playerHandler = player.GetComponent<Player>();
             PartOffsetDataSO partData = partDataList[pack.Item1];
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);
