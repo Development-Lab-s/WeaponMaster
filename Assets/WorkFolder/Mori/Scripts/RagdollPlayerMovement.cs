@@ -42,9 +42,12 @@ public class RagdollPlayerMovement : NetworkBehaviour
     public bool IsReadyWeapon = false;
 
 
-    // 소유자에서만 의미 있는 값이다. 프록시 루트는 kinematic이라 항상 0이지만,
-    // 프록시는 FootStepController를 끄고 Player가 동기화한 발 목표를 쓰므로 읽지 않는다.
-    public Vector3 CurrentVelocity => _rigidbody.linearVelocity;
+    private Vector3 _commandedVelocity;
+    private bool _hasCommandedVelocity;
+
+    public Vector3 CurrentVelocity => _hasCommandedVelocity
+        ? _commandedVelocity
+        : _rigidbody.linearVelocity;
 
     private void Awake()
     {
@@ -61,18 +64,12 @@ public class RagdollPlayerMovement : NetworkBehaviour
 
         _rigidbody.collisionDetectionMode =
             CollisionDetectionMode.ContinuousSpeculative;
-        _rigidbody.constraints |=
-            RigidbodyConstraints.FreezeRotationX
-          | RigidbodyConstraints.FreezeRotationZ;
+        _rigidbody.constraints |= RigidbodyConstraints.FreezeRotation;
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
     }
 
-    // 퍼펫 골반은 조인트가 없는 래그돌 루트라 이 두 힘만이 높이와 방향을 잡아준다.
-    // FixedUpdateNetwork는 InputAuthority에서만 돌기 때문에 거기 두면 프록시의
-    // 골반은 받침도 회전도 받지 못해 처지고 비틀린다. 입력은 이미 모든 클라이언트에
-    // 있다: 루트 회전은 NetworkTransform이, 접지 여부는 동기화된 발 골로 로컬 계산.
     private void FixedUpdate()
     {
         if (Runner == null || Object == null) return;
@@ -88,10 +85,6 @@ public class RagdollPlayerMovement : NetworkBehaviour
         UpdateSlopePelvisDrop();
     }
 
-    // 드라이버 골반 높이는 루트에 고정이고, 평지에서도 딛는 다리가 사거리의 약 99%까지
-    // 펴져 있다. 경사에서는 낮은 쪽 지면이 더 멀어져 그 발이 닿지 못하고 떠버린다.
-    // 몸 중심 아래 지면보다 가장 낮은 발 아래 지면이 낮은 만큼 드라이버를 내린다.
-    // 평지에서는 두 지면이 같은 높이라 0이고, 발 목표가 동기화돼 있어 프록시도 같게 계산한다.
     private void UpdateSlopePelvisDrop()
     {
         if (driverRoot == null)
@@ -140,7 +133,13 @@ public class RagdollPlayerMovement : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable) return;
+        if (!HasInputAuthority) return;
+        if (PlayerHipCamera.IsCameraEnable)
+        {
+            // 이동 명령을 내리지 않는 동안에는 예전처럼 실제 Rigidbody 속도를 쓴다.
+            _hasCommandedVelocity = false;
+            return;
+        }
         Vector2 moveInput = _input.MoveDirection;
         Quaternion cameraYawRotation = RotateTowardCamera();
         Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
@@ -204,6 +203,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
         }
 
         _rigidbody.linearVelocity = velocity;
+        _commandedVelocity = velocity;
+        _hasCommandedVelocity = true;
     }
 
     private bool TryGetWalkableGround(out Vector3 groundNormal)
