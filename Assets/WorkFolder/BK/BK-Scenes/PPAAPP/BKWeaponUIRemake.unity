@@ -10141,6 +10141,7 @@ MonoBehaviour:
   - target: {fileID: 267969117}
     delay: 0.1
   deathText: {fileID: 323641081}
+  targetByText: {fileID: 0}
 --- !u!224 &910580606
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10871,7 +10872,7 @@ MonoBehaviour:
     emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
-    weaponImageScale: 1
+    weaponImageScale: 0.9
   - visualRoot: {fileID: 1775325158}
     dragSlot: {fileID: 1714277778}
     emptyBarrelsBefore: 1
@@ -10883,7 +10884,7 @@ MonoBehaviour:
     emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
-    weaponImageScale: 1
+    weaponImageScale: 1.3
   - visualRoot: {fileID: 1735451678}
     dragSlot: {fileID: 1569104660}
     emptyBarrelsBefore: 1
