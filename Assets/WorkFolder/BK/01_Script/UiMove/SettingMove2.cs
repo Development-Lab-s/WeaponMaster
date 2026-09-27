@@ -10,7 +10,6 @@ public class SettingMove2 : MonoBehaviour
     [SerializeField]private GameObject debugSetting;
     [SerializeField]private GameObject mikeSetting;
     [SerializeField]private GameObject closeBtn;
-   [SerializeField]private SettingModeChoose settingMode;
    private void Start()
    {
        setting.transform.DOLocalMoveX(2500, 0.0001f);
@@ -18,8 +17,7 @@ public class SettingMove2 : MonoBehaviour
 
    public void SettingOnMoves()
    {
-       setting.transform.DOLocalMoveX(0, 0.7f).SetEase(Ease.OutBounce);
-       settingMode.ChooseMode1();
+      setting.transform.DOLocalMoveX(0, 0.7f).SetEase(Ease.OutBounce);
    }
    public void SettingOffMoves()
    {
