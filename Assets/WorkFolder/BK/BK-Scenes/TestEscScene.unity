@@ -1291,6 +1291,28 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8284883961332822894, guid: 3ecd27d2aa9a4804f8d5ce05a32bcd7d, type: 3}
   m_PrefabInstance: {fileID: 3635840813062953864}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &959769445 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8575675186615297303, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+  m_PrefabInstance: {fileID: 3107922129647475946}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &962327596 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6738275897257751601, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+  m_PrefabInstance: {fileID: 3107922129647475946}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Toggle
 --- !u!1 &968946986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1635,6 +1657,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 086e65d0687ae414081d7b4e46156862, type: 3}
   m_PrefabInstance: {fileID: 1126465315}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1146643645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1146643647}
+  - component: {fileID: 1146643646}
+  m_Layer: 0
+  m_Name: VoiceSetCompo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1146643646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146643645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb096378732036439d79a0dcc524166, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoiceSettingsUI
+  microphoneMuteToggle: {fileID: 962327596}
+  microphoneVolumeSlider: {fileID: 1921438945}
+  voiceOutputVolumeSlider: {fileID: 959769445}
+--- !u!4 &1146643647
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146643645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1411.6584, y: 508.52728, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1178512546 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2036563779555436110, guid: 3ecd27d2aa9a4804f8d5ce05a32bcd7d, type: 3}
@@ -2234,6 +2303,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787219820}
   m_CullTransparentMesh: 1
+--- !u!114 &1921438945 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1322535903259841417, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+  m_PrefabInstance: {fileID: 3107922129647475946}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1 &1961881979
 GameObject:
   m_ObjectHideFlags: 0
@@ -2420,7 +2500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1186045967219655012, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000011444092
+      value: -0.0000019073486
       objectReference: {fileID: 0}
     - target: {fileID: 1362017649601707237, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2445,6 +2525,10 @@ PrefabInstance:
     - target: {fileID: 1494590402178384114, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1593415953216809914, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1737116488476701025, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_IsActive
@@ -2570,6 +2654,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 350.55286
       objectReference: {fileID: 0}
+    - target: {fileID: 6347993068186030382, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -752
+      objectReference: {fileID: 0}
+    - target: {fileID: 6347993068186030382, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -430
+      objectReference: {fileID: 0}
     - target: {fileID: 6752200914608403264, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_SizeDelta.y
       value: 71.7312
@@ -2601,6 +2693,10 @@ PrefabInstance:
     - target: {fileID: 7378729723110664786, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -5.5649567
+      objectReference: {fileID: 0}
+    - target: {fileID: 7658241000364853485, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7685780543838056668, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_Pivot.x
@@ -2736,7 +2832,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8036573953988712751, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -2.4750218
+      value: -2.475029
       objectReference: {fileID: 0}
     - target: {fileID: 8070416235192229412, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_FontData.m_Font
@@ -2757,6 +2853,10 @@ PrefabInstance:
     - target: {fileID: 8593602818233351100, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_Color.a
       value: 0.3137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 8626114664568910414, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8788574417710951553, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_IsActive
@@ -3165,3 +3265,4 @@ SceneRoots:
   - {fileID: 1126465315}
   - {fileID: 548256711}
   - {fileID: 3107922129647475946}
+  - {fileID: 1146643647}
