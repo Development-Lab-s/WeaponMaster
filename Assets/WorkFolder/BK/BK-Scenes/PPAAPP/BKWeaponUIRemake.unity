@@ -10141,6 +10141,7 @@ MonoBehaviour:
   - target: {fileID: 267969117}
     delay: 0.1
   deathText: {fileID: 323641081}
+  targetByText: {fileID: 0}
 --- !u!224 &910580606
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10868,33 +10869,37 @@ MonoBehaviour:
   items:
   - visualRoot: {fileID: 2073804758}
     dragSlot: {fileID: 3340818092676202953}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
-    weaponImageScale: 1
+    weaponImageScale: 0.9
   - visualRoot: {fileID: 1775325158}
     dragSlot: {fileID: 1714277778}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1
   - visualRoot: {fileID: 1058265247}
     dragSlot: {fileID: 244091667}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
-    weaponImageScale: 1
+    weaponImageScale: 1.3
   - visualRoot: {fileID: 1735451678}
     dragSlot: {fileID: 1569104660}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1
   listScale: 1.55
   viewportSize: {x: 720, y: 800}
-  rightPadding: -90
+  rightPadding: -180
   verticalOffset: 0
   rowSpacing: 140
   barrelHeight: 140
   barrelRightInset: 20
-  weaponLength: 500
-  socketAlongBarrel: 0.2
+  weaponLength: 648
+  socketAlongBarrel: 0.5
   gripAlongWeapon: 0.82
   textureFrameScale: 1
   weaponStyles: []
@@ -28052,6 +28057,7 @@ MonoBehaviour:
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   targetPuppet: {fileID: 0}
   nameTag: {fileID: 0}
+  nameTitleObj: {fileID: 0}
   MeshRenderer: {fileID: 0}
   _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
   _NetRightGoalLocal: {x: 0, y: 0, z: 0}
