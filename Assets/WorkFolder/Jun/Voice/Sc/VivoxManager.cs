@@ -9,9 +9,8 @@ public sealed class VivoxManager : MonoBehaviour
 {
     public static VivoxManager Instance { get; private set; }
 
-    // 나중에 UI 표시 등이 필요할 때 사용할 수 있음.
-    // true = 실제 Vivox 마이크가 음소거된 상태.
     public event Action<bool> MicMuteStateChanged;
+    public event Action<bool> LocalSpeechDetectedChanged;
 
     [Header("3D Voice")]
     [SerializeField] private int audibleDistance = 30;
@@ -26,7 +25,6 @@ public sealed class VivoxManager : MonoBehaviour
     [Header("Voice Settings")]
     [SerializeField] private bool microphoneEnabledByDefault = true;
 
-    // Vivox의 기본 볼륨은 50.
     [SerializeField, Range(0, 75)]
     private int inputDeviceVolume = 50;
 
@@ -37,20 +35,17 @@ public sealed class VivoxManager : MonoBehaviour
     private Task _readyTask;
 
     private string _currentChannel;
+    private string _joiningChannel;
+
     private GameObject _positionTarget;
 
     private bool _vivoxReady;
     private bool _isChannelJoined;
     private bool _hasSentPosition;
 
-    // 사용자 설정.
     private bool _userMicEnabled;
-
-    // 게임 상태.
-    // Player가 Spawn되기 전에는 말할 수 없게 false로 시작.
     private bool _isPlayerAlive;
 
-    // 같은 Mute 상태를 Vivox에 계속 재적용하지 않기 위한 값.
     private bool? _lastAppliedMuteState;
 
     private float _nextUpdateTime;
@@ -59,15 +54,37 @@ public sealed class VivoxManager : MonoBehaviour
     private Quaternion _lastRotation;
 
 
+    // -----------------------------
+    // Speaking Detection
+    // -----------------------------
+
+    private VivoxParticipant _localParticipant;
+
+    private bool _participantEventsBound;
+    private bool _isLocalSpeaking;
+
+
+    // -----------------------------
+    // Public Properties
+    // -----------------------------
+
     public bool UserMicEnabled => _userMicEnabled;
+
     public bool IsPlayerAlive => _isPlayerAlive;
 
     public bool IsMicMuted =>
         !_userMicEnabled || !_isPlayerAlive;
 
+    public bool IsLocalSpeaking => _isLocalSpeaking;
+
     public int InputDeviceVolume => inputDeviceVolume;
+
     public int OutputDeviceVolume => outputDeviceVolume;
 
+
+    // -----------------------------
+    // Unity
+    // -----------------------------
 
     private void Awake()
     {
@@ -87,6 +104,22 @@ public sealed class VivoxManager : MonoBehaviour
         _readyTask = InitializeVivoxAsync();
     }
 
+
+    private void OnDestroy()
+    {
+        if (Instance != this)
+            return;
+
+        UnbindParticipantEvents();
+        DetachLocalParticipant();
+
+        Instance = null;
+    }
+
+
+    // -----------------------------
+    // Vivox Initialization
+    // -----------------------------
 
     private async Task InitializeVivoxAsync()
     {
@@ -113,6 +146,9 @@ public sealed class VivoxManager : MonoBehaviour
             }
 
             await VivoxService.Instance.InitializeAsync();
+
+            BindParticipantEvents();
+
             await VivoxService.Instance.LoginAsync();
 
             _vivoxReady = true;
@@ -129,9 +165,129 @@ public sealed class VivoxManager : MonoBehaviour
     }
 
 
-    // -------------------------------------------------------
-    // Fusion Room / Proximity Voice
-    // -------------------------------------------------------
+    // -----------------------------
+    // Participant Events
+    // -----------------------------
+
+    private void BindParticipantEvents()
+    {
+        if (_participantEventsBound)
+            return;
+
+        VivoxService.Instance.ParticipantAddedToChannel
+            += OnParticipantAdded;
+
+        VivoxService.Instance.ParticipantRemovedFromChannel
+            += OnParticipantRemoved;
+
+        _participantEventsBound = true;
+    }
+
+
+    private void UnbindParticipantEvents()
+    {
+        if (!_participantEventsBound)
+            return;
+
+        VivoxService.Instance.ParticipantAddedToChannel
+            -= OnParticipantAdded;
+
+        VivoxService.Instance.ParticipantRemovedFromChannel
+            -= OnParticipantRemoved;
+
+        _participantEventsBound = false;
+    }
+
+
+    private void OnParticipantAdded(VivoxParticipant participant)
+    {
+        // 머리 위 아이콘용으로 필요한 건
+        // 다른 사람이 아니라 이 클라이언트 자신의 발화 상태.
+        if (!participant.IsSelf)
+            return;
+
+        bool expectedChannel =
+            participant.ChannelName == _currentChannel ||
+            participant.ChannelName == _joiningChannel;
+
+        if (!expectedChannel)
+            return;
+
+        DetachLocalParticipant();
+
+        _localParticipant = participant;
+
+        _localParticipant.ParticipantSpeechDetected
+            += OnLocalParticipantSpeechDetected;
+
+        RefreshLocalSpeechState();
+    }
+
+
+    private void OnParticipantRemoved(VivoxParticipant participant)
+    {
+        if (!participant.IsSelf)
+            return;
+
+        if (_localParticipant == null)
+            return;
+
+        if (_localParticipant.PlayerId != participant.PlayerId ||
+            _localParticipant.ChannelName != participant.ChannelName)
+        {
+            return;
+        }
+
+        DetachLocalParticipant();
+
+        SetLocalSpeaking(false);
+    }
+
+
+    private void OnLocalParticipantSpeechDetected()
+    {
+        RefreshLocalSpeechState();
+    }
+
+
+    private void DetachLocalParticipant()
+    {
+        if (_localParticipant == null)
+            return;
+
+        _localParticipant.ParticipantSpeechDetected
+            -= OnLocalParticipantSpeechDetected;
+
+        _localParticipant = null;
+    }
+
+
+    private void RefreshLocalSpeechState()
+    {
+        bool speaking =
+            _isChannelJoined &&
+            !IsMicMuted &&
+            _localParticipant != null &&
+            _localParticipant.SpeechDetected;
+
+        SetLocalSpeaking(speaking);
+    }
+
+
+    private void SetLocalSpeaking(bool speaking)
+    {
+        if (_isLocalSpeaking == speaking)
+            return;
+
+        _isLocalSpeaking = speaking;
+
+        LocalSpeechDetectedChanged?.Invoke(speaking);
+    }
+
+
+    // -----------------------------
+    // Fusion Room / Voice Channel
+    // -----------------------------
 
     public async Task BindToFusionRoomAsync(
         string fusionRoomName,
@@ -153,26 +309,29 @@ public sealed class VivoxManager : MonoBehaviour
 
         await _readyTask;
 
-        // 서버에서 방 이름의 유일성과 유효한 문자를 보장한다고 했으므로
-        // 별도 문자 필터링은 하지 않는다.
-        string targetChannel = "prox_" + fusionRoomName;
+        string targetChannel =
+            "prox_" + fusionRoomName;
 
-        // 이미 같은 방에 있다면 위치 Target만 갱신.
+        // 이미 같은 방에 있다면 위치 Target만 교체.
         if (_isChannelJoined &&
             _currentChannel == targetChannel)
         {
             _hasSentPosition = false;
+            RefreshLocalSpeechState();
+
             return;
         }
 
-        // 다른 Vivox 방에 있었다면 먼저 퇴장.
+        // 기존 채널 퇴장.
         if (_isChannelJoined)
         {
-            string previousChannel = _currentChannel;
+            string previousChannel =
+                _currentChannel;
 
-            // Leave 중 Update에서 위치를 보내지 않도록 먼저 false.
             _isChannelJoined = false;
             _currentChannel = null;
+
+            SetLocalSpeaking(false);
 
             await VivoxService.Instance
                 .LeaveChannelAsync(previousChannel);
@@ -186,31 +345,43 @@ public sealed class VivoxManager : MonoBehaviour
                 AudioFadeModel.InverseByDistance
             );
 
-        await VivoxService.Instance
-            .JoinPositionalChannelAsync(
-                targetChannel,
-                ChatCapability.AudioOnly,
-                properties
+        _joiningChannel = targetChannel;
+
+        try
+        {
+            await VivoxService.Instance
+                .JoinPositionalChannelAsync(
+                    targetChannel,
+                    ChatCapability.AudioOnly,
+                    properties
+                );
+
+            _currentChannel = targetChannel;
+            _isChannelJoined = true;
+
+            _hasSentPosition = false;
+            _nextUpdateTime = Time.unscaledTime;
+
+            RefreshLocalSpeechState();
+
+            Debug.Log(
+                $"Vivox Positional Joined: {_currentChannel}"
             );
-
-        _currentChannel = targetChannel;
-        _isChannelJoined = true;
-
-        _hasSentPosition = false;
-        _nextUpdateTime = Time.unscaledTime;
-
-        Debug.Log(
-            $"Vivox Positional Joined: {_currentChannel}");
+        }
+        finally
+        {
+            _joiningChannel = null;
+        }
     }
 
 
     public void UnbindLocalPlayer(GameObject player)
     {
-        if (_positionTarget == player)
-        {
-            _positionTarget = null;
-            _hasSentPosition = false;
-        }
+        if (_positionTarget != player)
+            return;
+
+        _positionTarget = null;
+        _hasSentPosition = false;
     }
 
 
@@ -221,27 +392,25 @@ public sealed class VivoxManager : MonoBehaviour
         if (!_isChannelJoined)
             return;
 
-        string channelToLeave = _currentChannel;
+        string channelToLeave =
+            _currentChannel;
 
         _isChannelJoined = false;
         _currentChannel = null;
+
         _positionTarget = null;
         _hasSentPosition = false;
+
+        SetLocalSpeaking(false);
 
         await VivoxService.Instance
             .LeaveChannelAsync(channelToLeave);
     }
 
 
-    // -------------------------------------------------------
-    // Microphone State
-    // -------------------------------------------------------
-
-    public void ToggleUserMicrophone()
-    {
-        SetUserMicrophoneEnabled(!_userMicEnabled);
-    }
-
+    // -----------------------------
+    // Microphone
+    // -----------------------------
 
     public void SetUserMicrophoneEnabled(bool enabled)
     {
@@ -269,7 +438,10 @@ public sealed class VivoxManager : MonoBehaviour
         bool force = false)
     {
         if (!_vivoxReady)
+        {
+            RefreshLocalSpeechState();
             return;
+        }
 
         bool shouldMute = IsMicMuted;
 
@@ -277,6 +449,7 @@ public sealed class VivoxManager : MonoBehaviour
             _lastAppliedMuteState.HasValue &&
             _lastAppliedMuteState.Value == shouldMute)
         {
+            RefreshLocalSpeechState();
             return;
         }
 
@@ -292,16 +465,17 @@ public sealed class VivoxManager : MonoBehaviour
         _lastAppliedMuteState = shouldMute;
 
         MicMuteStateChanged?.Invoke(shouldMute);
+
+        RefreshLocalSpeechState();
     }
 
 
-    // -------------------------------------------------------
+    // -----------------------------
     // Volume
-    // -------------------------------------------------------
+    // -----------------------------
 
     public void SetInputDeviceVolume(float value)
     {
-        // 마이크 입력은 75 초과를 막는다.
         int volume = Mathf.Clamp(
             Mathf.RoundToInt(value),
             0,
@@ -316,7 +490,9 @@ public sealed class VivoxManager : MonoBehaviour
         if (_vivoxReady)
         {
             VivoxService.Instance
-                .SetInputDeviceVolume(inputDeviceVolume);
+                .SetInputDeviceVolume(
+                    inputDeviceVolume
+                );
         }
     }
 
@@ -337,7 +513,9 @@ public sealed class VivoxManager : MonoBehaviour
         if (_vivoxReady)
         {
             VivoxService.Instance
-                .SetOutputDeviceVolume(outputDeviceVolume);
+                .SetOutputDeviceVolume(
+                    outputDeviceVolume
+                );
         }
     }
 
@@ -348,18 +526,22 @@ public sealed class VivoxManager : MonoBehaviour
             return;
 
         VivoxService.Instance
-            .SetInputDeviceVolume(inputDeviceVolume);
+            .SetInputDeviceVolume(
+                inputDeviceVolume
+            );
 
         VivoxService.Instance
-            .SetOutputDeviceVolume(outputDeviceVolume);
+            .SetOutputDeviceVolume(
+                outputDeviceVolume
+            );
 
         RefreshMicrophoneMuteState(true);
     }
 
 
-    // -------------------------------------------------------
-    // Positional Update
-    // -------------------------------------------------------
+    // -----------------------------
+    // Positional Voice
+    // -----------------------------
 
     private void Update()
     {
@@ -369,8 +551,11 @@ public sealed class VivoxManager : MonoBehaviour
             return;
         }
 
-        if (Time.unscaledTime < _nextUpdateTime)
+        if (Time.unscaledTime <
+            _nextUpdateTime)
+        {
             return;
+        }
 
         _nextUpdateTime =
             Time.unscaledTime + updateInterval;
@@ -409,6 +594,7 @@ public sealed class VivoxManager : MonoBehaviour
 
         _lastPosition = currentPosition;
         _lastRotation = currentRotation;
+
         _hasSentPosition = true;
     }
 }
