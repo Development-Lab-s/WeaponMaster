@@ -92,14 +92,11 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
         if (!HasStateAuthority)
             return;
 
-        NetworkBool value = isSpeaking;
-
-        if (IsSpeaking == value)
+        if (IsSpeaking == isSpeaking)
             return;
 
-        IsSpeaking = value;
+        IsSpeaking = isSpeaking;
 
-        // State Authority 자신의 화면에는 즉시 반영.
         ApplySpeakingVisual();
     }
 
