@@ -160,7 +160,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             sum = 0;
             foreach (var plr in topPlayers)
             {
-                if (sum > 5) break;
+                if (sum > 4) break;
                 rankingRow[sum].SetData(++sum, plr.PlayerName, Convert.ToInt32(plr.Score), Convert.ToInt32(plr.KillCount));
             }
             if (_service == null)
@@ -169,7 +169,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             uint killCount = await _service.GetAsync<uint>(nameof(PlayerDataStore.KillCount));
             uint score = await _service.GetAsync<uint>(nameof(PlayerDataStore.Score));
 
-            rankingRow[5].SetData(0, playerName,(int)score ,(int)killCount);
+            rankingRow[4].SetData(0, playerName,(int)score ,(int)killCount);
         }
         
         public async void AddScore(double score)

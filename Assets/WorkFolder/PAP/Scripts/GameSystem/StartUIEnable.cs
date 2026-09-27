@@ -17,6 +17,7 @@ namespace WorkFolder.PAP.Scripts.GameSystem
         private ICameraService _service;
         private bool _isFirstTime = true;
         NetworkRunner runner = null;
+        [SerializeField] private GameObject targetEnable;
 
         private void Start()
         {
@@ -28,6 +29,7 @@ namespace WorkFolder.PAP.Scripts.GameSystem
 
         private void OnEnable()
         {
+            targetEnable.SetActive(false);
             if (_isFirstTime)
             {
                 _isFirstTime = false;
@@ -62,6 +64,7 @@ namespace WorkFolder.PAP.Scripts.GameSystem
 
         private void OnDisable()
         {
+            targetEnable.SetActive(true);
             _service.SwitchMainCam();
         }
     }
