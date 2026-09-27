@@ -75,6 +75,7 @@ namespace WorkFolder.KJS._01.Scripts
                 {
                     Player targetPlayer = Runner.GetPlayerObject(data.Owner).GetComponent<Player>();
                     Die(data.DeathMent.ToString(),targetPlayer.playerName.ToString());
+                    targetPlayer.RpcKilled();
                 }
                 else
                     Die(data.DeathMent.ToString(),"");

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Leaderboards;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
@@ -335,7 +337,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
                 uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
                 NetWorkedColor = _bodyMaterials[value].color;
-                ColorChanged();
                 HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
             }
 
@@ -351,6 +352,28 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
 
+        }
+
+        private void Start()
+        {
+            ColorChanged();
+            NameChanged();
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
+        public void RpcKilled()
+        {
+            _ = UpdateKillCountAsync();
+        }
+        public async Task UpdateKillCountAsync()
+        {
+            uint currentKill = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
+            await ServiceLocator.Get<IDataStoreService>().SaveAsync();
+            AddPlayerScoreOptions options = new AddPlayerScoreOptions();
+            KillStreak += 1;
         }
 
 
