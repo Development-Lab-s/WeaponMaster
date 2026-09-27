@@ -22,12 +22,22 @@ public class RagdollPlayerMovement : NetworkBehaviour
     [SerializeField, Range(0f, 89f)] private float maximumSlope = 50f;
     [SerializeField, Min(0f)] private float airborneGravity = 20f;
 
+    [Header("Slope Pelvis Drop")]
+    // 비워 두면 루트 바로 아래 "Driver"를 찾는다.
+    [SerializeField] private Transform driverRoot;
+    [SerializeField, Min(0f)] private float maximumPelvisDrop = 0.35f;
+    // 이만큼까지의 높이 차는 무시한다. 평지의 미세한 오차로 골반이 움직이지 않게 한다.
+    [SerializeField, Min(0f)] private float pelvisDropDeadZone = 0.03f;
+    [SerializeField, Min(0f)] private float pelvisDropResponse = 10f;
+
     private Rigidbody _rigidbody;
     private PlayerMovementInput _input;
     private FootTargetSolver[] _footSolvers;
     private Rigidbody _puppetPelvisBody;
     private float _puppetPelvisYawOffset;
     private float _currentForwardSpeed;
+    private float _driverBaseHeight;
+    private float _pelvisDrop;
     public float MaximumSpeed => Mathf.Max(walkSpeed, maxRunSpeed);
     public bool IsReadyWeapon = false;
 
@@ -43,6 +53,11 @@ public class RagdollPlayerMovement : NetworkBehaviour
         _footSolvers = GetComponentsInChildren<FootTargetSolver>(true);
         ResolvePuppetPelvisBody();
         _currentForwardSpeed = walkSpeed;
+
+        if (driverRoot == null)
+            driverRoot = transform.Find("Driver");
+        if (driverRoot != null)
+            _driverBaseHeight = driverRoot.localPosition.y;
 
         _rigidbody.collisionDetectionMode =
             CollisionDetectionMode.ContinuousSpeculative;
@@ -69,6 +84,58 @@ public class RagdollPlayerMovement : NetworkBehaviour
             ? _rigidbody.rotation
             : transform.rotation;
         RotatePuppetPelvis(rootRotation);
+
+        UpdateSlopePelvisDrop();
+    }
+
+    // 드라이버 골반 높이는 루트에 고정이고, 평지에서도 딛는 다리가 사거리의 약 99%까지
+    // 펴져 있다. 경사에서는 낮은 쪽 지면이 더 멀어져 그 발이 닿지 못하고 떠버린다.
+    // 몸 중심 아래 지면보다 가장 낮은 발 아래 지면이 낮은 만큼 드라이버를 내린다.
+    // 평지에서는 두 지면이 같은 높이라 0이고, 발 목표가 동기화돼 있어 프록시도 같게 계산한다.
+    private void UpdateSlopePelvisDrop()
+    {
+        if (driverRoot == null)
+            return;
+
+        float targetDrop = 0f;
+        Vector3 up = transform.up;
+        FootTargetSolver referenceSolver = null;
+        float lowestFootHeight = float.PositiveInfinity;
+
+        for (int i = 0; i < _footSolvers.Length; i++)
+        {
+            FootTargetSolver footSolver = _footSolvers[i];
+            if (footSolver == null || !footSolver.HasGroundHit)
+                continue;
+
+            if (referenceSolver == null)
+                referenceSolver = footSolver;
+            lowestFootHeight = Mathf.Min(
+                lowestFootHeight,
+                Vector3.Dot(footSolver.GroundPoint, up));
+        }
+
+        if (referenceSolver != null
+            && referenceSolver.TrySampleGround(
+                transform.position,
+                up,
+                1.5f,
+                1.5f,
+                out Vector3 centerGround))
+        {
+            float deficit = Vector3.Dot(centerGround, up) - lowestFootHeight;
+            targetDrop = Mathf.Clamp(
+                deficit - pelvisDropDeadZone,
+                0f,
+                maximumPelvisDrop);
+        }
+
+        float blend = 1f - Mathf.Exp(-pelvisDropResponse * Time.fixedDeltaTime);
+        _pelvisDrop = Mathf.Lerp(_pelvisDrop, targetDrop, blend);
+
+        Vector3 localPosition = driverRoot.localPosition;
+        localPosition.y = _driverBaseHeight - _pelvisDrop;
+        driverRoot.localPosition = localPosition;
     }
 
     public override void FixedUpdateNetwork()

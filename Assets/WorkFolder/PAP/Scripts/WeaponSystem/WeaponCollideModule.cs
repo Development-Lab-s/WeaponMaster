@@ -48,8 +48,6 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             if (currentSpeed > swingStartSpeed && !_isEnabled)
             {
                 _isEnabled = true;
-                if (_owner.HasInputAuthority)
-                    BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Swing, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
             }
             else if (currentSpeed < swingEndSpeed && _isEnabled)
             {

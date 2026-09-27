@@ -42,9 +42,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             leaderBoardId = leaderboardSettingSO.LeaderboardId == null ? "Global_Leaderboard" : leaderboardSettingSO.LeaderboardId ;
             offset = (ushort)(leaderboardSettingSO.LeaderboardFindOffset == null ? 0 : leaderboardSettingSO.LeaderboardFindOffset);
             limit = (ushort)(leaderboardSettingSO.MaxVisibleRank == null ? 0 : leaderboardSettingSO.MaxVisibleRank);
-            
         }
-        [ContextMenu("GetLeaderboard")]
         public async void GetTopRanker()
         {
             try
@@ -63,6 +61,10 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
         {
             if (scoresResponse != null && scoresResponse.Results.Count > 0)
             {
+                foreach (Transform child in context)
+                {
+                    Destroy(child.gameObject);
+                }
                 for (int i = 0; i < scoresResponse.Results.Count; i++)
                 {
                     var entry = scoresResponse.Results[i];
@@ -102,6 +104,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 
         private void MakeLeaderboard(int rank, string playerName, double score, uint kills)
         {
+
             GameObject obj = Instantiate(leaderboardTemplate, context);
             obj.GetComponent<UpdateRankObject>().UpdateRankText(rank, playerName, kills, score);
             
