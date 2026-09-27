@@ -1,0 +1,16 @@
+Edited using the built-in image_gen tool with transparent_background=true.
+Final asset: resolution-dropdown-scrollbar-v2-white.png (1536 x 1024 RGBA PNG).
+Seven parts with white interiors; exterior and gaps remain transparent. Pixel samples verified.
+
+Final prompt:
+Edit the attached 1536 x 1024 transparent sprite sheet by adding SOLID OPAQUE WHITE FILL inside its existing hollow black outlines. KEEP ALL SEVEN OBJECTS IN THEIR ORIGINAL LOCATIONS and keep the black line artwork unchanged.
+The existing components and their approximate pixel locations are:
+1) Upper-left wide empty field: x=54 to 1055, y=138 to 246. Fill its interior white.
+2) Large empty list panel below it: x=53 to 1055, y=280 to 780. Fill its interior white.
+3) Bottom white selection strip: x=72 to 1032, y=833 to 923. Keep it unchanged.
+4) Separate tall narrow empty scrollbar track: x=1143 to 1238, y=138 to 889. FILL THIS WHOLE SEPARATE TRACK WHITE. It must remain present as a tall thin white rectangle with a black border, separate from the left panels.
+5) Detached white thumb with three black horizontal grip marks: x=1270 to 1353, y=357 to 576. Keep it unchanged.
+6) Separate white up triangle: around x=1391 to 1495, y=182 to 239. Keep it unchanged.
+7) Separate white down triangle: around x=1391 to 1496, y=406 to 462. Keep it unchanged.
+Do not resize or widen either left panel. Their right edge must stay around x=1055. The 90px transparent gap between the left panels and track must remain fully transparent. Do not merge the track with either panel. Exactly seven separate sprites.
+Fill only the enclosed interiors using flat opaque white like a paint bucket. Preserve black outlines and mildly wobbly doodle style. All pixels OUTSIDE these seven shapes stay fully transparent alpha=0. All filled interiors must be white and opaque. No shadows, gradients, glows, gray fills, checkerboards, text, background or new ornaments.

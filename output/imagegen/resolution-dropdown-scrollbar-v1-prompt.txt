@@ -1,0 +1,20 @@
+Generated with the built-in image_gen tool and transparent_background=true.
+Final asset: resolution-dropdown-scrollbar-v1.png (1536 x 1024 RGBA PNG).
+Seven isolated pieces: dropdown field outline, list outline, selected-row strip, vertical scrollbar track, scrollbar thumb, up arrow, down arrow.
+Transparency samples verified for the empty frames, track, gaps, and exterior. White-filled parts remain opaque.
+
+Prompt:
+Use case: ui-mockup
+Asset type: a cohesive transparent PNG sprite sheet for a game's resolution-selection dropdown and vertical scrollbar. These are separate reusable UI parts, not a screenshot.
+Input image: STYLE REFERENCE ONLY. Match its simple black-and-white MS Paint outlines, but make the new pieces more neatly balanced and visually pleasing.
+Design: understated black ink doodle UI. Confident slightly wobbly contours, consistent medium-bold stroke weight, subtly imperfect nearly-square corners, clean flat white details. Controlled hand-drawn charm. No grunge, decorative scribbles, pencil texture, shading, or glossy styling. All strokes should remain readable at small UI size. Every frame has approximately the same stroke thickness on all four sides.
+Layout: landscape sheet about 1536 by 1024 with generous genuine transparent gaps around every piece. Exactly SEVEN separate sprites, each fully visible, arranged as follows:
+1. Upper left: a wide, shallow EMPTY rectangular outline for the closed resolution dropdown field, approximately 870 x 125. Its center is transparent. No words or arrow inside; it will receive live text in the game.
+2. Below that on the left: a large EMPTY rectangular outline for the opened resolution list, approximately 870 x 490. Its center is fully transparent. No rows, text, icons, or scrollbar inside.
+3. Lower left: a separate shallow white-filled selection-highlight strip, approximately 800 x 70, with a slightly irregular black outline. Blank interior.
+4. On the right half: one narrow vertical scrollbar TRACK, approximately 60 x 550, a black outlined tall slim rectangular channel with a fully transparent center. No thumb or arrows attached.
+5. Beside the track: one detached vertical scrollbar THUMB, approximately 60 x 155, opaque white fill with a bold black outline and three tiny centered horizontal black grip marks. Gentle square corners. Its width matches the track so it can be placed over it.
+6. Farther right near the top: one separate small white-filled upward-pointing triangle button glyph, around 70 x 45, black outline.
+7. Beneath that: one matching separate white-filled downward-pointing triangle glyph, around 70 x 45, black outline. Can also be used for the dropdown arrow.
+All parts must be isolated and never overlap. Keep visible margins around them. No assembled preview or extra copies.
+Transparency: genuinely transparent RGBA canvas. Fully transparent outside all sprites, inside BOTH large frames, and inside the empty scrollbar track. Opaque white is allowed ONLY in the highlight strip, thumb, and two triangle glyphs. No white/gray background, no painted checkerboard. No typography, dimensions, annotations, words, watermark, game scene, extra ornaments, lighting, shadows or gradients. Flat front-facing practical game UI artwork.
