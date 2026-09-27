@@ -10897,8 +10897,8 @@ MonoBehaviour:
   rowSpacing: 140
   barrelHeight: 140
   barrelRightInset: 20
-  weaponLength: 750
-  socketAlongBarrel: 0.8
+  weaponLength: 648
+  socketAlongBarrel: 0.5
   gripAlongWeapon: 0.82
   textureFrameScale: 1
   weaponStyles: []
