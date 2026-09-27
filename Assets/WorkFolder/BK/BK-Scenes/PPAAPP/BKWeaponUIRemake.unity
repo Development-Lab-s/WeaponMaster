@@ -10868,21 +10868,25 @@ MonoBehaviour:
   items:
   - visualRoot: {fileID: 2073804758}
     dragSlot: {fileID: 3340818092676202953}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1
   - visualRoot: {fileID: 1775325158}
     dragSlot: {fileID: 1714277778}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1
   - visualRoot: {fileID: 1058265247}
     dragSlot: {fileID: 244091667}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1
   - visualRoot: {fileID: 1735451678}
     dragSlot: {fileID: 1569104660}
+    emptyBarrelsBefore: 1
     weaponSocket: {fileID: 0}
     weaponOffset: {x: 0, y: 0}
     weaponImageScale: 1

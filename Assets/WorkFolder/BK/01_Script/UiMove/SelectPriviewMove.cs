@@ -48,7 +48,7 @@ public class SelectPriviewMove : MonoBehaviour
   }
   public void SelectMoveSound()
   {
-    select.transform.DOMove(soundPriview.transform.position, 0.7f);
+    select.transform.DOMove(soundPriview.transform.position, 0.1f);
     soundPriview.SetActive(false);
     mousePriview.SetActive(false);
     mikePriview.SetActive(false);
@@ -57,7 +57,7 @@ public class SelectPriviewMove : MonoBehaviour
 
   public void SelectMoveMouse()
   {
-    select.transform.DOMove(mousePriview.transform.position, 0.7f);
+    select.transform.DOMove(mousePriview.transform.position, 0.1f);
     mousePriview.SetActive(false);
     soundPriview.SetActive(false);
     mikePriview.SetActive(false);
@@ -66,7 +66,7 @@ public class SelectPriviewMove : MonoBehaviour
 
   public void SelectMoveMike()
   {
-    select.transform.DOMove(mikePriview.transform.position, 0.7f);
+    select.transform.DOMove(mikePriview.transform.position, 0.1f);
     mikePriview.SetActive(false);
     soundPriview.SetActive(false);
     debugPriview.SetActive(false);
@@ -75,7 +75,7 @@ public class SelectPriviewMove : MonoBehaviour
 
   public void SelectMoveDebug()
   {
-    select.transform.DOMove(debugPriview.transform.position, 0.7f);
+    select.transform.DOMove(debugPriview.transform.position, 0.1f);
     debugPriview.SetActive(false);
     mousePriview.SetActive(false);
     mikePriview.SetActive(false);
