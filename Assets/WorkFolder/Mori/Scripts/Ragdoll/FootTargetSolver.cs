@@ -143,6 +143,48 @@ public sealed class FootTargetSolver : MonoBehaviour
         return true;
     }
 
+    // 걸음을 계획할 때 착지 예정 지점의 지면 높이를 미리 잰다. 발 목표 탐지와 같은
+    // 레이어·필터·경사 제한을 쓰고, 여러 면이 걸리면 예상 높이에 가장 가까운 면을 고른다.
+    // (예상 높이 위의 턱이나 다른 물체 윗면보다 발이 실제로 디딜 지면을 우선한다.)
+    public bool TrySampleGround(
+        Vector3 point,
+        Vector3 up,
+        float searchUp,
+        float searchDown,
+        out Vector3 groundPoint)
+    {
+        Vector3 origin = point + up * searchUp;
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            sphereRadius,
+            -up,
+            _groundHits,
+            searchUp + searchDown,
+            groundLayers,
+            QueryTriggerInteraction.Ignore);
+
+        groundPoint = default;
+        float bestHeightError = float.PositiveInfinity;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit candidate = _groundHits[i];
+            if (!IsGroundCandidate(candidate.collider)
+                || candidate.distance <= 0f
+                || Vector3.Angle(candidate.normal, up) > maximumSlope)
+                continue;
+
+            float heightError = Mathf.Abs(Vector3.Dot(candidate.point - point, up));
+            if (heightError >= bestHeightError)
+                continue;
+
+            groundPoint = candidate.point;
+            bestHeightError = heightError;
+        }
+
+        return !float.IsPositiveInfinity(bestHeightError);
+    }
+
     private bool IsGroundCandidate(Collider candidate)
     {
         if (candidate == null)
