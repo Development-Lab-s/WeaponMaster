@@ -17128,6 +17128,7 @@ MonoBehaviour:
   - target: {fileID: 267969117}
     delay: 0.1
   deathText: {fileID: 323641081}
+  targetByText: {fileID: 735983677}
 --- !u!224 &910580606
 RectTransform:
   m_ObjectHideFlags: 0

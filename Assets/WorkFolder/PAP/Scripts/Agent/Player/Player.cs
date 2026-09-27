@@ -240,7 +240,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
-            ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.ToString());
+            ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
         }
 
         private void AttachWeaponLocal()
@@ -347,11 +347,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                          puppetRoot.GetComponentsInChildren<Rigidbody>(true))
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
-            
-            string val = await ServiceLocator.Get<IDataStoreService>()
-                .GetAsync<string>(nameof(PlayerDataStore.PlayerName));
-            await ServiceLocator.Get<ILeaderboardGiver>().MakePlayer(playerId.ToString(),val
-            );
+
         }
 
 
