@@ -22254,6 +22254,10 @@ PrefabInstance:
       propertyPath: 'NetworkedBehaviours.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5652856024669799113, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -156944933503258281, guid: a77f598948edee146907b6a8110da671, type: 3}
     - target: {fileID: 5822966420205995825, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 3306897900
