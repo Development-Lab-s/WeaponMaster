@@ -44,7 +44,7 @@ public sealed class FootTargetSolver : MonoBehaviour
     public bool GroundSnapEnabled { get; set; } = true;
     public bool HasGroundHit => _hasGroundHit;
     public bool IsGrounded => _isGrounded;
-    public bool IsSupportingGround => GroundSnapEnabled && _hasGroundHit;
+    public bool IsSupportingGround => GroundSnapEnabled && _hasGroundHit && _isGrounded;
     public Vector3 GroundNormal => _groundNormal;
     public Vector3 GroundPoint => _groundPoint;
 
@@ -132,6 +132,8 @@ public sealed class FootTargetSolver : MonoBehaviour
             return false;
         }
 
+        hit.normal = GetFaceNormal(hit);
+
         Vector3 currentSolePosition = ikTarget.position
                                     + ikTarget.rotation * _targetToSoleLocal;
         float soleHeight = Vector3.Dot(
@@ -141,6 +143,108 @@ public sealed class FootTargetSolver : MonoBehaviour
         _groundNormal = hit.normal;
         _groundPoint = hit.point;
         return true;
+    }
+
+    // 걸음을 계획할 때 착지 예정 지점의 지면 높이를 미리 잰다. 발 목표 탐지와 같은
+    // 레이어·필터·경사 제한을 쓰고, 여러 면이 걸리면 예상 높이에 가장 가까운 면을 고른다.
+    // (예상 높이 위의 턱이나 다른 물체 윗면보다 발이 실제로 디딜 지면을 우선한다.)
+    public bool TrySampleGround(
+        Vector3 point,
+        Vector3 up,
+        float searchUp,
+        float searchDown,
+        out Vector3 groundPoint)
+    {
+        Vector3 origin = point + up * searchUp;
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            sphereRadius,
+            -up,
+            _groundHits,
+            searchUp + searchDown,
+            groundLayers,
+            QueryTriggerInteraction.Ignore);
+
+        groundPoint = default;
+        float bestHeightError = float.PositiveInfinity;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit candidate = _groundHits[i];
+            if (!IsGroundCandidate(candidate.collider)
+                || candidate.distance <= 0f
+                || Vector3.Angle(candidate.normal, up) > maximumSlope)
+                continue;
+
+            float heightError = Mathf.Abs(Vector3.Dot(candidate.point - point, up));
+            if (heightError >= bestHeightError)
+                continue;
+
+            groundPoint = candidate.point;
+            bestHeightError = heightError;
+        }
+
+        return !float.IsPositiveInfinity(bestHeightError);
+    }
+
+    // from에서 to로 구를 밀어 가장 가까운 벽(디딜 수 없는 경사의 면)까지의 거리를 준다.
+    // 디딜 수 있는 바닥·경사면은 장애물로 치지 않는다. 시작부터 겹친 면은 무시한다.
+    public bool TrySweepForObstacle(
+        Vector3 from,
+        Vector3 to,
+        float radius,
+        Vector3 up,
+        out float distance,
+        out Vector3 normal)
+    {
+        Vector3 delta = to - from;
+        float length = delta.magnitude;
+        distance = length;
+        normal = default;
+        if (length < 0.0001f)
+            return false;
+
+        int hitCount = Physics.SphereCastNonAlloc(
+            from,
+            radius,
+            delta / length,
+            _groundHits,
+            length,
+            groundLayers,
+            QueryTriggerInteraction.Ignore);
+
+        bool blocked = false;
+        for (int i = 0; i < hitCount; i++)
+        {
+            RaycastHit candidate = _groundHits[i];
+            if (!IsGroundCandidate(candidate.collider)
+                || candidate.distance <= 0f
+                || Vector3.Angle(candidate.normal, up) <= maximumSlope
+                || candidate.distance >= distance)
+                continue;
+
+            distance = candidate.distance;
+            normal = candidate.normal;
+            blocked = true;
+        }
+
+        return blocked;
+    }
+
+    // 구 캐스트가 턱·계단의 모서리에 닿으면 법선이 면이 아니라 "모서리 → 구 중심" 방향이라
+    // 비스듬하다(최대 maximumSlope까지 통과). 발이 그 각도로 기울고, 이동 코드도 이 법선으로
+    // 경사 보정을 해 몸이 턱에서 비틀린다. 접점 바로 위에서 같은 콜라이더에 수직 레이를 쏴
+    // 실제 면의 법선을 쓴다. 면 안쪽에 닿은 경우(평지·일반 경사)는 두 법선이 같아 변화가 없다.
+    private Vector3 GetFaceNormal(RaycastHit hit)
+    {
+        const float probeHeight = 0.1f;
+        Ray ray = new Ray(hit.point + Vector3.up * probeHeight, Vector3.down);
+
+        if (hit.collider.Raycast(ray, out RaycastHit faceHit, probeHeight * 2f)
+            && Vector3.Angle(faceHit.normal, Vector3.up) <= maximumSlope)
+            return faceHit.normal;
+
+        return hit.normal;
     }
 
     private bool IsGroundCandidate(Collider candidate)

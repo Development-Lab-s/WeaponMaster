@@ -28,6 +28,7 @@ public class SettingMove : MonoBehaviour
  
  [Header("DEBUG")]
  [SerializeField]private GameObject debugSetting;
+
  
 
  private void Start()
@@ -47,14 +48,14 @@ public class SettingMove : MonoBehaviour
  {
      setting.transform.DOLocalMoveX(26, 1f);
      
-     soundSetting.transform.DOLocalMoveX( 300, 1.2f);
-     masterSetting.transform.DOLocalMoveX(300, 1.4f);
-     vfxSetting.transform.DOLocalMoveX(300, 1.45f);
-     bgmSetting.transform.DOLocalMoveX(300, 1.6f);
+     soundSetting.transform.DOLocalMoveX( 550, 1.2f); //원래 300
+     masterSetting.transform.DOLocalMoveX(0, 1.4f); //300
+     vfxSetting.transform.DOLocalMoveX(0, 1.45f); // 300
+     bgmSetting.transform.DOLocalMoveX(0, 1.6f); // 300
      
-     mouseSetting.transform.DOLocalMoveX(50, 1.2f);
+     mouseSetting.transform.DOLocalMoveX(50, 1.2f); //50
      
-     debugSetting.transform.DOLocalMoveX(300, 1.2f);
+     debugSetting.transform.DOLocalMoveX(300, 1.2f); //300
  }
 
  public void SettingOffMove()

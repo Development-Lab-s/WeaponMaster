@@ -23,13 +23,9 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
         private string GetKey(string key) => $"{_storeName}_{key}";
 
 
-        private async Task EnsureInitializedAsync()
+        private Task EnsureInitializedAsync()
         {
-            if (UnityServices.State  == ServicesInitializationState.Uninitialized)
-                await UnityServices.InitializeAsync();
-
-            if (!AuthenticationService.Instance.IsSignedIn)
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            return UgsSignIn.EnsureSignedInAsync();
         }
         
         public async Task<T> GetAsync(string key)

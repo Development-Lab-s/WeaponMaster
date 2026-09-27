@@ -2,6 +2,6 @@
 {
     public interface ILeaderboardGlobalMaker
     {
-        void GetTopRanker(string storeName, ushort RankerCount);
+        void GetTopRanker();
     }
 }

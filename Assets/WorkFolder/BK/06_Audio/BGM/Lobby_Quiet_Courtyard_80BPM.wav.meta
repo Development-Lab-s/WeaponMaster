@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: a74e90a8404e4a5c87bf581bfd2b4367
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 8
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 2
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 0.8
+    conversionMode: 0
+    preloadAudioData: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 0
+  loadInBackground: 1
+  ambisonic: 0
+  3D: 0
+  userData: Original lobby cue - Quiet Courtyard - 80 BPM - 32 bars - seamless source loop
+  assetBundleName: 
+  assetBundleVariant: 

@@ -11,5 +11,6 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
         public uint HairStyle;
         public uint KillCount;
         public uint DeathCount;
+        public uint Score;
     }
 }

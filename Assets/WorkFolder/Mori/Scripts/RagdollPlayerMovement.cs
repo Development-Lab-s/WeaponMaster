@@ -22,13 +22,32 @@ public class RagdollPlayerMovement : NetworkBehaviour
     [SerializeField, Range(0f, 89f)] private float maximumSlope = 50f;
     [SerializeField, Min(0f)] private float airborneGravity = 20f;
 
+    [Header("Slope Pelvis Drop")]
+    // 비워 두면 루트 바로 아래 "Driver"를 찾는다.
+    [SerializeField] private Transform driverRoot;
+    [SerializeField, Min(0f)] private float maximumPelvisDrop = 0.35f;
+    // 이만큼까지의 높이 차는 무시한다. 평지의 미세한 오차로 골반이 움직이지 않게 한다.
+    [SerializeField, Min(0f)] private float pelvisDropDeadZone = 0.03f;
+    [SerializeField, Min(0f)] private float pelvisDropResponse = 10f;
+
     private Rigidbody _rigidbody;
     private PlayerMovementInput _input;
     private FootTargetSolver[] _footSolvers;
     private Rigidbody _puppetPelvisBody;
     private float _puppetPelvisYawOffset;
     private float _currentForwardSpeed;
+    private float _driverBaseHeight;
+    private float _pelvisDrop;
     public float MaximumSpeed => Mathf.Max(walkSpeed, maxRunSpeed);
+    public bool IsReadyWeapon = false;
+
+
+    private Vector3 _commandedVelocity;
+    private bool _hasCommandedVelocity;
+
+    public Vector3 CurrentVelocity => _hasCommandedVelocity
+        ? _commandedVelocity
+        : _rigidbody.linearVelocity;
 
     private void Awake()
     {
@@ -38,25 +57,94 @@ public class RagdollPlayerMovement : NetworkBehaviour
         ResolvePuppetPelvisBody();
         _currentForwardSpeed = walkSpeed;
 
+        if (driverRoot == null)
+            driverRoot = transform.Find("Driver");
+        if (driverRoot != null)
+            _driverBaseHeight = driverRoot.localPosition.y;
+
         _rigidbody.collisionDetectionMode =
             CollisionDetectionMode.ContinuousSpeculative;
-        _rigidbody.constraints |=
-            RigidbodyConstraints.FreezeRotationX
-          | RigidbodyConstraints.FreezeRotationZ;
+        _rigidbody.constraints |= RigidbodyConstraints.FreezeRotation;
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
     }
 
+    private void FixedUpdate()
+    {
+        if (Runner == null || Object == null) return;
+
+        bool hasWalkableGround = TryGetWalkableGround(out _);
+        ApplyPuppetPelvisLift(hasWalkableGround);
+
+        Quaternion rootRotation = HasInputAuthority
+            ? _rigidbody.rotation
+            : transform.rotation;
+        RotatePuppetPelvis(rootRotation);
+
+        UpdateSlopePelvisDrop();
+    }
+
+    private void UpdateSlopePelvisDrop()
+    {
+        if (driverRoot == null)
+            return;
+
+        float targetDrop = 0f;
+        Vector3 up = transform.up;
+        FootTargetSolver referenceSolver = null;
+        float lowestFootHeight = float.PositiveInfinity;
+
+        for (int i = 0; i < _footSolvers.Length; i++)
+        {
+            FootTargetSolver footSolver = _footSolvers[i];
+            if (footSolver == null || !footSolver.HasGroundHit)
+                continue;
+
+            if (referenceSolver == null)
+                referenceSolver = footSolver;
+            lowestFootHeight = Mathf.Min(
+                lowestFootHeight,
+                Vector3.Dot(footSolver.GroundPoint, up));
+        }
+
+        if (referenceSolver != null
+            && referenceSolver.TrySampleGround(
+                transform.position,
+                up,
+                1.5f,
+                1.5f,
+                out Vector3 centerGround))
+        {
+            float deficit = Vector3.Dot(centerGround, up) - lowestFootHeight;
+            targetDrop = Mathf.Clamp(
+                deficit - pelvisDropDeadZone,
+                0f,
+                maximumPelvisDrop);
+        }
+
+        float blend = 1f - Mathf.Exp(-pelvisDropResponse * Time.fixedDeltaTime);
+        _pelvisDrop = Mathf.Lerp(_pelvisDrop, targetDrop, blend);
+
+        Vector3 localPosition = driverRoot.localPosition;
+        localPosition.y = _driverBaseHeight - _pelvisDrop;
+        driverRoot.localPosition = localPosition;
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (!HasInputAuthority) return;
+        if (PlayerHipCamera.IsCameraEnable)
+        {
+            // 이동 명령을 내리지 않는 동안에는 예전처럼 실제 Rigidbody 속도를 쓴다.
+            _hasCommandedVelocity = false;
+            return;
+        }
         Vector2 moveInput = _input.MoveDirection;
         Quaternion cameraYawRotation = RotateTowardCamera();
-        Vector3 localDirection = new Vector3(moveInput.x, 0f, moveInput.y);
+        Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
         bool hasWalkableGround = TryGetWalkableGround(
             out Vector3 groundNormal);
-        ApplyPuppetPelvisLift(hasWalkableGround);
         float airborneVerticalVelocity =
             _rigidbody.linearVelocity.y
             - airborneGravity * Time.fixedDeltaTime;
@@ -66,14 +154,19 @@ public class RagdollPlayerMovement : NetworkBehaviour
         {
             _currentForwardSpeed = walkSpeed;
             velocity = hasWalkableGround
-                ? Vector3.zero
+                ? new Vector3(0f, -0.5f, 0f)
                 : new Vector3(0f, airborneVerticalVelocity, 0f);
         }
         else
         {
             float speed;
 
-            if (_input.HasForwardInput && _input.IsSprintPressed)
+            if (IsReadyWeapon)
+            {
+                speed = 2.4f;
+                _currentForwardSpeed = speed;
+            }
+            else if (_input.HasForwardInput && _input.IsSprintPressed)
             {
                 _currentForwardSpeed = Mathf.MoveTowards(
                     _currentForwardSpeed,
@@ -86,6 +179,7 @@ public class RagdollPlayerMovement : NetworkBehaviour
                 _currentForwardSpeed = walkSpeed;
                 speed = walkSpeed;
             }
+
 
             Vector3 movementDirection =
                 cameraYawRotation * localDirection.normalized;
@@ -109,6 +203,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
         }
 
         _rigidbody.linearVelocity = velocity;
+        _commandedVelocity = velocity;
+        _hasCommandedVelocity = true;
     }
 
     private bool TryGetWalkableGround(out Vector3 groundNormal)
@@ -186,7 +282,6 @@ public class RagdollPlayerMovement : NetworkBehaviour
             rotationSpeed * Time.fixedDeltaTime);
 
         _rigidbody.MoveRotation(nextRotation);
-        RotatePuppetPelvis(nextRotation);
 
         return cameraYawRotation;
     }

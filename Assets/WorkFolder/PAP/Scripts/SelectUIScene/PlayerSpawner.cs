@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DevLib.ServiceLocator;
+using Fusion;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Player;
 using WorkFolder.PAP.Scripts.Network;
@@ -10,8 +11,9 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
     public class PlayerSpawner : SimulationBehaviour
     {
         [SerializeField] private EquipSocketContainer container;
-        [SerializeField] private GameObject playerPrefab;
+        [SerializeField] private NetworkObject playerPrefab;
         [SerializeField] private PartOffsetDataSO[] partDataList;
+        [SerializeField] private Transform[] playerSpawnPoints;
         
         Transform FindChildHelper(Transform current, string targetName)
         {
@@ -28,9 +30,23 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
         
         public void SpawnCharacter()
         {
-            (int, ItemData) pack = container.GetCurrentPartAndWeapon();
+            NetworkRunner runner = null;
+
+            foreach (NetworkRunner candidate in
+                     FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
+            {
+                if (candidate != null && candidate.IsRunning)
+                {
+                    runner = candidate;
+                    break;
+                }
+            }
+
+            if (runner == null) return;
             
-            NetworkObject player = RunnerProvider.Current.Spawn(playerPrefab, new Vector3(0,4,0),Quaternion.identity,inputAuthority:RunnerProvider.Current.LocalPlayer);
+            (int, ItemData) pack = container.GetCurrentPartAndWeapon();
+            NetworkObject player = runner.Spawn(playerPrefab, playerSpawnPoints[Random.Range(0,playerSpawnPoints.Length)].position + new Vector3(Random.Range(-3f,3f),0,Random.Range(-3f,3f)),Quaternion.identity,inputAuthority:runner.LocalPlayer);
+            runner.SetPlayerObject(runner.LocalPlayer, player);
             Player playerHandler = player.GetComponent<Player>();
             PartOffsetDataSO partData = partDataList[pack.Item1];
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);

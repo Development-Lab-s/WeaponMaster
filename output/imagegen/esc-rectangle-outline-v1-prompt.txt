@@ -1,0 +1,6 @@
+Generated using the built-in image_gen tool with transparent_background=true.
+Final asset: esc-rectangle-outline-v1.png (1672 x 941 RGBA PNG).
+Interior and exterior alpha verified transparent by pixel sampling.
+
+Prompt:
+Create one simple hand-drawn black rectangular border on a truly transparent PNG canvas. Landscape proportions about 16:9. Four thin slightly wobbly black lines joined at imperfect square corners, like a rectangle drawn with a mouse in Microsoft Paint. A few subtle retraced line segments give a casual doodle style. Center the entire rectangle with a small transparent margin so all four edges are visible. The rectangle is EMPTY: its entire interior is fully transparent, exactly like the exterior. Only the black outline has visible pixels. No white fill, no colored fill, no background, no checkerboard, no text, no decoration, no shadows. Flat two-dimensional outline only.

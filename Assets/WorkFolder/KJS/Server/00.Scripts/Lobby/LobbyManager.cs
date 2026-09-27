@@ -5,7 +5,6 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
-using UnityPipeline.Microsoft.CodeAnalysis.Diagnostics;
 
 namespace _00.Scripts.Lobby
 {
@@ -60,7 +59,7 @@ namespace _00.Scripts.Lobby
             {
                 GameMode = GameMode.Shared,
                 SessionName = roomName,
-                Scene = SceneRef.FromIndex(0),
+                Scene = SceneRef.FromIndex(1),
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>(),
                 SessionProperties = properties
             });
@@ -150,6 +149,8 @@ namespace _00.Scripts.Lobby
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>()
             });
 
+            
+            
             if (result.Ok)
             {
                 Debug.Log("Joined room");
@@ -157,6 +158,7 @@ namespace _00.Scripts.Lobby
             else
             {
                 Debug.Log($"Failed : {result.ShutdownReason}");
+                TextChange($"예상치 못한 오류가 발생했습니다.{result.ShutdownReason}");
             }
         }
         
@@ -200,6 +202,7 @@ namespace _00.Scripts.Lobby
                 _realSessionList.Add(session);
 
                 Debug.Log($"방 발견: {session.Name}");
+                Debug.Log($"방 발견: {session.PlayerCount}");
 
                 bool isPrivate = false;
 

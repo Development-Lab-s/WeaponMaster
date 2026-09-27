@@ -1,0 +1,8 @@
+Edited using the built-in image_gen tool with transparent_background=true.
+Final asset: esc-rectangle-outline-v3-thick-white.png (1672 x 941 RGBA PNG).
+Thick white outline with transparent interior and exterior. Color and alpha spot checks passed.
+
+Prompt:
+Use case: precise-object-edit.
+Edit the attached transparent thick rectangular outline sprite. Change ONLY the color of the existing black contour to pure opaque WHITE. Preserve its exact hollow rectangular shape, wide aspect ratio, placement, transparent margins, thick stroke weight (about 30 pixels), square corners, and slightly uneven hand-drawn MS Paint doodle character.
+This is a WHITE OUTLINE version of the original frame, NOT a white-filled panel. The entire enclosed rectangular center MUST remain fully transparent alpha=0, as must the whole area outside the contour. Only the four connected thick white lines of the border are visible. Preserve antialiased transparency along the edges. Do not create any black outline, shadow, gray backdrop, glow, shading, gradients, textures, fill, text, symbols, decorations, or extra objects. Exactly one hollow white rectangular border, on a truly transparent RGBA PNG canvas. Keep canvas size and composition unchanged.

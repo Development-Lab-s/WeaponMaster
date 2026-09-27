@@ -86,17 +86,19 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
         public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
         {
             await EnsureInitializedAsync();
-            var keys = new HashSet<string> { valueName };
+
+            string key = $"{storeName}_{playerId}";                
+            var keys = new HashSet<string> { key };
             var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
 
             var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys, options);
+            if (!playerData.TryGetValue(key, out var item))
+                return default;
 
-            if (playerData.TryGetValue(valueName, out var item))
-            {
-                return item.Value.GetAs<TValue>(); 
-            }
-
-            return default;
+            PlayerDataStore store = item.Value.GetAs<PlayerDataStore>();
+            FieldInfo field = GetField<TValue>(valueName);
+            object value = field.GetValue(store);
+            return value == null ? default : (TValue)value;
         }
 
         public async Task<string> SetPlayerName<TValue>(string playerName)
@@ -132,22 +134,21 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         private Task EnsureInitializedAsync()
         {
+            if (_initializationTask != null
+                && (_initializationTask.IsFaulted || _initializationTask.IsCanceled))
+                _initializationTask = null;
+
             return _initializationTask ??= InitializeCoreAsync();
         }
 
         private async Task InitializeCoreAsync()
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
-                await UnityServices.InitializeAsync();
-
-            if (!AuthenticationService.Instance.IsSignedIn)
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await UgsSignIn.EnsureSignedInAsync();
 
             _store = Lib.DataStoreService.GetDataStore<PlayerDataStore>(storeName);
             playerDataStore = await _store.GetAsync(AuthenticationService.Instance.PlayerId)
                               ?? new PlayerDataStore();
             
-            // Cloud Code owns the canonical nickname; the public V1 profile is a display copy.
             var names = await CloudSaveService.Instance.Data.Player.LoadAsync(
                 new HashSet<string> { nameof(PlayerDataStore.PlayerName) });
             if (names.TryGetValue(nameof(PlayerDataStore.PlayerName), out var name))

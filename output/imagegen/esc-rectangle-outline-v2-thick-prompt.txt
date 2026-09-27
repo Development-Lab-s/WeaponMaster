@@ -1,0 +1,8 @@
+Generated using the built-in image_gen tool with transparent_background=true.
+Final asset: esc-rectangle-outline-v2-thick.png (1672 x 941 RGBA PNG).
+Input: esc-rectangle-outline-v1.png.
+Validation: transparent central region and exterior; central top/bottom stroke total increased from 20 to 60 pixels.
+
+Prompt:
+Edit the attached transparent rectangular outline PNG. Change only the line thickness: make all four black sides approximately THREE TIMES thicker, a bold clearly visible black marker outline rather than a fine pen line. Preserve the same wide rectangular proportions, placement, joined square corners, and irregular hand-drawn MS Paint doodle character. Keep slight natural wobble and uneven thickness, with small retraced strokes close to the main outline. The four sides should be continuous and predominantly opaque black, with enough weight to read clearly when used as a small game UI border. Preserve the transparent canvas size and padding, and keep every edge fully visible.
+Crucial: both the entire empty rectangular interior AND the exterior remain completely transparent (alpha 0). ONLY the thick black outline is visible. Do not add any white or colored fill, any background, checkerboard, shading, shadow, text, decorations, or extra shapes. Export a real transparent RGBA PNG.
