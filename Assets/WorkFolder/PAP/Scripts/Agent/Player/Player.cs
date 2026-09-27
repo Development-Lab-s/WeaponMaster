@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
+using TMPro;
 using Unity.Services.Authentication;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
+using WorkFolder.PAP.Scripts.GameSystem.KillSystem;
 using WorkFolder.PAP.Scripts.SO.DataFolder;
+using WorkFolder.PAP.Scripts.WeaponSystem;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -26,6 +30,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [SerializeField] private PlayerInputSO playerInput;
         [field:SerializeField] public SettingValueSO SettingValue;
         [SerializeField]private Transform targetPuppet;
+        [SerializeField] private TextMeshPro nameTag;
 
         public static List<Player> All { get; private set; }
         public IAgentMovement AgentMover { get; private set; }
@@ -34,7 +39,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public SkinnedMeshRenderer MeshRenderer;
         
-        // 퓨전 2 방식의 네트워크 동기화 변수들
         [Networked] private NetworkBool NetCanInitialize { get; set; }
         [Networked] private NetworkedPartData NetPartData { get; set; }
         [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
@@ -49,11 +53,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked] public NetworkString<_32> playerId { get; set; }
         
+        [Networked, OnChangedRender(nameof(NameChanged))] public NetworkString<_32> playerName { get; set; }
 
         [Networked, OnChangedRender(nameof(ColorChanged))] 
         public Color NetWorkedColor{ get; set;}
-        
-        private Color loadedColor { get; set; }
         
         private uint HairStyleIndex { get; set; }
         
@@ -153,21 +156,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetLeftGoalLocal = transform.InverseTransformPoint(left.position);
             NetLeftGoalLocalRotation = inverseRoot * left.rotation;
             NetRightGoalLocal = transform.InverseTransformPoint(right.position);
-            NetRightGoalLocalRotation = inverseRoot * right.rotation;
 
-            // 스윙 중에는 FootStepController가 솔버의 지면 스냅을 끈다. 프록시는
-            // FootStepController를 끄므로 이 상태를 따로 보내지 않으면 스냅이 항상
-            // 켜진 채로 남아, 들어 올린 발까지 매 프레임 바닥으로 끌어내린다.
             FootTargetSolver leftSolver = _footStepper.LeftSolver;
             FootTargetSolver rightSolver = _footStepper.RightSolver;
             if (leftSolver != null) NetLeftSwinging = !leftSolver.GroundSnapEnabled;
             if (rightSolver != null) NetRightSwinging = !rightSolver.GroundSnapEnabled;
         }
 
-        // 프록시의 루트는 NetworkTransform이 remote time(보간된 과거 시점)으로 그린다.
-        // [Networked] 프로퍼티를 그냥 읽으면 보간되지 않은 최신 스냅샷이 나오므로,
-        // 몸은 과거인데 발은 현재가 되어 심어 둔 발이 속도에 비례해 뒤로 밀린다.
-        // 같은 NetworkObject의 스냅샷 버퍼로 보간해 루트와 같은 시간대를 맞춘다.
         private void ApplyFootGoals()
         {
             if (HasStateAuthority) return;
@@ -234,6 +229,11 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             MeshRenderer.material.color = NetWorkedColor;
         }
+
+        void NameChanged()
+        {
+            nameTag.SetText(playerName.ToString());
+        }
         
         private void AttachWeaponLocal()
         {
@@ -241,7 +241,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
             NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
 
-            // 퍼펫과 같은 이유: 프록시 무기도 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 한다.
             if (!HasStateAuthority)
             {
                 foreach (Rigidbody weaponBody in
@@ -264,7 +263,17 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             {
                 if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
                 {
-                    weaponJoint.connectedBody = targetNetObj.GetComponent<Rigidbody>();
+                    Rigidbody partBody = targetNetObj.GetComponent<Rigidbody>();
+
+                    if (weaponJoint is ConfigurableJoint configurableJoint)
+                    {
+                        if (!NetSpawnedWeapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
+                            edgeAligner = NetSpawnedWeapon.gameObject.AddComponent<WeaponEdgeAligner>();
+
+                        edgeAligner.Bind(configurableJoint, partBody, GetComponent<Rigidbody>());
+                    }
+
+                    weaponJoint.connectedBody = partBody;
                 }
             }
 
@@ -293,8 +302,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
-
-
             if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
                 rootBody.linearVelocity = Vector3.zero;
@@ -302,10 +309,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 rootBody.isKinematic = true;
                 rootBody.interpolation = RigidbodyInterpolation.None;
             }
-
-            // 프리팹은 저장된 위치에서 생성(Awake)된 뒤 Spawn 위치로 옮겨진다. 퍼펫 강체를
-            // 옮겨진 transform에 즉시 맞추고 속도를 지운다. 예전처럼 await 뒤에 하면
-            // 데이터를 받는 동안 퍼펫이 옛 위치를 향해 날뛰다가 나중에 한 번 더 튄다.
+            
             if (HasStateAuthority)
                 TeleportTo(transform.position, transform.rotation);
 
@@ -316,26 +320,18 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                          puppetRoot.GetComponentsInChildren<StablePuppetJoint>(true))
                     joint.SetProxyMode(true);
 
-                // 프록시 퍼펫은 NetworkTransform이 Render에서 옮기는 루트에 끌려가며 이동한다.
-                // 보간이 켜져 있으면 물리 스텝이 없는 프레임마다 Unity가 이전 물리 포즈로
-                // transform을 되돌려 그 이동분을 버린다. 관절 추종이 없는 골반이 가장 많이
-                // 뒤처지고, 드라이버를 따라 앞으로 당겨지는 척추가 그 위에서 앞으로 꺾인다.
                 foreach (Rigidbody puppetBody in
                          puppetRoot.GetComponentsInChildren<Rigidbody>(true))
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
-
-            // OnChangedRender는 스폰 이후의 변경만 알린다. 나중에 들어온 클라이언트는
-            // 이미 정해진 색을 변경으로 받지 못하므로 스폰 시점 값을 한 번 적용한다.
-            if (!HasInputAuthority && NetWorkedColor.a > 0f)
-                ColorChanged();
 
             if (!HasInputAuthority) return;
             playerInput.OnAttackKeyPressed += HandleAttack;
             
             playerId = AuthenticationService.Instance.PlayerId;
             _service = ServiceLocator.Get<IDataStoreService>();
-            uint value = await ServiceLocator.Get<IDataStoreService>().GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+            playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+            uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
             NetWorkedColor = _bodyMaterials[value].color;
             ColorChanged();
             HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;

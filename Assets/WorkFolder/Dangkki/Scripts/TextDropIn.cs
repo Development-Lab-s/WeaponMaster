@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 public class TextDropIn : MonoBehaviour
@@ -15,13 +16,13 @@ public class TextDropIn : MonoBehaviour
     [SerializeField] private float fadeFrom = 0f;
 
     
-    
-    
     private RectTransform rect;
     private Vector3 endScale;
     private Vector2 endPos;
     private Sequence seq;
-
+    
+    public UnityEvent OnPlay;
+    
     private void Awake()
     {
         rect = (RectTransform)transform;
@@ -32,6 +33,7 @@ public class TextDropIn : MonoBehaviour
     private void OnEnable()
     {
         Play();
+        OnPlay?.Invoke();
     }
 
     private void OnDisable()

@@ -18,7 +18,7 @@ namespace WorkFolder.PAP.Scripts.Sound
         public async void PlaySound(AudioClip clip)
         {
             PlaySound(Array.IndexOf(clips,clip));
-            await Task.Delay(TimeSpan.FromSeconds(clip.length));
+            await Task.Delay(TimeSpan.FromSeconds(clip.length+1));
             Destroy(gameObject);
         }
 
