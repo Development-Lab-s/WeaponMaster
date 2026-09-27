@@ -370,7 +370,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: -156944933503258281, guid: d84e1f0a8c195ea49a4ca47a2435e193, type: 3}
+  m_Mesh: {fileID: -156944933503258281, guid: a77f598948edee146907b6a8110da671, type: 3}
   m_Bones:
   - {fileID: 4724774825702161111}
   - {fileID: 1392163381799924835}
@@ -406,8 +406,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3382301216077223421}
-  - component: {fileID: 5044385035853222019}
-  - component: {fileID: 7336169983445395712}
   m_Layer: 0
   m_Name: foot.R
   m_TagString: Untagged
@@ -431,66 +429,6 @@ Transform:
   - {fileID: 4934329806405054431}
   m_Father: {fileID: 1631967884052464417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5044385035853222019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812507355655533824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 2405383441
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 7336169983445395712}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &7336169983445395712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812507355655533824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &951873739550882275
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,8 +532,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8388530085108882349}
-  - component: {fileID: 4875399403993044896}
-  - component: {fileID: 8207928898018034968}
   m_Layer: 0
   m_Name: shin.L
   m_TagString: Untagged
@@ -619,67 +555,6 @@ Transform:
   - {fileID: 7081888373756350178}
   m_Father: {fileID: 3174424409196970394}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4875399403993044896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1070517921525277665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 1735837626
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects:
-  - {fileID: 6954758458828442975}
-  NetworkedBehaviours:
-  - {fileID: 8207928898018034968}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &8207928898018034968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1070517921525277665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &1227573927979173931
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,8 +659,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3174424409196970394}
-  - component: {fileID: 7352685920395203660}
-  - component: {fileID: 2968621836330332855}
   m_Layer: 0
   m_Name: thigh.L
   m_TagString: Untagged
@@ -809,68 +682,6 @@ Transform:
   - {fileID: 8388530085108882349}
   m_Father: {fileID: 619375812927510110}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7352685920395203660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2089626945746617105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 1002192235
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects:
-  - {fileID: 4875399403993044896}
-  - {fileID: 6954758458828442975}
-  NetworkedBehaviours:
-  - {fileID: 2968621836330332855}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &2968621836330332855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2089626945746617105}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &2435325800570033073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1715,12 +1526,6 @@ MonoBehaviour:
   Flags: 262402
   NestedObjects:
   - {fileID: 6908295986261129180}
-  - {fileID: 7352685920395203660}
-  - {fileID: 4875399403993044896}
-  - {fileID: 6954758458828442975}
-  - {fileID: 4877509066077585339}
-  - {fileID: 6607164584675512580}
-  - {fileID: 5044385035853222019}
   NetworkedBehaviours:
   - {fileID: 6778409569775565887}
   ForceRemoteRenderTimeframe: 0
@@ -2018,8 +1823,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1631967884052464417}
-  - component: {fileID: 6607164584675512580}
-  - component: {fileID: 2949353625937786516}
   m_Layer: 0
   m_Name: shin.R
   m_TagString: Untagged
@@ -2043,67 +1846,6 @@ Transform:
   - {fileID: 3382301216077223421}
   m_Father: {fileID: 3798441126110803615}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6607164584675512580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3790985122176633042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 2634168395
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects:
-  - {fileID: 5044385035853222019}
-  NetworkedBehaviours:
-  - {fileID: 2949353625937786516}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &2949353625937786516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3790985122176633042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &3888308350053634155
 GameObject:
   m_ObjectHideFlags: 0
@@ -3108,8 +2850,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3798441126110803615}
-  - component: {fileID: 4877509066077585339}
-  - component: {fileID: 5881815018485614521}
   m_Layer: 0
   m_Name: thigh.R
   m_TagString: Untagged
@@ -3133,68 +2873,6 @@ Transform:
   - {fileID: 1631967884052464417}
   m_Father: {fileID: 619375812927510110}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4877509066077585339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4879150153350646760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 3105556890
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects:
-  - {fileID: 6607164584675512580}
-  - {fileID: 5044385035853222019}
-  NetworkedBehaviours:
-  - {fileID: 5881815018485614521}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &5881815018485614521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4879150153350646760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &5026159999029807052
 GameObject:
   m_ObjectHideFlags: 0
@@ -3301,7 +2979,7 @@ ConfigurableJoint:
   m_ZMotion: 0
   m_AngularXMotion: 1
   m_AngularYMotion: 1
-  m_AngularZMotion: 2
+  m_AngularZMotion: 1
   m_LinearLimitSpring:
     spring: 0
     damper: 0
@@ -3313,11 +2991,11 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: 31.18747
+    limit: -177
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 177
+    limit: -30
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -4247,8 +3925,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7081888373756350178}
-  - component: {fileID: 6954758458828442975}
-  - component: {fileID: 6852470441465441521}
   m_Layer: 0
   m_Name: foot.L
   m_TagString: Untagged
@@ -4272,66 +3948,6 @@ Transform:
   - {fileID: 8245760924914041646}
   m_Father: {fileID: 8388530085108882349}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6954758458828442975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5866093690850940870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 3401318577
-  SendPriority: 1
-  EnableInterpolation: 1
-  Flags: 262402
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 6852470441465441521}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &6852470441465441521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5866093690850940870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  ConfigFlags: 0
-  PhysicsSettings:
-    ForecastEnabled: 1
-    DebugPhysics: 0
-    GravityForecast: 2
-    MaxExtrapolationTime: 0.15
-    MinLinearDetectedError: 0.02
-    MinAngularDetectedError: 3
-    MaxLinearError: 0
-    MaxAngularError: 0
-    LowCorrectionProgressThreshold: 0.015
-    HighErrorSimilarityThreshold: 1
-    MaxErrorTotalTime: 0.5
-    MaxRemoteSleepIgnoreTime: 0.5
-    ErrorCorrectionType: 0
-    LinearVelCorrectionMul: 1
-    AngularVelCorrectionMul: 1
-    PositionCorrectionLerp: 0.15
-    RotationCorrectionLerp: 0.15
-    Spring: 75
-    Damper: 2
-    MinImpactfulCollisionAlignment: 0.3
-    ImpactStartCorrectionTime: 0.1
-    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &6029173199625489351
 GameObject:
   m_ObjectHideFlags: 0
@@ -5025,11 +4641,11 @@ MonoBehaviour:
   swingToeLiftAngle: 12
   minimumStepDuration: 0.2
   speedForBaseDuration: 2.8
-  landingLeadTime: 0.07
-  strideLengthScale: 0.8
+  touchdownLeadRatio: 0.5
+  maximumTouchdownLead: 0.6
   sideStrideScale: 1
   backwardStrideScale: 1.2
-  landingLimitScale: 0.5
+  teleportDistance: 1
 --- !u!1 &7849872694032200681
 GameObject:
   m_ObjectHideFlags: 0
@@ -5706,12 +5322,6 @@ MonoBehaviour:
   - {fileID: 2703785108867984636}
   - {fileID: 5822966420205995825}
   - {fileID: 6908295986261129180}
-  - {fileID: 7352685920395203660}
-  - {fileID: 4875399403993044896}
-  - {fileID: 6954758458828442975}
-  - {fileID: 4877509066077585339}
-  - {fileID: 6607164584675512580}
-  - {fileID: 5044385035853222019}
   NetworkedBehaviours:
   - {fileID: 6583043841087276679}
   - {fileID: 173528877312612209}

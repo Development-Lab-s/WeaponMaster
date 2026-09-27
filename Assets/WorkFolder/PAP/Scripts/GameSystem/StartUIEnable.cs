@@ -23,6 +23,7 @@ namespace WorkFolder.PAP.Scripts.GameSystem
             }
 
             if (runner == null) return;
+            BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
             
             NetworkObject[] allNetworkObjects = runner.SimulationUnityScene.GetComponents<NetworkObject>(true);
 
