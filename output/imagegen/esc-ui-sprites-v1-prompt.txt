@@ -1,0 +1,15 @@
+Generated with the built-in image_gen tool.
+Final asset: esc-ui-sprites-v1.png (1536 x 1024 RGBA PNG).
+
+Use case: ui-mockup
+Asset type: production-ready 2D game ESC / pause-menu UI sprite atlas, one PNG with a genuinely transparent alpha background.
+Primary request: create cut-out ESC-menu UI sprites matching the user's references, with a deliberately crude Microsoft Paint mouse-drawn look.
+Input images: Image 1 is the PRIMARY STYLE REFERENCE: its plain white fill, very thin uneven black rectangular outline, imperfect doubled strokes and slightly ragged edges. Image 2 is only the COMPONENT REFERENCE: SOUND, MOUSE, DEBUG top tabs, CLOSE button, slider, small square. Do not reproduce the screenshot environment or its overlapping Korean text.
+Style: flat monochrome bitmap art drawn awkwardly with a mouse in MS Paint. Almost straight but subtly shaky outlines, uneven square corners, sparse little scratch marks near edges. Mostly clean solid white interiors. Restrained roughness, not dramatic torn paper, not grunge poster, not pencil shading. No depth or cast shadows.
+Composition: a landscape sprite sheet, about 1536 x 1024, every asset isolated with generous transparent padding, no overlaps.
+Top row: three matching wide shallow white rectangular tabs, each about 420 x 80, labelled exactly "SOUND", "MOUSE", "DEBUG" respectively in centered black narrow serif uppercase like the second reference.
+Second row: three separate matching white shallow rectangles: a "CLOSE" button, a blank button, and a blank button with a slightly bolder black outline suitable for selection. Keep the button rectangles similar in scale to the top row.
+Third row: one long thin imperfect white outlined slider track (empty transparent center), a separate small white diamond slider thumb, a separate white square with a rough thin black edge. Keep them separate so they can be used as individual sprites; white slider track must remain white even on transparency.
+Lower half: a single large blank wide white rectangular menu background panel, thin shaky black outline on all four sides, aspect ratio around 2.8:1, closely matching image 1. No text or controls on this panel.
+Text: only "SOUND", "MOUSE", "DEBUG", "CLOSE". No other labels, headings, numbers, annotations, logos or watermarks.
+Constraints: true transparent pixels outside each sprite, including all canvas gaps; opaque white fill inside buttons and panel. No background color, no baked-in checkerboard, no black backdrop, no gray presentation board. All parts fully visible and flat front-facing. Do not add game scene, cursor, device frame, icons, gradients, glossy effects, bevels, paper texture or ornamental decoration.

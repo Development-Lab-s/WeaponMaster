@@ -47,6 +47,7 @@ namespace WorkFolder.PAP.Scripts.Camera
             _camera = (_mainCam.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera);
             Debug.Assert(_camera != null, "Cinemachine camera is Null");
             _axisController = _camera.GetComponentInChildren<CinemachineInputAxisController>();
+            _mainCam.GetComponent<PlayerHipCamera>().playerRoot = Owner.transform;
             _weaponModule = Owner.GetModule<IWeaponModule>();
             _lockOn = _mainCam.GetComponent<LockOnCameraController>();
             
@@ -59,7 +60,7 @@ namespace WorkFolder.PAP.Scripts.Camera
 
         public override void Render()
         {
-            if (!HasInputAuthority) return;
+            if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable) return;
             RotateCharacter();
             AxisControl();
             if (EquipWeapon)

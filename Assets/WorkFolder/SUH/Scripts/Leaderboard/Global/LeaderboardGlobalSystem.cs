@@ -1,14 +1,20 @@
 using System;
+using Newtonsoft.Json;
+using Photon.Client.StructWrapping;
 using Unity.Services.Leaderboards;
 using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.Leaderboard.Global.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
     public class LeaderboardGlobalSystem : MonoBehaviour, ILeaderboardGlobalMaker
     {
+        [SerializeField] private GameObject leaderboardTemplate;
+        [SerializeField] private Transform context;
+        
         private void Awake()
         {
             DevLib.ServiceLocator.ServiceLocator.Register<ILeaderboardGlobalMaker>(this);
@@ -38,37 +44,49 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             limit = (ushort)(leaderboardSettingSO.MaxVisibleRank == null ? 0 : leaderboardSettingSO.MaxVisibleRank);
             
         }
-        
-        public async void AddScore()
+        [ContextMenu("GetLeaderboard")]
+        public async void GetTopRanker()
         {
-            var scoreResponse = await LeaderboardsService.Instance.AddPlayerScoreAsync(leaderBoardId, 102);
+            try
+            {
+                var scoresResponse =
+                    await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId, new GetScoresOptions{Offset = offset, Limit = limit, IncludeMetadata = true});
+                GetLeaderboard(scoresResponse);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[리더보드] 데이터 로드 실패: {e.Message}");
+            }
         }
 
-        public async void GetScores()
-        {
-            var scoresResponse =
-                await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId);
-        }
-
-        public async void GetPlayerScore()
-        {
-            var scoreResponse =
-                await LeaderboardsService.Instance.GetPlayerScoreAsync(leaderBoardId);
-        }
-        
-     
-        public async void GetTopRanker(string storeName, ushort RankerCount)
-        {
-            var scoresResponse =
-                await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId, new GetScoresOptions{Offset = offset, Limit = limit});
-            MakeLeaderboard(scoresResponse);
-            
-           
-        }
-
-        private void MakeLeaderboard(LeaderboardScoresPage scoresResponse)
+        private void GetLeaderboard(LeaderboardScoresPage scoresResponse)
         {
             if (scoresResponse != null && scoresResponse.Results.Count > 0)
+            {
+                for (int i = 0; i < scoresResponse.Results.Count; i++)
+                {
+                    var entry = scoresResponse.Results[i];
+                    
+                    int rank = entry.Rank + 1;
+                    string playerName = entry.PlayerName ?? "알 수 없는 닉네임";
+                    double score = entry.Score;
+                    uint kills = 0;
+
+                    if (!string.IsNullOrEmpty(entry.Metadata))
+                    {
+                        var metaDataObj = JsonConvert.DeserializeAnonymousType(entry.Metadata, new { kills = 0U });
+                        kills = metaDataObj.kills;
+                    }
+                    MakeLeaderboard(rank, playerName, score, kills);
+                }
+
+            }
+            else
+            {
+                Debug.Log("리더보드에 데이터가 없습니다.");
+            }
+            
+            /*if (scoresResponse != null && scoresResponse.Results.Count > 0)
             {
                 for (int i = 0; i < scoresResponse.Results.Count; i++)
                 {
@@ -79,7 +97,14 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             else
             {
                 Debug.Log("리더보드에 데이터가 없습니다.");
-            }
+            }*/
+        }
+
+        private void MakeLeaderboard(int rank, string playerName, double score, uint kills)
+        {
+            GameObject obj = Instantiate(leaderboardTemplate, context);
+            obj.GetComponent<UpdateRankObject>().UpdateRankText(rank, playerName, kills, score);
+            
         }
     }
 }

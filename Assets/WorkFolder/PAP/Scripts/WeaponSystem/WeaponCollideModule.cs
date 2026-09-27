@@ -42,7 +42,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void FixedUpdate()
         {
-            if (_swordRb.linearVelocity.sqrMagnitude > 250)
+            if (_swordRb.linearVelocity.sqrMagnitude > 75)
             {
                 _isEnabled = true;
             }
@@ -66,7 +66,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                     _damagables.Add(hitBox.Damageable);
                     DamageData data = new DamageData();
                     data.DeathMent = deathMents[Random.Range(0, deathMents.Length)];
-                    data.Damage = (int)(hitBox.Part.DamageMultiplier * 4f + _swordRb.linearVelocity.magnitude);
+                    data.Damage = (int)(hitBox.Part.DamageMultiplier * 20f + _swordRb.linearVelocity.magnitude);
                     data.Owner = _owner.Runner.LocalPlayer;
                     hitBox.Damageable.RpcTakeDamage(data);
                     

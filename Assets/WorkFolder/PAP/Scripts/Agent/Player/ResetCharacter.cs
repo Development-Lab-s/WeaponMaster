@@ -18,7 +18,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         public void TryReset(string deathMent = "죽음!")
         {
             if (!HasStateAuthority) return;
-            Runner.Despawn(_obj);
+
             UIManager.Instance.DropDeathUI(deathMent);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -26,7 +26,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         //테스트코드
 
-        private string[] resetMent = { "삶에서 도피하다!", "죽음과 포옹하다!", "기압으로 인해 죽음!", "초보는 장비탓을 한다!", "가장 멍청한 죽음!", "죽음!" };
+        private string[] resetMent = { "삶에서 도피하다!", "죽음과 포옹하다!", "기압으로 인해 죽음!", "초보는 장비탓을 한다!", "가장 멍청한 죽음!"};
 
         private void Update()
         {

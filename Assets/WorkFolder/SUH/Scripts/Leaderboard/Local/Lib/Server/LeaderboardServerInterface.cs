@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.Server
 {

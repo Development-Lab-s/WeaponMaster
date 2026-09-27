@@ -37,8 +37,24 @@ public sealed class StablePuppetJoint : MonoBehaviour
     private Vector3 _centerOfMassOffset;
     private Vector3 _previousTargetCenterOfMass;
     private bool _hasPreviousTargetCenterOfMass;
+    private bool _proxyMode;
+    private Vector3 _previousPositionError;
+    private bool _hasPreviousPositionError;
 
     public Transform AnimatedBone => animatedBone;
+
+    // 프록시에서는 NetworkTransform이 루트 transform을 직접 옮기고, Unity는 부모
+    // transform이 움직이면 자식 Rigidbody를 함께 끌고 간다. 드라이버 뼈도 같은 루트
+    // 밑이라 함께 움직이므로, 월드 기준 목표 속도에는 루트 이동이 들어가지만 바디의
+    // linearVelocity에는 들어가지 않는다. 그 차이만큼 댐퍼가 매 스텝 퍼펫을 밀어내어
+    // 속도에 비례해 앞으로 쏠리고 요동친다. 프록시에서는 목표와 바디를 모두 transform
+    // 기준으로 재고, 둘의 오차가 변하는 속도로 감쇠한다. 함께 끌려간 이동은 오차에서
+    // 상쇄되므로 끌려가든 아니든 올바른 상대 속도가 나온다.
+    public void SetProxyMode(bool enabled)
+    {
+        _proxyMode = enabled;
+        _hasPreviousPositionError = false;
+    }
 
     private void Awake()
     {
@@ -207,14 +223,39 @@ public sealed class StablePuppetJoint : MonoBehaviour
             targetVelocity,
             maximumTargetSpeed);
 
-        Vector3 positionError = targetCenterOfMass - _body.worldCenterOfMass;
+        Vector3 bodyCenterOfMass = _proxyMode
+            ? transform.position + transform.rotation * _centerOfMassOffset
+            : _body.worldCenterOfMass;
+        Vector3 positionError = targetCenterOfMass - bodyCenterOfMass;
+
+        Vector3 relativeVelocity;
+        if (_proxyMode)
+        {
+            if (!_hasPreviousPositionError)
+            {
+                _previousPositionError = positionError;
+                _hasPreviousPositionError = true;
+            }
+
+            relativeVelocity = Vector3.ClampMagnitude(
+                (positionError - _previousPositionError)
+                / Mathf.Max(Time.fixedDeltaTime, 0.0001f),
+                maximumTargetSpeed);
+            _previousPositionError = positionError;
+        }
+        else
+        {
+            relativeVelocity = targetVelocity - _body.linearVelocity;
+        }
+
         float positionGain = IsLowerBodyBone()
             ? LowerBodyPositionGain
             : 1f;
         float effectiveSpring = positionSpring * positionGain;
         float damper = 2f * positionDampingRatio * Mathf.Sqrt(effectiveSpring);
         Vector3 acceleration = effectiveSpring * positionError
-                             + damper * (targetVelocity - _body.linearVelocity);
+                               + damper * relativeVelocity
+                               - Physics.gravity;
         acceleration *= _currentStrength;
         acceleration = Vector3.ClampMagnitude(
             acceleration,

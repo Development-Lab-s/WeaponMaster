@@ -58,8 +58,8 @@ namespace WorkFolder.SUH.Scripts.UserInterface.CharacterEditor
                 return;
 
             var colorService = ServiceLocator.Get<WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator.IBodyColorInterfaceChange>();
-            if (colorService == null || index > ushort.MaxValue) return;
-            colorService.BodyColorInterfaceChange((ushort)index);
+            if (colorService == null) return;
+            colorService.BodyColorInterfaceChange(index);
             
             OnBodyColorChanged?.Invoke(index);
         }

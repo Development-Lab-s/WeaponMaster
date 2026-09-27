@@ -2,6 +2,6 @@
 {
     public interface IBodyColorInterfaceChange
     {
-        void BodyColorInterfaceChange(ushort index);
+        void BodyColorInterfaceChange(uint index);
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
@@ -6,7 +8,7 @@ using UnityEngine.EventSystems;
 public class PlayerHipCamera : MonoBehaviour
 {
    [Header("필수: 씬의 플레이어 최상위 오브젝트")]
-    [SerializeField] private Transform playerRoot;
+    public Transform playerRoot;
     [Header("선택: 자동 검색이 잘못된 경우에만 지정")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private Transform hipsOverride;
@@ -43,6 +45,8 @@ public class PlayerHipCamera : MonoBehaviour
     private bool[] controllerStates;
     private CursorLockMode savedCursorLock;
     private bool savedCursorVisible, sessionActive;
+    private CinemachineBrain _brain;
+ public static bool IsCameraEnable = false;
 
     private Vector3 Up => playerRoot.up.normalized;
     private Vector3 Forward
@@ -71,6 +75,11 @@ public class PlayerHipCamera : MonoBehaviour
         + Up * (bodySize * heightRatio)
         + Vector3.Cross(Up, Forward) * (bodySize * sideRatio);
 
+    private void Awake()
+    {
+        _brain = GetComponent<CinemachineBrain>();
+    }
+
     private void Update()
     {
         if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
@@ -83,10 +92,12 @@ public class PlayerHipCamera : MonoBehaviour
     public void EnterHipView()
     {
         if (state != State.Normal || !ResolveBones()) return;
+        _brain.enabled = false;
         originalPosition = playerRoot.InverseTransformPoint(transform.position);
         originalRotation = Quaternion.Inverse(playerRoot.rotation) * transform.rotation;
-        savedCursorLock = Cursor.lockState;
-        savedCursorVisible = Cursor.visible;
+        IsCameraEnable = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         sessionActive = true;
         controllerStates = new bool[cameraControllers == null ? 0 : cameraControllers.Length];
         for (int i = 0; i < controllerStates.Length; i++)
@@ -100,8 +111,7 @@ public class PlayerHipCamera : MonoBehaviour
             controllerStates[i] = control.enabled;
             control.enabled = false;
         }
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+
         // Keep only the initial horizontal direction, not the camera's distance
         // or height. Freeze the orbit plane so turning the player cannot add
         // extra rotation to the camera's one full revolution.
@@ -116,9 +126,16 @@ public class PlayerHipCamera : MonoBehaviour
     public void ReturnToNormal()
     {
         if (!sessionActive || state == State.Returning) return;
+        IsCameraEnable = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         bool wasHip = state == State.Hip;
         Begin(State.Returning);
-        if (wasHip) onHipViewExited.Invoke();
+        if (wasHip)
+        {
+            onHipViewExited.Invoke();
+            _brain.enabled = true;
+        }
     }
 
     private void Begin(State next)
@@ -136,7 +153,10 @@ public class PlayerHipCamera : MonoBehaviour
         {
             bool wasHip = state == State.Hip;
             RestoreControl();
-            if (wasHip) onHipViewExited.Invoke();
+            if (wasHip)
+            {
+                onHipViewExited.Invoke();
+            }
             return;
         }
         elapsed += Time.unscaledDeltaTime;
@@ -218,10 +238,9 @@ public class PlayerHipCamera : MonoBehaviour
             rightLeg = selected.GetBoneTransform(HumanBodyBones.RightUpperLeg);
             head = selected.GetBoneTransform(HumanBodyBones.Head);
         }
-        // Generic rigs, including the supplied character (1).fbx.
         Transform searchRoot = selected != null ? selected.transform : playerRoot;
         Transform[] bones = searchRoot.GetComponentsInChildren<Transform>(true);
-        if (hips == null) hips = FindBone(bones, "pelvis", "hips", "hip");
+        if (hips == null) hips = FindBone(bones, "root", "hips", "hip");
         if (leftLeg == null) leftLeg = FindBone(bones, "thighl", "leftupleg", "leftupperleg");
         if (rightLeg == null) rightLeg = FindBone(bones, "thighr", "rightupleg", "rightupperleg");
         if (head == null) head = FindBone(bones, "head");
@@ -271,8 +290,6 @@ public class PlayerHipCamera : MonoBehaviour
             for (int i = 0; i < Mathf.Min(cameraControllers.Length, controllerStates.Length); i++)
                 if (cameraControllers[i] != null && controllerStates[i]) cameraControllers[i].enabled = true;
         }
-        Cursor.lockState = savedCursorLock;
-        Cursor.visible = savedCursorVisible;
     }
     private void OnDisable()
     {
