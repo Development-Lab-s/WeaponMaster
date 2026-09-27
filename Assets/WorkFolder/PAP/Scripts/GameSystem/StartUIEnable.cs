@@ -18,21 +18,11 @@ namespace WorkFolder.PAP.Scripts.GameSystem
         private bool _isFirstTime = true;
         NetworkRunner runner = null;
 
-        private async void Start()
+        private void Start()
         {
             _service = ServiceLocator.Get<ICameraService>();
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
-            foreach (NetworkRunner candidate in
-                     FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
-            {
-                if (candidate != null && candidate.IsRunning)
-                {
-                    runner = candidate;
-                    break;
-                }
-            }
-
 
         }
 
@@ -43,11 +33,20 @@ namespace WorkFolder.PAP.Scripts.GameSystem
                 _isFirstTime = false;
                 return;
             }
+            
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
 
 
-
+            foreach (NetworkRunner candidate in
+                     FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
+            {
+                if (candidate != null && candidate.IsRunning)
+                {
+                    runner = candidate;
+                    break;
+                }
+            }
             if (runner == null) return;
             
             NetworkObject[] allNetworkObjects = runner.SimulationUnityScene.GetComponents<NetworkObject>(true);

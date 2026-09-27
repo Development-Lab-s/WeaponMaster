@@ -6,6 +6,8 @@ using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
 using S2;
+using Unity.Services.Leaderboards;
+using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
 using WorkFolder.PAP.Scripts.Agent.Player;
@@ -106,7 +108,8 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                 .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
             await ServiceLocator.Get<IDataStoreService>()
                 .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
-            await ServiceLocator.Get<IDataStoreService>().SaveAsync();       
+            await ServiceLocator.Get<IDataStoreService>().SaveAsync();
+            AddPlayerScoreOptions options = new AddPlayerScoreOptions();
         }
     }
 }
