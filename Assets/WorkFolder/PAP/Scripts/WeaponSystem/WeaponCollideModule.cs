@@ -15,6 +15,8 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
     public class WeaponCollideModule : MonoBehaviour
     {
         [SerializeField] private string[] deathMents;
+        private float swingStartSpeed = 200f;
+        private float swingEndSpeed = 30f;
         private Rigidbody _swordRb;
         private Collider[] _swordCol;
         private HashSet<IDamageable> _damagables = new HashSet<IDamageable>();
@@ -42,11 +44,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void FixedUpdate()
         {
-            if (_swordRb.linearVelocity.sqrMagnitude > 75)
+            float currentSpeed = _swordRb.GetPointVelocity(_swordRb.centerOfMass).sqrMagnitude;
+            if (currentSpeed > swingStartSpeed && !_isEnabled)
             {
                 _isEnabled = true;
+                if (_owner.HasInputAuthority)
+                    BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Swing, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
             }
-            else if (_isEnabled)
+            else if (currentSpeed < swingEndSpeed && _isEnabled)
             {
                 _isEnabled = false;
                 _damagables.Clear();
@@ -59,6 +64,12 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         {
             if (_owner == null || !_owner.HasInputAuthority || !_isEnabled) return;
             var contact = collision.contacts[0];
+            if (contact.otherCollider.CompareTag("Weapon") && contact.thisCollider.CompareTag("Weapon"))
+            {
+                if (_owner.HasInputAuthority)
+                    BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Clash, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
+                _swordRb.linearVelocity = Vector3.zero;
+            }
             if (collision.transform.CompareTag("Player") && contact.thisCollider.CompareTag("Weapon"))
             {
                 if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
@@ -69,11 +80,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                     data.Damage = (int)(hitBox.Part.DamageMultiplier * 20f + _swordRb.linearVelocity.magnitude);
                     data.Owner = _owner.Runner.LocalPlayer;
                     hitBox.Damageable.RpcTakeDamage(data);
-                    
-                    if (data.Damage >= 15)
+                    if (_owner.HasInputAuthority)
+                        BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
+                    if (data.Damage >= 20)
                     {
                         CritEffectSpawnRequest request = new CritEffectSpawnRequest(collision.contacts[0].otherCollider.transform.position, data.Damage/10f);
                         Factories.GetFactory<CritEffect, CritEffectSpawnRequest>().Create(request);
+                        if (_owner.HasInputAuthority)
+                            BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
                     }
                 }
             }

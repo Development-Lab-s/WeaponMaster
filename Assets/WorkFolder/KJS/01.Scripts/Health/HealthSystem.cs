@@ -62,7 +62,7 @@ namespace WorkFolder.KJS._01.Scripts
                 _iFeedable.PlayAllFeedBacks();
             if (Health <= 0 && !_isDead)
             {
-                Die();
+                Die(data.DeathMent.ToString());
                 KillLog.Instance.RPC_Kill(data.Owner, "엄준식");
             }
         }
