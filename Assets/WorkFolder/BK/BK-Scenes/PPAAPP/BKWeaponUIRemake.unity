@@ -10892,13 +10892,13 @@ MonoBehaviour:
     weaponImageScale: 1
   listScale: 1.55
   viewportSize: {x: 720, y: 800}
-  rightPadding: -90
+  rightPadding: -180
   verticalOffset: 0
   rowSpacing: 140
   barrelHeight: 140
   barrelRightInset: 20
-  weaponLength: 500
-  socketAlongBarrel: 0.2
+  weaponLength: 750
+  socketAlongBarrel: 0.8
   gripAlongWeapon: 0.82
   textureFrameScale: 1
   weaponStyles: []
@@ -28056,6 +28056,7 @@ MonoBehaviour:
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   targetPuppet: {fileID: 0}
   nameTag: {fileID: 0}
+  nameTitleObj: {fileID: 0}
   MeshRenderer: {fileID: 0}
   _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
   _NetRightGoalLocal: {x: 0, y: 0, z: 0}
