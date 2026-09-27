@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using DevLib.SoundSystem.Runtime;
+using Fusion;
 using UnityEngine;
+using WorkFolder.PAP.Scripts.Sound;
 using Random = UnityEngine.Random;
 
 public enum SfxSoundEnum
@@ -12,18 +15,22 @@ public enum SfxSoundEnum
   GameStart,
   Equipment,
   Hit,
-  Clash
+  Clash,
+  Swing,
+  Crit,
+  EntryBattle,
+  Click,
 }
 
 public enum BGMSoundEnum
 {
   EquipmentScene,
+  BattleScene,
 }
 
 public class BK_SoundManger : MonoBehaviour
 {
   [Header("SFXSound")]
-  public AudioSource sfxSource;
   public AudioClip[] swordSoundClips;
   public AudioClip[] lanceSoundClips;
   public AudioClip[] walkSoundClips;
@@ -32,8 +39,15 @@ public class BK_SoundManger : MonoBehaviour
   public AudioClip[] equipmentSoundClips;
   public AudioClip[] hitSoundClips;
   public AudioClip[] clashSoundClips;
+  public AudioClip[] swingSoundClips;
+  public AudioClip[] critSoundClips;
+  public AudioClip[] entrySoundClips;
+  public AudioClip[] clickSoundClips;
+  
   
   private SfxSoundEnum sfxSoundEnum;
+  [SerializeField] private SoundPlayer sfxPrefab;
+  [SerializeField] private SoundPlayerLocal sfxPrefabLocal;
   public Dictionary<SfxSoundEnum,AudioClip[]> sfxSoundClips =  new();
   public Action<SfxSoundEnum> SFXSoundOn;
   
@@ -41,6 +55,7 @@ public class BK_SoundManger : MonoBehaviour
   [Header("BGMSound")]
   public AudioSource bgmSource;
   public AudioClip[] equipmentClips;
+  public AudioClip[] battleClips;
   
   private BGMSoundEnum bgmSoundEnum;
   public Dictionary<BGMSoundEnum,AudioClip[]> bgmSoundClips =  new();
@@ -69,25 +84,44 @@ public class BK_SoundManger : MonoBehaviour
     sfxSoundClips[SfxSoundEnum.Equipment] = equipmentSoundClips;
     sfxSoundClips[SfxSoundEnum.Hit] = hitSoundClips;
     sfxSoundClips[SfxSoundEnum.Clash] = clashSoundClips;
+    sfxSoundClips[SfxSoundEnum.Swing] = swingSoundClips;
+    sfxSoundClips[SfxSoundEnum.Crit] = critSoundClips;
+    sfxSoundClips[SfxSoundEnum.Click] = clickSoundClips;
+    sfxSoundClips[SfxSoundEnum.EntryBattle] = entrySoundClips;
+    
     
     //bgm
     bgmSoundClips[BGMSoundEnum.EquipmentScene] =  equipmentClips;
+    bgmSoundClips[BGMSoundEnum.BattleScene] =  battleClips;
+    
   }
 
-  public void OnEnable()
+  private void Start()
   {
-    SFXSoundOn+=UpdateSfxSoundState;
-    BGMSoundOn+=UpdateBGMSoundState;
+    UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
   }
 
-  public void UpdateSfxSoundState(SfxSoundEnum sfxSoundState)
+  public void PlaySfx(SfxSoundEnum sfxSoundState, Vector3? position, NetworkRunner runner)
   {
-    if(sfxSource.isPlaying && sfxSoundEnum == sfxSoundState) return;
+    SoundPlayer soundPlayer = runner.Spawn(sfxPrefab, position);
+    if (position == null)
+      soundPlayer.GetComponent<AudioSource>().spatialBlend = 0f;
     sfxSoundEnum = sfxSoundState;
     AudioClip[] clips = sfxSoundClips[sfxSoundEnum];
     AudioClip clip = clips[Random.Range(0, clips.Length)];
+    soundPlayer.PlaySound(clip);
+  }
 
-    sfxSource.PlayOneShot(clip);
+  public void PlaySfxLocal(SfxSoundEnum sfxSoundState, Vector3? position = null)
+  {
+    SoundPlayerLocal soundPlayer = Instantiate(sfxPrefabLocal);
+    soundPlayer.transform.position = position ?? Vector3.zero;
+    if (position == null)
+      soundPlayer.GetComponent<AudioSource>().spatialBlend = 0f;
+    sfxSoundEnum = sfxSoundState;
+    AudioClip[] clips = sfxSoundClips[sfxSoundEnum];
+    AudioClip clip = clips[Random.Range(0, clips.Length)];
+    soundPlayer.PlaySound(clip);
   }
 
   public void UpdateBGMSoundState(BGMSoundEnum bgmSoundState)
