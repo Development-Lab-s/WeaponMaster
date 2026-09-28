@@ -43,7 +43,6 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
             }
 
             if (runner == null) return;
-            
             (int, ItemData) pack = container.GetCurrentPartAndWeapon();
             NetworkObject player = runner.Spawn(playerPrefab, playerSpawnPoints[Random.Range(0,playerSpawnPoints.Length)].position + new Vector3(Random.Range(-3f,3f),0,Random.Range(-3f,3f)),Quaternion.identity,inputAuthority:runner.LocalPlayer);
             runner.SetPlayerObject(runner.LocalPlayer, player);
