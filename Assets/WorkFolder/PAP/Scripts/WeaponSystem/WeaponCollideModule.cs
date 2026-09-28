@@ -96,14 +96,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                     hitBox.Damageable.RpcTakeDamage(data);
                     if (_owner.HasInputAuthority)
                         BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _swordRb.worldCenterOfMass, _owner.Runner);
-                    ServiceLocator.Get<IEffectManager>().RpcSetPositionAndPlayEffect(contact.point,Quaternion.LookRotation(contact.normal).eulerAngles);
-                    if (data.Damage >= 30)
+                    if (data.Damage >= 25)
                     {
                         CritEffectSpawnRequest request = new CritEffectSpawnRequest(collision.contacts[0].otherCollider.transform.position, data.Damage/10f);
                         Factories.GetFactory<CritEffect, CritEffectSpawnRequest>().Create(request);
                         if (_owner.HasInputAuthority)
                             BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _swordRb.worldCenterOfMass, _owner.Runner);
                     }
+                    ServiceLocator.Get<IEffectManager>().RpcSetPositionAndPlayEffect(contact.point,Quaternion.LookRotation(contact.normal).eulerAngles);
                 }
             }
         }

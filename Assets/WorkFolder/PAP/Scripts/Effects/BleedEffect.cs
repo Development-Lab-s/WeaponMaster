@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Fusion;
 using UnityEngine;
 
@@ -7,6 +8,11 @@ namespace WorkFolder.PAP.Scripts.Effects
     public class BleedEffect : MonoBehaviour
     {
         private ParticleSystem particleSystem;
+
+        private void Awake()
+        {
+            particleSystem = GetComponent<ParticleSystem>();
+        }
 
         public void SetPositionAndPlayEffect(Vector3 position, Quaternion rotation)
         {

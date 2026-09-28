@@ -291,9 +291,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             foreach (Rigidbody weaponBody in
                      weapon.GetComponentsInChildren<Rigidbody>(true))
             {
-                // 퍼펫과 같은 이유: 프록시 무기도 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 한다.
-                if (!HasStateAuthority)
-                    weaponBody.interpolation = RigidbodyInterpolation.None;
+                // 소유자: 퍼펫 몸은 보간으로 화면 프레임마다 부드럽게 그려지는데 무기 프리팹은 보간이
+                // 꺼져 있어 물리 스텝(50Hz) 단위로 뚝뚝 움직였다. 뛸수록 스텝 사이 이동이 커져 버벅인다.
+                // 프록시: 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 끈다(퍼펫과 같은 이유).
+                weaponBody.interpolation = HasStateAuthority
+                    ? RigidbodyInterpolation.Interpolate
+                    : RigidbodyInterpolation.None;
 
                 // 대검처럼 굵고 긴 날은 휘두를 때 몸·무기에 깊이 파고든다. PhysX는 겹친 만큼을
                 // 기본 최대 10 m/s로 튕겨내는데, 그 반동이 척추에 고정된 조인트로 전해져 몸이 날뛴다.
@@ -320,11 +323,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
                     if (weaponJoint is ConfigurableJoint configurableJoint)
                     {
-                        // 큰 힘이 걸려 무기가 척추에서 벌어지는 순간이 생기면 제자리로 붙잡는다.
-                        // 벌어짐이 이 거리·각도 안이면 아무 일도 하지 않는다.
+                        // 무기가 척추에서 크게 벌어지는(폭발) 순간에만 제자리로 붙잡는 안전장치다.
+                        // 프로젝션은 순간이동이라 기준이 작으면 뛸 때의 평범한 흔들림에도 매 스텝
+                        // 발동해 무기가 두두둑 튄다. 정상 동작에서는 절대 넘지 않을 만큼 크게 잡는다.
                         configurableJoint.projectionMode = JointProjectionMode.PositionAndRotation;
-                        configurableJoint.projectionDistance = 0.05f;
-                        configurableJoint.projectionAngle = 5f;
+                        configurableJoint.projectionDistance = 0.3f;
+                        configurableJoint.projectionAngle = 30f;
 
                         if (!weapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
                             edgeAligner = weapon.gameObject.AddComponent<WeaponEdgeAligner>();
