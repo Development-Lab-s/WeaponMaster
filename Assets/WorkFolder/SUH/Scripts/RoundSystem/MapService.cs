@@ -45,6 +45,10 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 return false;
 
             NetworkRunner runner = RunnerProvider.Current;
+
+            if (runner == null || (!runner.IsServer && !runner.IsSharedModeMasterClient))
+                return false;
+
             NetworkSceneManagerDefault sceneManager =
                 runner != null ? runner.GetComponent<NetworkSceneManagerDefault>() : null;
 
