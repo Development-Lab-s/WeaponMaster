@@ -75,7 +75,7 @@ public class FaceDrawUI : MonoBehaviour
     private void SetDrawing(bool drawing)
     {
         drawPanel.SetActive(drawing);
-        startButton.gameObject.SetActive(!drawing);
+        startButton.gameObject.SetActive(!drawing && !faceDraw.SkipStartButton);
     }
 
     private void SetEraser(bool on)
