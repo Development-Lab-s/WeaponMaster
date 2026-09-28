@@ -24,6 +24,9 @@ public enum SfxSoundEnum
   HitAss,
   Draw,
   Kill,
+  Mace,
+  Sickle,
+  powder
 }
 
 public enum BGMSoundEnum
@@ -37,6 +40,8 @@ public class BK_SoundManger : MonoBehaviour
   [Header("SFXSound")]
   public AudioClip[] swordSoundClips;
   public AudioClip[] lanceSoundClips;
+  public AudioClip[] maceSoundClips;
+  public AudioClip[] sickleSoundClips;
   public AudioClip[] walkSoundClips;
   public AudioClip[] serverEntrySoundClips;
   public AudioClip[] gameStartSoundClips;
@@ -51,6 +56,7 @@ public class BK_SoundManger : MonoBehaviour
   public AudioClip[] hitAssSoundClips;
   public AudioClip[] drawSoundClips;
   public AudioClip[] killSoundClips;
+  public AudioClip[] powderSoundClips;
   
   
   private SfxSoundEnum sfxSoundEnum;
@@ -86,6 +92,8 @@ public class BK_SoundManger : MonoBehaviour
     //sfx
     sfxSoundClips[SfxSoundEnum.Sword] = swordSoundClips;
     sfxSoundClips[SfxSoundEnum.Lance] = lanceSoundClips;
+    sfxSoundClips[SfxSoundEnum.Mace] = maceSoundClips;
+    sfxSoundClips[SfxSoundEnum.Sickle] = sickleSoundClips;
     sfxSoundClips[SfxSoundEnum.Walk] = walkSoundClips;
     sfxSoundClips[SfxSoundEnum.ServerEntry] = serverEntrySoundClips;
     sfxSoundClips[SfxSoundEnum.GameStart] = gameStartSoundClips;
@@ -100,6 +108,8 @@ public class BK_SoundManger : MonoBehaviour
     sfxSoundClips[SfxSoundEnum.HitAss] = hitAssSoundClips;
     sfxSoundClips[SfxSoundEnum.Draw] = drawSoundClips;
     sfxSoundClips[SfxSoundEnum.Kill] = killSoundClips;
+    sfxSoundClips[SfxSoundEnum.powder] =  powderSoundClips;
+    
     
     
     //bgm
