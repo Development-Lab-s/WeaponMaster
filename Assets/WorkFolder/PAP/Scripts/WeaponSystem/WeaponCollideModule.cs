@@ -103,7 +103,8 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                         if (_owner.HasInputAuthority)
                             BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _swordRb.worldCenterOfMass, _owner.Runner);
                     }
-                    ServiceLocator.Get<IEffectManager>().RpcSetPositionAndPlayEffect(contact.point,Quaternion.LookRotation(contact.normal).eulerAngles);
+                    if (ServiceLocator.TryGet(out IEffectManager effectManager))
+                        effectManager.PlayEffect(contact.point, Quaternion.LookRotation(contact.normal).eulerAngles);
                 }
             }
         }
