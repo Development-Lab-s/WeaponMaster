@@ -9,6 +9,7 @@ using WorkFolder.SUH.Scripts.RoundSystem.Lib.Interface;
 
 namespace WorkFolder.SUH.Scripts.RoundSystem
 {
+    [RequireComponent(typeof(NetworkObject))]
     public class RoundSystem : NetworkBehaviour, IRoundSystem
     {
         [Header("Round Settings")]
@@ -25,6 +26,9 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public event Action<RoundState> StateChanged;
         public event Action<IReadOnlyList<RoundResultEntry>> ResultsReady;
 
+        private bool HasRoundAuthority =>
+            HasStateAuthority && (Runner.IsServer || Runner.IsSharedModeMasterClient);
+
         private void Awake()
         {
             ServiceLocator.Register<IRoundSystem>(this);
@@ -40,13 +44,13 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
 
         public override void Spawned()
         {
-            if (HasStateAuthority)
+            if (HasRoundAuthority)
                 StartRound();
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (!HasStateAuthority || State != RoundState.Playing)
+            if (!HasRoundAuthority || State != RoundState.Playing)
                 return;
 
             if (RoundTimer.Expired(Runner))
@@ -55,7 +59,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
 
         public void StartRound()
         {
-            if (!HasStateAuthority)
+            if (!HasRoundAuthority)
                 return;
 
             RoundNumber++;
@@ -68,7 +72,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
 
         public void EndRound()
         {
-            if (!HasStateAuthority || State != RoundState.Playing)
+            if (!HasRoundAuthority || State != RoundState.Playing)
                 return;
 
             ChangeState(RoundState.Result);
