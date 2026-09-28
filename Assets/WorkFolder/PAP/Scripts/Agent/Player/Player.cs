@@ -53,9 +53,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         private bool HasSecondWeapon => NetPartData.Offset2 != Vector3.zero;
 
-        // 무기를 두 개 달 때 각 무기의 크기 배율. 두 개 여부가 동기화된 Offset2로 정해지고
-        // 모든 클라이언트가 붙일 때 같은 배율을 적용하므로 따로 보낼 값이 없다.
-        [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.5f;
+        [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.75f;
+
+        // 무기 회전 관성이 척추의 몇 배까지 그대로 둘지. 넘는 무기만 척추가 느끼는 관성을 줄인다.
+        // 실행하면 무기마다 측정값이 콘솔에 찍히니 그걸 보고 맞춘다.
+        [SerializeField, Min(1f)] private float maximumWeaponInertiaRatio = 8f;
+
+        // 무기가 다른 몸·무기와 겹쳤을 때 튕겨 나오는 최대 속도(PhysX 기본 10).
+        [SerializeField, Min(0.1f)] private float weaponMaxDepenetrationVelocity = 3f;
 
         [Networked] public Vector3 NetLeftGoalLocal { get; private set; }
         [Networked] public Vector3 NetRightGoalLocal { get; private set; }
@@ -271,16 +276,29 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             // 이 함수는 무기마다 한 번만(부모가 없을 때) 불리므로 배율도 한 번만 곱해진다.
             // 조인트를 연결하기 전에 줄여야 콜라이더와 연결 앵커가 줄어든 크기 기준으로 잡힌다.
             if (HasSecondWeapon)
+            {
                 weapon.transform.localScale *= dualWeaponScale;
+
+                // 질량도 크기와 같은 배율로 줄인다. 부피대로(배율의 세제곱) 줄이면 척추 대비
+                // 너무 가벼워져서, 무기끼리 부딪혀도 막히지 않고 뚫리던 문제가 다시 생긴다.
+                foreach (Rigidbody weaponBody in weapon.GetComponentsInChildren<Rigidbody>(true))
+                    weaponBody.mass *= dualWeaponScale;
+            }
 
             weapon.transform.localPosition = localOffset;
             weapon.transform.localEulerAngles = NetPartData.EulerAngles;
 
-            if (!HasStateAuthority)
+            foreach (Rigidbody weaponBody in
+                     weapon.GetComponentsInChildren<Rigidbody>(true))
             {
-                foreach (Rigidbody weaponBody in
-                         weapon.GetComponentsInChildren<Rigidbody>(true))
+                // 퍼펫과 같은 이유: 프록시 무기도 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 한다.
+                if (!HasStateAuthority)
                     weaponBody.interpolation = RigidbodyInterpolation.None;
+
+                // 대검처럼 굵고 긴 날은 휘두를 때 몸·무기에 깊이 파고든다. PhysX는 겹친 만큼을
+                // 기본 최대 10 m/s로 튕겨내는데, 그 반동이 척추에 고정된 조인트로 전해져 몸이 날뛴다.
+                // 겹치지 않은 평소에는 영향이 없다.
+                weaponBody.maxDepenetrationVelocity = weaponMaxDepenetrationVelocity;
             }
 
             Transform rotPart = FindChildHelper(targetPuppet, "spine");
@@ -302,6 +320,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
                     if (weaponJoint is ConfigurableJoint configurableJoint)
                     {
+                        // 큰 힘이 걸려 무기가 척추에서 벌어지는 순간이 생기면 제자리로 붙잡는다.
+                        // 벌어짐이 이 거리·각도 안이면 아무 일도 하지 않는다.
+                        configurableJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+                        configurableJoint.projectionDistance = 0.05f;
+                        configurableJoint.projectionAngle = 5f;
+
                         if (!weapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
                             edgeAligner = weapon.gameObject.AddComponent<WeaponEdgeAligner>();
 
@@ -309,6 +333,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     }
 
                     weaponJoint.connectedBody = partBody;
+
+                    if (!weapon.TryGetComponent(out WeaponInertiaLimiter inertiaLimiter))
+                        inertiaLimiter = weapon.gameObject.AddComponent<WeaponInertiaLimiter>();
+                    inertiaLimiter.Bind(weaponJoint, partBody, maximumWeaponInertiaRatio);
                 }
             }
 
