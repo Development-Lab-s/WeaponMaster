@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ca90a7107b77bf7439a84a9aa07acd7c
+guid: 8cf987023d2657041b7903524576ab7b
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - ????????
+  - EF_jejudoldam
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

@@ -65,7 +65,11 @@ public class FaceDrawUI : MonoBehaviour
     private void Update()
     {
         if (drawPanel.activeSelf)
-            undoButton.interactable = faceDraw.CanUndo;
+            undoButton.interactable = faceDraw.CanUndo && !faceDraw.IsSaving;
+        confirmButton.interactable = !faceDraw.InputLocked && !faceDraw.IsSaving;
+        cancelButton.interactable = !faceDraw.IsSaving;
+        clearButton.interactable = !faceDraw.InputLocked && !faceDraw.IsSaving;
+        startButton.interactable = !faceDraw.InputLocked && !faceDraw.IsSaving;
     }
 
     private void SetDrawing(bool drawing)
