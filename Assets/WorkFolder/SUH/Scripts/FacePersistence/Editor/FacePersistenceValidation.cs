@@ -7,6 +7,89 @@ using WorkFolder.SUH.Scripts.FacePersistence;
 
 internal static class FacePersistenceValidation
 {
+    [MenuItem("Tools/Face Persistence/Validate Lobby Panel")]
+    public static void ValidateLobbyPanel()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/WorkFolder/SUH/Scripts/FacePersistence/LobbyFaceDrawPanel.prefab");
+        if (prefab == null || prefab.activeSelf) throw new Exception("Lobby panel must be an inactive prefab.");
+        var controller = prefab.GetComponentInChildren<FaceSaveController>(true);
+        var drawer = prefab.GetComponentInChildren<FaceDraw>(true);
+        if (controller == null || drawer == null || prefab.GetComponentInChildren<FaceDrawUI>(true) == null)
+            throw new Exception("Lobby face components missing.");
+        var serializedController = new SerializedObject(controller);
+        foreach (string field in new[] { "statusText", "returnButton" })
+            if (serializedController.FindProperty(field).objectReferenceValue == null)
+                throw new Exception($"Lobby face UI reference missing: {field}");
+        var lobby = EditorSceneManager.OpenPreviewScene("Assets/WorkFolder/KJS/Server/02.Scenes/Lobby.unity");
+        try
+        {
+            WorkFolder.SUH.Scripts.CharacterVisual.CharacterEditorUI editor = null;
+            foreach (var root in lobby.GetRootGameObjects())
+                if (root.GetComponentInChildren<WorkFolder.SUH.Scripts.CharacterVisual.CharacterEditorUI>(true) is { } found)
+                    editor = found;
+            if (editor == null) throw new Exception("Lobby customization UI missing.");
+            var editorData = new SerializedObject(editor);
+            var previewRenderer = (SkinnedMeshRenderer)editorData.FindProperty("_meshRenderer").objectReferenceValue;
+            if (!previewRenderer.sharedMesh.isReadable) throw new Exception("Lobby preview mesh must be readable.");
+            var skins = editorData.FindProperty("_bodyMaterials");
+            var lightSkin = (Material)skins.GetArrayElementAtIndex(0).objectReferenceValue;
+            var darkSkin = (Material)skins.GetArrayElementAtIndex(4).objectReferenceValue;
+            var testTexture = new Texture2D(512, 512, TextureFormat.RGBA32, false);
+            try
+            {
+                var testPixels = new Color32[512 * 512];
+                Color32 light = FaceDrawShared.GetColor(lightSkin);
+                for (int i = 0; i < testPixels.Length; i++) testPixels[i] = light;
+                testPixels[1] = Color.black;
+                testTexture.SetPixels32(testPixels);
+                testTexture.Apply();
+                var face = new SavedFace { BackgroundColor = FaceDrawShared.GetColor(lightSkin), Png = Convert.ToBase64String(testTexture.EncodeToPNG()) };
+                using (var preview = new CharacterFacePreview(previewRenderer))
+                {
+                    preview.Apply(lightSkin, null);
+                    preview.Apply(darkSkin, face);
+                    var faceMaterial = previewRenderer.sharedMaterials[1];
+                    var result = (Texture2D)faceMaterial.GetTexture("baseColorTexture");
+                    var resultPixels = result.GetPixels32();
+                    if (previewRenderer.sharedMaterials[0] != darkSkin ||
+                        !resultPixels[0].Equals((Color32)FaceDrawShared.GetColor(darkSkin)) ||
+                        !resultPixels[1].Equals((Color32)Color.black))
+                        throw new Exception("Preview body/face skin sync or stroke preservation failed.");
+                }
+                Debug.Log("[Character Face Preview Validation] PASS: current palette applied to body and saved-face background; black drawing preserved.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(testTexture); }
+            var panel = new SerializedObject(editor).FindProperty("faceDrawPanel").objectReferenceValue as GameObject;
+            if (panel == null || panel.scene != lobby || panel.activeSelf || panel.GetComponentInChildren<FaceSaveController>(true) == null)
+                throw new Exception("Lobby must reference its own inactive face panel instance.");
+            BrushFaceDrawButton brush = null;
+            foreach (var root in lobby.GetRootGameObjects())
+                if (root.GetComponentInChildren<BrushFaceDrawButton>(true) is { } foundBrush) brush = foundBrush;
+            if (brush == null || brush.GetComponent<BoxCollider>() == null ||
+                new SerializedObject(brush).FindProperty("characterEditor").objectReferenceValue != editor)
+                throw new Exception("Brush collider or customization reference missing.");
+            brush.FitCollider();
+            if (brush.GetComponent<BoxCollider>().bounds.size.sqrMagnitude <= 0)
+                throw new Exception("Brush collider fitting failed.");
+            Debug.Log("[Brush FaceDraw Validation] PASS: Lobby Brush collider, fitted model bounds and CharacterEditorUI reference.");
+        }
+        finally { EditorSceneManager.ClosePreviewScene(lobby); }
+        foreach (string field in new[] { "targetRenderer", "mainCamera", "closeUpCamera" })
+            if (new SerializedObject(drawer).FindProperty(field).objectReferenceValue == null)
+                throw new Exception($"Lobby FaceDraw reference missing: {field}");
+        if (prefab.GetComponentInChildren<UnityEngine.EventSystems.EventSystem>(true) != null ||
+            prefab.GetComponentInChildren<WorkFolder.SUH.Scripts.DataStoreService.PlayerDataStoreService>(true) != null)
+            throw new Exception("Lobby panel must reuse Lobby event/data services.");
+        var data = new SavedFace { BodyColor = 2, BackgroundColor = new Color(0.8f, 0.6f, 0.4f, 1f), Png = "serialization-test" };
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+        if (json.Length > 512 || json.Contains("StoredBackground") || json.Contains("linear") || json.Contains("gamma"))
+            throw new Exception("Unexpected recursive Unity color properties in cloud JSON.");
+        var restored = Newtonsoft.Json.JsonConvert.DeserializeObject<SavedFace>(json);
+        if (restored.BodyColor != 2 || !restored.StoredBackground.Equals((Color)data.BackgroundColor))
+            throw new Exception("Cloud face DTO roundtrip failed.");
+        Debug.Log("[FacePersistence Lobby Validation] PASS: Lobby scene-local inactive panel, supplied status Text and return Button references, reused Lobby services, Newtonsoft RGBA roundtrip. No cloud writes performed.");
+    }
+
     [MenuItem("Tools/Face Persistence/Validate Setup")]
     private static void Validate()
     {
@@ -69,7 +152,8 @@ internal static class FacePersistenceValidation
             input.SetPixel(2, 0, Color.white); // An intentional white stroke in the new format.
             input.Apply();
             var coloredFace = new SavedFace { BodyColor = 1, BackgroundColor = skin, Png = Convert.ToBase64String(input.EncodeToPNG()) };
-            coloredFace = JsonUtility.FromJson<SavedFace>(JsonUtility.ToJson(coloredFace));
+            coloredFace = Newtonsoft.Json.JsonConvert.DeserializeObject<SavedFace>(
+                Newtonsoft.Json.JsonConvert.SerializeObject(coloredFace));
             output.LoadImage(coloredFace.Decode());
             FaceDrawShared.ApplySkinBackground(output, coloredFace.StoredBackground, skin);
             var coloredPixels = output.GetPixels32();

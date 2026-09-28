@@ -10,6 +10,15 @@
 - Existing baked PNGs only identify background by exact pixel color; antialiased stroke edges retain their old blended color, and strokes identical to the background cannot be distinguished. This is not a separate transparent stroke layer.
 - An already-spawned remote character does not poll for cloud edits; the requested flow publishes changes when returning to MainScene and creating a character.
 
+## Lobby customization flow
+
+- Character customization Save awaits the profile save and immediately invokes the existing Lobby return events; it does not open FaceDraw. Clicking Lobby's Brush opens the existing inactive `faceDrawPanel` through `BrushFaceDrawButton` and its fitted BoxCollider using the Input System. Opening the brush does not save profile edits. Face confirmation saves the face and invokes Lobby return events. There are no runtime scene transitions, panel instantiations or panel destruction.
+- The panel copies the supplied FaceDraw scene layout, including `StartState/Text` and `UndoButton` (return to customization). FaceSaveController updates that TMP text and registers the return button; the temporary OnGUI overlay has been removed. Each opening reloads the current skin and saved face. Late results from a closed panel are ignored.
+- Lobby cameras and UI are temporarily disabled and restored when the panel closes. Lobby objects, network connections, the EventSystem and data services stay alive. The panel contains no duplicate EventSystem or data service.
+- Saving failures keep FaceDraw open. The explicit unsaved-return button returns to the customization panel without invoking the successful-completion events.
+- The panel reference is serialized on Lobby's CharacterEditorUI; the standalone FaceDraw scene is not used by this flow. Other CharacterEditorUI instances retain their previous flow unless the new option is enabled.
+- Background color is stored as four float fields, not UnityEngine.Color. The computed StoredBackground property is JsonIgnore to prevent recursive Newtonsoft traversal of Color.linear/gamma during UGS serialization.
+
 ## Validation
 
 `Tools > Face Persistence > Validate Setup` checks scene/prefab references, six palette entries, face UV projection and exact skin/line pixel recovery through PNG + JSON. Passed in Unity during implementation; C# runtime/editor builds passed.

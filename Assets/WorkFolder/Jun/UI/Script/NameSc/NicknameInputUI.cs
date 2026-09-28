@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using DevLib.ServiceLocator;
 using DG.Tweening;
 using TMPro;
@@ -30,6 +31,7 @@ public class NicknameInputUI : MonoBehaviour
     [SerializeField] private string[] bannedWords;
 
     public bool _currentSaveNickname;
+    public Task PendingSave { get; private set; } = Task.CompletedTask;
     
     private async void Start()
     {
@@ -46,7 +48,6 @@ public class NicknameInputUI : MonoBehaviour
         else 
             inputField.text = $"{value}";
         NameChange(inputField.text);
-        _currentSaveNickname = true;
     }
     private void LateUpdate()
     {
@@ -63,8 +64,11 @@ public class NicknameInputUI : MonoBehaviour
         inputRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width + horizontalPadding);
     }
 
-    public async void NameChange(string text)
+    public void NameChange(string text) => PendingSave = SaveNameAsync(text);
+
+    private async Task SaveNameAsync(string text)
     {
+        _currentSaveNickname = false;
         text = text.Trim();
         if (!LengthCheck(text)) return;
         if (!BannedCheck(text)) return;

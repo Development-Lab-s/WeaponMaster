@@ -96,6 +96,13 @@ public class FaceDraw : MonoBehaviour
         faceTriStart = sub.indexStart / 3;
         faceTriEnd = (sub.indexStart + sub.indexCount) / 3;
     }
+
+    private void OnDestroy()
+    {
+        if (texture != null) Destroy(texture);
+        if (faceMaterial != null) Destroy(faceMaterial);
+        if (colliderMesh != null) Destroy(colliderMesh);
+    }
     
 
     
@@ -302,6 +309,15 @@ public class FaceDraw : MonoBehaviour
 
     public void InitializeCanvas(Material skin, byte[] savedPng, Color? savedBackground = null)
     {
+        SaveError = null;
+        // Keep the body and face shading consistent with the current editor selection.
+        var materials = targetRenderer.sharedMaterials;
+        materials[0] = skin;
+        materials[faceMaterialIndex] = faceMaterial;
+        targetRenderer.sharedMaterials = materials;
+        faceMaterial.shader = skin.shader;
+        faceMaterial.CopyPropertiesFromMaterial(skin);
+        FaceDrawShared.ApplyTexture(faceMaterial, texture);
         Color32 fill = FaceDrawShared.GetColor(skin);
         fill.a = 255;
         for (int i = 0; i < background.Length; i++) background[i] = fill;
