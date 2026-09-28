@@ -29,11 +29,13 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         private bool ready;
         private bool savedThisSession;
         public Action<bool> FlowFinished { get; set; }
+        public void PrepareDirectDrawing() => faceDraw.SkipStartButton = true;
 
         private void Awake()
         {
             faceDraw.InputLocked = true;
             faceDraw.onConfirmed.AddListener(OnConfirmed);
+            faceDraw.onDrawingEnded.AddListener(OnDrawingEnded);
             if (returnButton != null) returnButton.onClick.AddListener(ReturnToCustomization);
             faceDraw.SaveAsync = async texture =>
             {
@@ -43,10 +45,15 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         }
 
         private void OnConfirmed(Texture2D texture) => FlowFinished?.Invoke(true);
+        private void OnDrawingEnded()
+        {
+            if (faceDraw.SkipStartButton && !faceDraw.IsSaving) FlowFinished?.Invoke(false);
+        }
 
         private void OnDestroy()
         {
             if (faceDraw != null) faceDraw.onConfirmed.RemoveListener(OnConfirmed);
+            if (faceDraw != null) faceDraw.onDrawingEnded.RemoveListener(OnDrawingEnded);
             if (returnButton != null) returnButton.onClick.RemoveListener(ReturnToCustomization);
             FlowFinished?.Invoke(false);
         }
@@ -96,6 +103,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
                 faceDraw.InputLocked = false;
                 ready = true;
                 status = saved == null ? "저장된 얼굴이 없습니다. 새로 그려주세요." : "얼굴 불러오기 완료";
+                if (faceDraw.SkipStartButton) faceDraw.BeginDrawing();
             }
             catch (Exception ex)
             {
