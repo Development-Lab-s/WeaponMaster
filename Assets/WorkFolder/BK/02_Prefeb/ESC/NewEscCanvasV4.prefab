@@ -1836,15 +1836,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Go to Main
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
-  m_sharedMaterial: {fileID: 7722576454694357243, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+  m_sharedMaterial: {fileID: 5801631636661270881, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3815,6 +3815,7 @@ GameObject:
   - component: {fileID: 3312816664079902628}
   - component: {fileID: 1966022754025346776}
   - component: {fileID: 2662422813109946188}
+  - component: {fileID: 8971286968948359427}
   m_Layer: 5
   m_Name: GoToMain
   m_TagString: Untagged
@@ -3839,7 +3840,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 271.0305, y: 0}
+  m_AnchoredPosition: {x: 151, y: -76}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3312816664079902628
@@ -3923,7 +3924,34 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1966022754025346776}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8971286968948359427}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.GameSystem.LeaveSessionButton,
+          Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8971286968948359427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4293708568679781866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9611491c0ea57774f8d40d387e2cb1f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.GameSystem.LeaveSessionButton
+  lobbySceneName: Lobby
+  despawnFlushSeconds: 0.25
 --- !u!1 &4459567949429257430
 GameObject:
   m_ObjectHideFlags: 0
@@ -4050,7 +4078,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -271.03052, y: 0}
+  m_AnchoredPosition: {x: -342, y: -71}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7741694908411322348
@@ -7595,15 +7623,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Setting
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
-  m_sharedMaterial: {fileID: 7722576454694357243, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+  m_sharedMaterial: {fileID: 5801631636661270881, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

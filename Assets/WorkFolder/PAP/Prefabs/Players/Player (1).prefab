@@ -5394,18 +5394,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &756233845710095431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8729207244763384829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d132f08952c408ab14f58e8404c5290, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.FacePersistence.PlayerSavedFace
 --- !u!4 &675080623715004483
 Transform:
   m_ObjectHideFlags: 0
@@ -5598,6 +5586,8 @@ MonoBehaviour:
   nameTitleObj: {fileID: 6763116108920330518}
   MeshRenderer: {fileID: 5652856024669799113}
   dualWeaponScale: 0.75
+  maximumWeaponInertiaRatio: 8
+  weaponMaxDepenetrationVelocity: 3
   _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
   _NetRightGoalLocal: {x: 0, y: 0, z: 0}
   _NetLeftGoalLocalRotation: {x: 0, y: 0, z: 0, w: 0}
@@ -5730,6 +5720,18 @@ CapsuleCollider:
   m_Height: 2.4
   m_Direction: 1
   m_Center: {x: 0, y: 1.3, z: 0}
+--- !u!114 &756233845710095431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8729207244763384829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d132f08952c408ab14f58e8404c5290, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.FacePersistence.PlayerSavedFace
 --- !u!1 &8893227280485621473
 GameObject:
   m_ObjectHideFlags: 0

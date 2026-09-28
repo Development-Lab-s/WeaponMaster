@@ -15,3 +15,7 @@ MonoBehaviour:
   maps:
   - displayName: "\uCF5C\uB85C\uC138\uC6C0"
     prefab: {fileID: 7151664250987953334, guid: 8cf40f42c161db34495b4b39a7c4427c, type: 3}
+  - displayName: "\uCCB4\uC2A4\uD310"
+    prefab: {fileID: 6288023135040131246, guid: 6d50efe8fb7f0d24bb62a747585f3c1d, type: 3}
+  - displayName: "\uC5B4\uB5A4 \uC6B4\uB3D9\uC7A5"
+    prefab: {fileID: 2154269617816407646, guid: f100255afa4ed224799df5a49443b837, type: 3}
