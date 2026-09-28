@@ -208,8 +208,13 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             bool firstIsWider = bladeBounds.size[firstIndex] >= bladeBounds.size[secondIndex];
             int edgeIndex = firstIsWider != swapEdgeAndFlat ? firstIndex : secondIndex;
 
+            // 낫처럼 날이 손잡이 축에서 옆으로 크게 튀어나온 무기만 외날로 본다. 날 크기 대비로만
+            // 보면 창끝처럼 축에서 살짝 벗어난 날도 외날이 되어, 몸이 흔들릴 때마다 180도씩 뒤집힌다.
+            // 그래서 무기 전체 길이의 10% 이상 튀어나와야 한다는 조건을 함께 건다.
             float bladeOffset = bladeBounds.center[edgeIndex];
-            bool offsetBlade = Mathf.Abs(bladeOffset) > bladeBounds.size[edgeIndex] * 0.25f;
+            float weaponLength = weaponBounds.size[bladeIndex];
+            bool offsetBlade = Mathf.Abs(bladeOffset) > bladeBounds.size[edgeIndex] * 0.25f
+                               && Mathf.Abs(bladeOffset) > weaponLength * 0.1f;
 
             _singleEdged = edgeMode == EdgeMode.SingleEdged
                            || (edgeMode == EdgeMode.Auto && offsetBlade);
@@ -218,6 +223,10 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             _edgeAxisLocal = AxisVector(edgeIndex) * edgeSign;
             _bladeCenterLocal = bladeBounds.center;
 
+            Debug.Log(
+                $"[WeaponEdgeAligner] {name}: 날 축 {_bladeAxisLocal}, 날 방향 {_edgeAxisLocal}, " +
+                $"{(_singleEdged ? "외날" : "양날")} (날 치우침 {Mathf.Abs(bladeOffset):F2} / 무기 길이 {weaponLength:F2})",
+                this);
             return true;
         }
 

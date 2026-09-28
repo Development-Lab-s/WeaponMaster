@@ -8,6 +8,7 @@ namespace WorkFolder.PAP.Scripts.SO.DataFolder
     {
         public string targetPartName;
         public Vector3 offset;
+        public Vector3 offset2;
         public Vector3 eulerAngles;
         public AbstractPartDataSO bodyPartData;
         public Vector2 driveX;

@@ -23,6 +23,10 @@ public class SoundManger : MonoBehaviour
     private const string BgmParameter = "BgmVolume";
     private const string VfxParameter = "VfxVolume";
 
+    private SliderSnap masterSnap;
+    private SliderSnap bgmSnap;
+    private SliderSnap vfxSnap;
+
     private void Awake()
     {
         if (!CheckReferences())
@@ -34,6 +38,10 @@ public class SoundManger : MonoBehaviour
         ConfigureSlider(masterSlider);
         ConfigureSlider(bgmSlider);
         ConfigureSlider(vfxSlider);
+
+        masterSnap = SliderSnap.Attach(masterSlider, 0.05f);
+        bgmSnap = SliderSnap.Attach(bgmSlider, 0.05f);
+        vfxSnap = SliderSnap.Attach(vfxSlider, 0.05f);
 
         masterSlider.onValueChanged.AddListener(OnMasterChanged);
         bgmSlider.onValueChanged.AddListener(OnBgmChanged);
@@ -88,33 +96,28 @@ public class SoundManger : MonoBehaviour
             return;
         }
 
-        masterSlider.SetValueWithoutNotify(
-            soundSettings.MasterVolume
-        );
-
-        bgmSlider.SetValueWithoutNotify(
-            soundSettings.BgmVolume
-        );
-
-        vfxSlider.SetValueWithoutNotify(
-            soundSettings.VfxVolume
-        );
+        masterSnap.SnapAndSet(soundSettings.MasterVolume);
+        bgmSnap.SnapAndSet(soundSettings.BgmVolume);
+        vfxSnap.SnapAndSet(soundSettings.VfxVolume);
     }
 
     private void OnMasterChanged(float value)
     {
+        value = masterSnap.SnapAndSet(value);
         soundSettings.MasterVolume = value;
         //SetMixerVolume(MasterParameter, value);
     }
 
     private void OnBgmChanged(float value)
     {
+        value = bgmSnap.SnapAndSet(value);
         soundSettings.BgmVolume = value;
         //SetMixerVolume(BgmParameter, value);
     }
 
     private void OnVfxChanged(float value)
     {
+        value = vfxSnap.SnapAndSet(value);
         soundSettings.VfxVolume = value;
         //SetMixerVolume(VfxParameter, value);
     }

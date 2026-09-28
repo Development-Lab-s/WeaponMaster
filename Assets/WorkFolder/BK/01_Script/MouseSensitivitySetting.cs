@@ -11,6 +11,7 @@ public class MouseSensitivitySetting : MonoBehaviour
     [SerializeField] private float defaultSensitivity = 1f;
 
     private UnityEngine.UI.Slider sensitivitySlider;
+    private SliderSnap sliderSnap;
 
     private const string SensitivityKey = "MouseSensitivity";
 
@@ -28,6 +29,7 @@ public class MouseSensitivitySetting : MonoBehaviour
 
         sensitivitySlider.minValue = minSensitivity;
         sensitivitySlider.maxValue = maxSensitivity;
+        sliderSnap = SliderSnap.Attach(sensitivitySlider, 0.1f);
 
         sensitivitySlider.onValueChanged.AddListener(OnSliderChanged);
         sensitivityInput.onEndEdit.AddListener(OnInputChanged);
@@ -74,13 +76,11 @@ public class MouseSensitivitySetting : MonoBehaviour
 
     private void ApplySensitivity(float value)
     {
-        Sensitivity = Mathf.Clamp(
+        Sensitivity = sliderSnap.SnapAndSet(Mathf.Clamp(
             value,
             minSensitivity,
             maxSensitivity
-        );
-
-        sensitivitySlider.SetValueWithoutNotify(Sensitivity);
+        ));
 
         sensitivityInput.SetTextWithoutNotify(
             Sensitivity.ToString("0.0")

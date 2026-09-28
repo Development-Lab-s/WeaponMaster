@@ -27,9 +27,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 902625790226559886}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.49999997, y: -0.50000006, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: -0, z: -5.11}
-  m_LocalScale: {x: -0.15936565, y: -2.591722, z: -0.15936565}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.50000006, w: -0.49999997}
+  m_LocalPosition: {x: 0, y: 0, z: -2.93}
+  m_LocalScale: {x: 0.15936565, y: 2.591722, z: 0.15936565}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3827809415307768827}
@@ -274,7 +274,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6047679949654826449}
   serializedVersion: 5
-  m_Mass: 0.15
+  m_Mass: 0.5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -430,3 +430,4 @@ MonoBehaviour:
   - "\uCC14\uB824 \uC8FD\uC74C!"
   - "\uAC00\uC2B4\uC5D0 \uCC3D\uC774 \uBC15\uD798!"
   - "\uBAB8\uD1B5\uC5D0 \uAD6C\uBA4D\uC774 \uB0A8!"
+  hitCooldown: 0.25
