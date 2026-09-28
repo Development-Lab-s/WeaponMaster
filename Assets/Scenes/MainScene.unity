@@ -1754,6 +1754,11 @@ Transform:
   - {fileID: 53339953}
   m_Father: {fileID: 1182507741}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: -90}
+--- !u!1 &162794129 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4308668187281033914, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+  m_PrefabInstance: {fileID: 3651081942530759659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &168897910
 GameObject:
   m_ObjectHideFlags: 0
@@ -10470,7 +10475,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -15.2, y: 280}
+  m_AnchoredPosition: {x: -15.2, y: 317}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1084247061
@@ -11728,7 +11733,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1300, y: -270}
+  m_AnchoredPosition: {x: 1300, y: -310}
   m_SizeDelta: {x: 350, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1205685629
@@ -19241,9 +19246,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 13547621964626249, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: microphoneIcon
+      value: 
+      objectReference: {fileID: 162794129}
     - target: {fileID: 430697068044884134, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 2056163982
+      objectReference: {fileID: 0}
+    - target: {fileID: 434563414093321663, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 434563414093321663, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 434563414093321663, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 439402688701810534, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
@@ -19289,14 +19310,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 996758378046940572, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_fontSize
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 996758378046940572, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 996758378046940572, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_overrideHtmlColors
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2703785108867984636, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 3713841321
+      objectReference: {fileID: 0}
+    - target: {fileID: 3418966181590242373, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 964227941544000036, guid: 33f87393a8065d747a113b9752d4c165, type: 2}
+    - target: {fileID: 5025756262347566357, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5822966420205995825, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 3306897900
       objectReference: {fileID: 0}
+    - target: {fileID: 6139883582353868522, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1198099448, guid: 80c2e3ac59f208f4ca579538eac50b1f, type: 3}
     - target: {fileID: 6908295986261129180, guid: 467ef7ff72ae9494cba54a387406a5ba, type: 3}
       propertyPath: SortKey
       value: 2597529551

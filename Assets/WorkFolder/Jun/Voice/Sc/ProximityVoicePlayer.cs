@@ -150,7 +150,10 @@ public sealed class ProximityVoicePlayer : NetworkBehaviour
         NetworkRunner runner,
         bool hasState)
     {
-        microphoneIcon?.SetActive(false);
+        if (microphoneIcon != null)
+        {
+            microphoneIcon.SetActive(false);
+        }
 
         if (!hasState)
             return;
