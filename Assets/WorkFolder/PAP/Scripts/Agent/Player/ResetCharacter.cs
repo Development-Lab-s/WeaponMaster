@@ -10,16 +10,26 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     public class ResetCharacter : NetworkModule
     {
         private NetworkObject _obj;
+
+        private string[] targetByRando =
+        {
+            "의문",
+            "없음",
+            "데브랩 개발자 일동",
+            "의도된 게임 디자인",
+            "데브랩은 2분기에서 끝이다!"
+        };
         public override void Spawned()
         {
             _obj = GetComponent<NetworkObject>();
         }
 
-        public void TryReset(string deathMent = "죽음!")
+        public void TryReset(string deathMent = "죽음!", string targetBy = "")
         {
             if (!HasStateAuthority) return;
-
-            UIManager.Instance.DropDeathUI(deathMent);
+            if (targetBy == "")
+                targetBy = targetByRando[Random.Range(0, targetByRando.Length)];
+            UIManager.Instance.DropDeathUI(deathMent, targetBy,((Player)Owner).KillStreak);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -33,7 +43,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (!HasStateAuthority) return;
             if (Keyboard.current.rKey.wasPressedThisFrame)
             {
-                Owner.GetModule<IHealthSystem>().Die(resetMent[Random.Range(0, resetMent.Length)]);
+                Owner.GetModule<IHealthSystem>().Die(resetMent[Random.Range(0, resetMent.Length)],"");
             }
         }
     }

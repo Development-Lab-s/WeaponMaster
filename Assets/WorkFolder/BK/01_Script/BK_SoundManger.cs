@@ -20,6 +20,7 @@ public enum SfxSoundEnum
   Crit,
   EntryBattle,
   Click,
+  Impact,
 }
 
 public enum BGMSoundEnum
@@ -43,6 +44,7 @@ public class BK_SoundManger : MonoBehaviour
   public AudioClip[] critSoundClips;
   public AudioClip[] entrySoundClips;
   public AudioClip[] clickSoundClips;
+  public AudioClip[] impactSoundClips;
   
   
   private SfxSoundEnum sfxSoundEnum;
@@ -88,6 +90,7 @@ public class BK_SoundManger : MonoBehaviour
     sfxSoundClips[SfxSoundEnum.Crit] = critSoundClips;
     sfxSoundClips[SfxSoundEnum.Click] = clickSoundClips;
     sfxSoundClips[SfxSoundEnum.EntryBattle] = entrySoundClips;
+    sfxSoundClips[SfxSoundEnum.Impact] = impactSoundClips;
     
     
     //bgm
@@ -96,10 +99,6 @@ public class BK_SoundManger : MonoBehaviour
     
   }
 
-  private void Start()
-  {
-    UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
-  }
 
   public void PlaySfx(SfxSoundEnum sfxSoundState, Vector3? position, NetworkRunner runner)
   {

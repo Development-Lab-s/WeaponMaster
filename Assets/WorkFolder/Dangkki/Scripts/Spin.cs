@@ -4,15 +4,21 @@ using UnityEngine.Events;
 
 public class Spin : MonoBehaviour//깡깡
 {
+    [Header("돌기")]
     [SerializeField] private float spinDuration = 2f;
+    [SerializeField] private float spinStrength = 2f;
     [SerializeField] private float spinDistance = 5f;
+    [SerializeField] private Ease spinEase = Ease.InOutCubic;
+    
+    [Header("좆됐을때 설정")]
     [SerializeField] private bool useLocalRotate = false;
-    [SerializeField] private Transform modelRoot;
     [SerializeField] private bool autoCenterPivot = true; 
     [SerializeField] private Vector3 pivotOffset;
     [SerializeField] private float nextDelay = 0f; 
+    
+    [Header("똥")]
     [SerializeField] private GameObject[] nextObjects;
-
+    [SerializeField] private Transform modelRoot;
     private Vector3 endPos;
     private bool captured;
     private Sequence sequence;
@@ -59,12 +65,12 @@ public class Spin : MonoBehaviour//깡깡
             .SetEase(Ease.OutCubic)
             .SetLink(gameObject);
 
-        Vector3 spin = new Vector3(0, 360, 0);
+        Vector3 spin = new Vector3(0, 360 * spinStrength, 0);
         Tween rotateTween = useLocalRotate
             ? transform.DOLocalRotate(spin, spinDuration, RotateMode.FastBeyond360)
             : transform.DORotate(spin, spinDuration, RotateMode.FastBeyond360);
 
-        rotateTween.SetEase(Ease.OutCubic).SetLink(gameObject);
+        rotateTween.SetEase(spinEase).SetLink(gameObject);
 
         sequence = DOTween.Sequence()
             .Append(moveTween)

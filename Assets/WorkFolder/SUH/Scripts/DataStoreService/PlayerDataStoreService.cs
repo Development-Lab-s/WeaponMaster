@@ -86,17 +86,19 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
         public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
         {
             await EnsureInitializedAsync();
-            var keys = new HashSet<string> { valueName };
+
+            string key = $"{storeName}_{playerId}";                
+            var keys = new HashSet<string> { key };
             var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
 
             var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys, options);
+            if (!playerData.TryGetValue(key, out var item))
+                return default;
 
-            if (playerData.TryGetValue(valueName, out var item))
-            {
-                return item.Value.GetAs<TValue>(); 
-            }
-
-            return default;
+            PlayerDataStore store = item.Value.GetAs<PlayerDataStore>();
+            FieldInfo field = GetField<TValue>(valueName);
+            object value = field.GetValue(store);
+            return value == null ? default : (TValue)value;
         }
 
         public async Task<string> SetPlayerName<TValue>(string playerName)

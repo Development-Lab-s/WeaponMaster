@@ -22,19 +22,32 @@ public class RagdollPlayerMovement : NetworkBehaviour
     [SerializeField, Range(0f, 89f)] private float maximumSlope = 50f;
     [SerializeField, Min(0f)] private float airborneGravity = 20f;
 
+    [Header("Slope Pelvis Drop")]
+    // 비워 두면 루트 바로 아래 "Driver"를 찾는다.
+    [SerializeField] private Transform driverRoot;
+    [SerializeField, Min(0f)] private float maximumPelvisDrop = 0.35f;
+    // 이만큼까지의 높이 차는 무시한다. 평지의 미세한 오차로 골반이 움직이지 않게 한다.
+    [SerializeField, Min(0f)] private float pelvisDropDeadZone = 0.03f;
+    [SerializeField, Min(0f)] private float pelvisDropResponse = 10f;
+
     private Rigidbody _rigidbody;
     private PlayerMovementInput _input;
     private FootTargetSolver[] _footSolvers;
     private Rigidbody _puppetPelvisBody;
     private float _puppetPelvisYawOffset;
     private float _currentForwardSpeed;
+    private float _driverBaseHeight;
+    private float _pelvisDrop;
     public float MaximumSpeed => Mathf.Max(walkSpeed, maxRunSpeed);
     public bool IsReadyWeapon = false;
 
 
-    // 소유자에서만 의미 있는 값이다. 프록시 루트는 kinematic이라 항상 0이지만,
-    // 프록시는 FootStepController를 끄고 Player가 동기화한 발 목표를 쓰므로 읽지 않는다.
-    public Vector3 CurrentVelocity => _rigidbody.linearVelocity;
+    private Vector3 _commandedVelocity;
+    private bool _hasCommandedVelocity;
+
+    public Vector3 CurrentVelocity => _hasCommandedVelocity
+        ? _commandedVelocity
+        : _rigidbody.linearVelocity;
 
     private void Awake()
     {
@@ -44,20 +57,19 @@ public class RagdollPlayerMovement : NetworkBehaviour
         ResolvePuppetPelvisBody();
         _currentForwardSpeed = walkSpeed;
 
+        if (driverRoot == null)
+            driverRoot = transform.Find("Driver");
+        if (driverRoot != null)
+            _driverBaseHeight = driverRoot.localPosition.y;
+
         _rigidbody.collisionDetectionMode =
             CollisionDetectionMode.ContinuousSpeculative;
-        _rigidbody.constraints |=
-            RigidbodyConstraints.FreezeRotationX
-          | RigidbodyConstraints.FreezeRotationZ;
+        _rigidbody.constraints |= RigidbodyConstraints.FreezeRotation;
 
         if (cameraTransform == null && Camera.main != null)
             cameraTransform = Camera.main.transform;
     }
 
-    // 퍼펫 골반은 조인트가 없는 래그돌 루트라 이 두 힘만이 높이와 방향을 잡아준다.
-    // FixedUpdateNetwork는 InputAuthority에서만 돌기 때문에 거기 두면 프록시의
-    // 골반은 받침도 회전도 받지 못해 처지고 비틀린다. 입력은 이미 모든 클라이언트에
-    // 있다: 루트 회전은 NetworkTransform이, 접지 여부는 동기화된 발 골로 로컬 계산.
     private void FixedUpdate()
     {
         if (Runner == null || Object == null) return;
@@ -69,13 +81,72 @@ public class RagdollPlayerMovement : NetworkBehaviour
             ? _rigidbody.rotation
             : transform.rotation;
         RotatePuppetPelvis(rootRotation);
+
+        UpdateSlopePelvisDrop();
+    }
+
+    private void UpdateSlopePelvisDrop()
+    {
+        if (driverRoot == null)
+            return;
+
+        float targetDrop = 0f;
+        Vector3 up = transform.up;
+        FootTargetSolver referenceSolver = null;
+        float lowestFootHeight = float.PositiveInfinity;
+
+        for (int i = 0; i < _footSolvers.Length; i++)
+        {
+            FootTargetSolver footSolver = _footSolvers[i];
+            if (footSolver == null || !footSolver.HasGroundHit)
+                continue;
+
+            if (referenceSolver == null)
+                referenceSolver = footSolver;
+            lowestFootHeight = Mathf.Min(
+                lowestFootHeight,
+                Vector3.Dot(footSolver.GroundPoint, up));
+        }
+
+        if (referenceSolver != null
+            && referenceSolver.TrySampleGround(
+                transform.position,
+                up,
+                1.5f,
+                1.5f,
+                out Vector3 centerGround))
+        {
+            float deficit = Vector3.Dot(centerGround, up) - lowestFootHeight;
+            targetDrop = Mathf.Clamp(
+                deficit - pelvisDropDeadZone,
+                0f,
+                maximumPelvisDrop);
+        }
+
+        float blend = 1f - Mathf.Exp(-pelvisDropResponse * Time.fixedDeltaTime);
+        _pelvisDrop = Mathf.Lerp(_pelvisDrop, targetDrop, blend);
+
+        Vector3 localPosition = driverRoot.localPosition;
+        localPosition.y = _driverBaseHeight - _pelvisDrop;
+        driverRoot.localPosition = localPosition;
     }
 
     public override void FixedUpdateNetwork()
     {
-        if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable) return;
-        Vector2 moveInput = _input.MoveDirection;
-        Quaternion cameraYawRotation = RotateTowardCamera();
+        if (!HasInputAuthority) return;
+        if (PlayerHipCamera.IsCameraEnable)
+        {
+            // 이동 명령을 내리지 않는 동안에는 예전처럼 실제 Rigidbody 속도를 쓴다.
+            _hasCommandedVelocity = false;
+            return;
+        }
+        // 개발자 프리캠 중에는 이동 입력을 버리고 카메라를 따라 돌지도 않는다.
+        // 이동 처리 자체는 계속 돌아 캐릭터가 땅을 딛고 제자리에 선다.
+        bool freeCamera = WorkFolder.PAP.Scripts.Camera.DevFreeCamera.IsActive;
+        Vector2 moveInput = freeCamera ? Vector2.zero : _input.MoveDirection;
+        Quaternion cameraYawRotation = freeCamera
+            ? _rigidbody.rotation
+            : RotateTowardCamera();
         Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
         bool hasWalkableGround = TryGetWalkableGround(
             out Vector3 groundNormal);
@@ -137,6 +208,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
         }
 
         _rigidbody.linearVelocity = velocity;
+        _commandedVelocity = velocity;
+        _hasCommandedVelocity = true;
     }
 
     private bool TryGetWalkableGround(out Vector3 groundNormal)

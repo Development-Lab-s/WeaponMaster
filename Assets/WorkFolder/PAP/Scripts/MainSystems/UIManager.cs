@@ -16,7 +16,7 @@ namespace WorkFolder.PAP.Scripts.MainSystems
                 Destroy(gameObject);
         }
 
-        public void DropDeathUI(string deathMent) => dropUI.Dead(deathMent);
+        public void DropDeathUI(string deathMent, string targetBy, int streak) => dropUI.Dead(deathMent, targetBy, streak);
 
         public void OpenSelectUI()
         {

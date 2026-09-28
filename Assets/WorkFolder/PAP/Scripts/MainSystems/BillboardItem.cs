@@ -1,20 +1,21 @@
 ﻿using System;
+using DevLib.ServiceLocator;
 using UnityEngine;
 
 namespace WorkFolder.PAP.Scripts.MainSystems
 {
     public class BillboardItem : MonoBehaviour
     {
-        private Transform camTransform;
+        private ICameraService _service;
 
         private void Start()
         {
-            camTransform = UnityEngine.Camera.main.transform;
+            _service = ServiceLocator.Get<ICameraService>();
         }
 
         private void LateUpdate()
         {
-            transform.LookAt(transform.position + camTransform.rotation * Vector3.forward, camTransform.rotation * Vector3.up);
+            transform.LookAt(transform.position + _service.CurrentCamera.transform.rotation * Vector3.forward, _service.CurrentCamera.transform.rotation * Vector3.up);
         }
     }
 }

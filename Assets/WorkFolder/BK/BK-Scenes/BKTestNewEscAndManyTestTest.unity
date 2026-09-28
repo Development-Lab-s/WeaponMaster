@@ -1361,7 +1361,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120ecdab5df35fb42827b2f8cbff4127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BK_SoundManger
-  sfxSource: {fileID: 1346427505}
   swordSoundClips:
   - {fileID: 8300000, guid: 0b8f6ac73bae676418ee4372e803855b, type: 3}
   lanceSoundClips:
@@ -1382,9 +1381,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5c037b0ecd5aaa04bb484acc42d31dce, type: 3}
   clashSoundClips:
   - {fileID: 8300000, guid: d327e8f32943cef4e9d14fb0db5effe6, type: 3}
+  swingSoundClips: []
+  critSoundClips: []
+  entrySoundClips: []
+  clickSoundClips: []
+  sfxPrefab: {fileID: 0}
+  sfxPrefabLocal: {fileID: 0}
   bgmSource: {fileID: 1259060953}
   equipmentClips:
   - {fileID: 8300000, guid: 0df3974b27c35b24d832898ab3b36830, type: 3}
+  battleClips: []
 --- !u!4 &1715806375
 Transform:
   m_ObjectHideFlags: 0
@@ -1942,6 +1948,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3322288376519536513, guid: 6c1527a256898b24da51b44a1f0f60b8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3325692551490989895, guid: 6c1527a256898b24da51b44a1f0f60b8, type: 3}
       propertyPath: m_text
       value: "\uC190\uB180\uB9BC"
@@ -2086,6 +2096,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1961477790}
+    - target: {fileID: 8671100141517766309, guid: 6c1527a256898b24da51b44a1f0f60b8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8831536602564781562, guid: 6c1527a256898b24da51b44a1f0f60b8, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 10

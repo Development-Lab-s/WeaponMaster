@@ -60,7 +60,7 @@ namespace WorkFolder.PAP.Scripts.Camera
 
         public override void Render()
         {
-            if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable) return;
+            if (!HasInputAuthority || PlayerHipCamera.IsCameraEnable || DevFreeCamera.IsActive) return;
             RotateCharacter();
             AxisControl();
             if (EquipWeapon)

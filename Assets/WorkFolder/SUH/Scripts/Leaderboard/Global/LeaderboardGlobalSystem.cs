@@ -1,10 +1,12 @@
 using System;
+using DevLib.ServiceLocator;
 using Newtonsoft.Json;
 using Photon.Client.StructWrapping;
 using Unity.Services.Leaderboards;
 using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.Leaderboard.Global.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
 using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 
@@ -42,11 +44,10 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             leaderBoardId = leaderboardSettingSO.LeaderboardId == null ? "Global_Leaderboard" : leaderboardSettingSO.LeaderboardId ;
             offset = (ushort)(leaderboardSettingSO.LeaderboardFindOffset == null ? 0 : leaderboardSettingSO.LeaderboardFindOffset);
             limit = (ushort)(leaderboardSettingSO.MaxVisibleRank == null ? 0 : leaderboardSettingSO.MaxVisibleRank);
-            
         }
-        [ContextMenu("GetLeaderboard")]
         public async void GetTopRanker()
         {
+            await ServiceLocator.Get<ILeaderboardSender>().TryUpdatePlayer();
             try
             {
                 var scoresResponse =
@@ -63,6 +64,10 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
         {
             if (scoresResponse != null && scoresResponse.Results.Count > 0)
             {
+                foreach (Transform child in context)
+                {
+                    Destroy(child.gameObject);
+                }
                 for (int i = 0; i < scoresResponse.Results.Count; i++)
                 {
                     var entry = scoresResponse.Results[i];
@@ -102,6 +107,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 
         private void MakeLeaderboard(int rank, string playerName, double score, uint kills)
         {
+
             GameObject obj = Instantiate(leaderboardTemplate, context);
             obj.GetComponent<UpdateRankObject>().UpdateRankText(rank, playerName, kills, score);
             
