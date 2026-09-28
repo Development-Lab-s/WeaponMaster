@@ -253,6 +253,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             ApplyFootGoals();
         }
 
+        public Color GetBodyPaletteColor(uint index)
+        {
+            if (index >= _bodyMaterials.Length || _bodyMaterials[index] == null)
+                throw new System.ArgumentOutOfRangeException(nameof(index));
+            return FaceDrawShared.GetColor(_bodyMaterials[index]);
+        }
+
         void ColorChanged()
         {
             MeshRenderer.material.color = NetWorkedColor;
@@ -389,10 +396,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             
                 playerId = AuthenticationService.Instance.PlayerId;
                 _service = ServiceLocator.Get<IDataStoreService>();
-                playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                string savedName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
+                playerName = savedName;
                 uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
-                NetWorkedColor = _bodyMaterials[value].color;
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
+                NetWorkedColor = GetBodyPaletteColor(value);
                 HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
             }
 
             if (!HasStateAuthority)
@@ -407,10 +418,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
 
-        }
-
-        private void Start()
-        {
+            // Initial network state is available here, not in Unity Start().
             ColorChanged();
             NameChanged();
         }

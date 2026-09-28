@@ -16,6 +16,7 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
         [SerializeField] private EquipSocketContainer container;
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private PartOffsetDataSO[] partDataList;
+        private bool spawning;
         
         /*public NetworkString<_32> _playerId { get; set; }
         public Color NetworkColor;
@@ -53,6 +54,20 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
         
         public async void SpawnCharacter()
         {
+            if (spawning) return;
+            spawning = true;
+            try
+            {
+            await UgsSignIn.EnsureSignedInAsync();
+            try
+            {
+                await WorkFolder.SUH.Scripts.FacePersistence.FaceStore.Load(AuthenticationService.Instance.PlayerId);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"Face preload failed; spawned player will retry: {ex.Message}", this);
+            }
+            if (this == null || RunnerProvider.Current == null) return;
             (int, ItemData) pack = container.GetCurrentPartAndWeapon();
             
             NetworkObject player = RunnerProvider.Current.Spawn(playerPrefab, new Vector3(0,4,0),Quaternion.identity,inputAuthority:RunnerProvider.Current.LocalPlayer);
@@ -60,6 +75,8 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
             PartOffsetDataSO partData = partDataList[pack.Item1];
             
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);
+            }
+            finally { spawning = false; }
             
             /*_playerId = AuthenticationService.Instance.PlayerId;
             

@@ -55,7 +55,12 @@ public class FaceDraw : MonoBehaviour
     
     public bool IsDrawing { get; private set; }
     public Texture2D Texture => texture;
+    public Color BackgroundColor => background[0];
     public bool CanUndo => undoStack.Count > 0;
+    public bool InputLocked { get; set; }
+    public System.Func<Texture2D, System.Threading.Tasks.Task> SaveAsync;
+    public bool IsSaving { get; private set; }
+    public string SaveError { get; private set; }
     private bool IsReady => texture != null && brain != null;
 
 
@@ -112,7 +117,7 @@ public class FaceDraw : MonoBehaviour
 
     private void Update()
     {
-        if (!IsDrawing || brain.IsBlending) return;
+        if (!IsDrawing || InputLocked || IsSaving || brain.IsBlending || Mouse.current == null) return;
         if (!Mouse.current.leftButton.isPressed)
         {
             pressing = false;
@@ -222,7 +227,7 @@ public class FaceDraw : MonoBehaviour
 
     public void BeginDrawing()
     {
-        if (IsDrawing || !IsReady)
+        if (IsDrawing || !IsReady || InputLocked || IsSaving)
             return;
 
         BakeCollider();
@@ -231,22 +236,35 @@ public class FaceDraw : MonoBehaviour
         onDrawingStarted?.Invoke();
     }
 
-    public void Confirm()
+    public async void Confirm()
     {
-        if (!IsDrawing)
+        if (!IsDrawing || InputLocked || IsSaving)
             return;
-
-        texture.SetPixels32(pixels);
-        texture.Apply(false);
-        byte[] png = texture.EncodeToPNG();
-        FaceDrawShared.SetFace(png); 
-        undoStack.Clear();
-        onConfirmed?.Invoke(texture);
-        EndDrawing();
+        IsSaving = true;
+        SaveError = null;
+        try
+        {
+            texture.SetPixels32(pixels);
+            texture.Apply(false);
+            if (SaveAsync != null) await SaveAsync(texture);
+            if (this == null) return;
+            byte[] png = texture.EncodeToPNG();
+            FaceDrawShared.SetFace(png);
+            undoStack.Clear();
+            onConfirmed?.Invoke(texture);
+            EndDrawing();
+        }
+        catch (System.Exception ex)
+        {
+            SaveError = "얼굴 저장 실패. 다시 저장해주세요.";
+            Debug.LogException(ex, this);
+        }
+        finally { IsSaving = false; }
     }
     
     public void Cancel()
     {
+        if (IsSaving) return;
         if (IsDrawing)
             EndDrawing();
     }
@@ -261,6 +279,7 @@ public class FaceDraw : MonoBehaviour
 
     public void Undo() // 한번 되돌리는거
     {
+        if (InputLocked || IsSaving) return;
         if (undoStack.Count == 0)
             return;
 
@@ -271,6 +290,7 @@ public class FaceDraw : MonoBehaviour
 
     public void Clear() // 다 치우기
     {
+        if (InputLocked || IsSaving) return;
         PushUndo();
         pixels = (Color32[])background.Clone();
         dirty = true;
@@ -279,6 +299,25 @@ public class FaceDraw : MonoBehaviour
     public void SetColor(Color color) { brushColor = color; eraser = false; }
     public void SetBrushRadius(float radius) => brushRadius = radius;
     public void SetEraser(bool on) => eraser = on;
+
+    public void InitializeCanvas(Material skin, byte[] savedPng, Color? savedBackground = null)
+    {
+        Color32 fill = FaceDrawShared.GetColor(skin);
+        fill.a = 255;
+        for (int i = 0; i < background.Length; i++) background[i] = fill;
+        pixels = (Color32[])background.Clone();
+        if (savedPng != null)
+        {
+            if (!texture.LoadImage(savedPng) || texture.width != textureSize || texture.height != textureSize)
+                throw new System.InvalidOperationException("Saved face dimensions do not match the canvas.");
+            FaceDrawShared.ApplySkinBackground(texture, savedBackground ?? Color.white, fill);
+            pixels = texture.GetPixels32();
+        }
+        texture.SetPixels32(pixels);
+        texture.Apply(false);
+        undoStack.Clear();
+        dirty = false;
+    }
     
     // ############################################################ UI 호출 끝
 }
