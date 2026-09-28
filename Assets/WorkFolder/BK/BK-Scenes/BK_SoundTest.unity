@@ -403,16 +403,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120ecdab5df35fb42827b2f8cbff4127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BK_SoundManger
-  sfxSource: {fileID: 897984820}
   swordSoundClips:
   - {fileID: 8300000, guid: 0b8f6ac73bae676418ee4372e803855b, type: 3}
   lanceSoundClips:
   - {fileID: 8300000, guid: 214e39663c90d984aa31594fc5d5bad1, type: 3}
   - {fileID: 8300000, guid: 4439028e3991f714fa286045198551db, type: 3}
-  uiSoundClips: []
+  walkSoundClips: []
+  serverEntrySoundClips: []
+  gameStartSoundClips: []
+  equipmentSoundClips:
+  - {fileID: 8300000, guid: 9991c0f910349b64c90a471da0f948a9, type: 3}
+  - {fileID: 8300000, guid: 60d54305d249487489940cb980b6018c, type: 3}
+  hitSoundClips:
+  - {fileID: 8300000, guid: 0ae6cc22734c6d04ab483fb88dd1073d, type: 3}
+  - {fileID: 8300000, guid: 5c037b0ecd5aaa04bb484acc42d31dce, type: 3}
+  clashSoundClips: []
+  swingSoundClips:
+  - {fileID: 8300000, guid: d6aebe8a5f17fec47bd17301e083ebcd, type: 3}
+  - {fileID: 8300000, guid: 1b3adb873b969d04592d14ef6afa8bd5, type: 3}
+  critSoundClips:
+  - {fileID: 8300000, guid: be548298126c57540981dc567fe742be, type: 3}
+  entrySoundClips: []
+  clickSoundClips:
+  - {fileID: 8300000, guid: 01c816507b258ad48a9d86403ab2c4bb, type: 3}
+  impactSoundClips: []
+  sfxPrefab: {fileID: 0}
+  sfxPrefabLocal: {fileID: 0}
   bgmSource: {fileID: 897984821}
-  nomalClips: []
-  notNomalClips: []
+  equipmentClips: []
+  battleClips: []
 --- !u!82 &897984820
 AudioSource:
   m_ObjectHideFlags: 0

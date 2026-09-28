@@ -17757,12 +17757,18 @@ MonoBehaviour:
   swordSoundClips:
   - {fileID: 8300000, guid: 60d54305d249487489940cb980b6018c, type: 3}
   - {fileID: 8300000, guid: 9991c0f910349b64c90a471da0f948a9, type: 3}
-  lanceSoundClips: []
+  lanceSoundClips:
+  - {fileID: 8300000, guid: d6aebe8a5f17fec47bd17301e083ebcd, type: 3}
+  - {fileID: 8300000, guid: 1b3adb873b969d04592d14ef6afa8bd5, type: 3}
   walkSoundClips:
   - {fileID: 8300000, guid: 1a259e7b3b20864459100509865359c8, type: 3}
-  serverEntrySoundClips: []
-  gameStartSoundClips: []
-  equipmentSoundClips: []
+  serverEntrySoundClips:
+  - {fileID: 8300000, guid: 5602efb4105ee6b45b192b73a922e476, type: 3}
+  gameStartSoundClips:
+  - {fileID: 8300000, guid: 48eb0e9558311034ba0b56eb0fa0cd6a, type: 3}
+  equipmentSoundClips:
+  - {fileID: 8300000, guid: 9991c0f910349b64c90a471da0f948a9, type: 3}
+  - {fileID: 8300000, guid: 60d54305d249487489940cb980b6018c, type: 3}
   hitSoundClips:
   - {fileID: 8300000, guid: 0ae6cc22734c6d04ab483fb88dd1073d, type: 3}
   - {fileID: 8300000, guid: 5c037b0ecd5aaa04bb484acc42d31dce, type: 3}
@@ -17779,6 +17785,10 @@ MonoBehaviour:
   impactSoundClips:
   - {fileID: 8300000, guid: f61eb550c6300ee42b6b8100023b7c2b, type: 3}
   - {fileID: 8300000, guid: 3671d35053c441b4fa79a15f6a75bcb8, type: 3}
+  hitAssSoundClips:
+  - {fileID: 8300000, guid: 5d6e77311423c944bb1ed1964c5f9988, type: 3}
+  - {fileID: 8300000, guid: f853616f4b04f5648aae44357b890daa, type: 3}
+  - {fileID: 8300000, guid: e3204c0498c0e1b41a32939bdc4f0993, type: 3}
   sfxPrefab: {fileID: 876470313289951931, guid: b9e125b2add1e4d49b252d6df3301753, type: 3}
   sfxPrefabLocal: {fileID: -5049269069515123218, guid: 4c16bea2b6b5c634db1f1d7a8c14c7ba, type: 3}
   bgmSource: {fileID: 1879776281}

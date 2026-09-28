@@ -13,6 +13,7 @@ public class MouseGamdoSet : MonoBehaviour
         WeaponSensitivityY
     }
     private Slider slider;
+    private SliderSnap sliderSnap;
     [SerializeField] private SettingValueSO sensitivitySO;
     [SerializeField] private TargetValue targetValue;
 
@@ -28,11 +29,13 @@ public class MouseGamdoSet : MonoBehaviour
             return;
         }
 
+        sliderSnap = SliderSnap.Attach(slider, 0.1f);
+
         // 이벤트 등록
         slider.onValueChanged.AddListener(OnSliderValueChanged);
 
         // SO 값으로 슬라이더 초기화
-        slider.SetValueWithoutNotify(GetSOValue());
+        sliderSnap.SnapAndSet(GetSOValue());
     }
 
     private void OnDestroy()
@@ -43,7 +46,7 @@ public class MouseGamdoSet : MonoBehaviour
 
     private void OnSliderValueChanged(float value)
     {
-        float roundedValue = Mathf.Round(value * 100f) / 100f;
+        float roundedValue = sliderSnap.SnapAndSet(value);
 
         switch (targetValue)
         {
