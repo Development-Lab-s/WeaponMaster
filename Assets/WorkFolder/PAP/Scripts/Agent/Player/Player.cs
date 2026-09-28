@@ -361,18 +361,21 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         }
 
         [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
-        public void RpcKilled()
+        public void RpcKilled(int score)
         {
-            _ = UpdateKillCountAsync();
+            _ = UpdateKillCountAsync(score);
         }
-        public async Task UpdateKillCountAsync()
+        public async Task UpdateKillCountAsync(int score)
         {
             uint currentKill = await ServiceLocator.Get<IDataStoreService>()
                 .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            uint currentScore = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.Score));
             await ServiceLocator.Get<IDataStoreService>()
                 .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.Score), (uint)(currentScore + score));
             await ServiceLocator.Get<IDataStoreService>().SaveAsync();
-            AddPlayerScoreOptions options = new AddPlayerScoreOptions();
             KillStreak += 1;
         }
 
