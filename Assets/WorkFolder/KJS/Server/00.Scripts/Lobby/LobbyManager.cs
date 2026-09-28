@@ -65,7 +65,7 @@ namespace _00.Scripts.Lobby
             {
                 GameMode = GameMode.Shared,
                 SessionName = roomName,
-                Scene = SceneRef.FromIndex(0),
+                Scene = SceneRef.FromIndex(1),
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>(),
                 SessionProperties = properties
             });
