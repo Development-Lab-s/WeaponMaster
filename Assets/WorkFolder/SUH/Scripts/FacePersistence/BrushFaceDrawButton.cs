@@ -11,6 +11,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
     public sealed class BrushFaceDrawButton : MonoBehaviour
     {
         [SerializeField] private CharacterEditorUI characterEditor;
+        [SerializeField] private GameObject targetObject;
         private BoxCollider hitBox;
         private readonly List<RaycastResult> uiHits = new();
 
@@ -46,7 +47,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         private void Update()
         {
             if (LobbyFaceDrawFlow.IsOpen || characterEditor == null ||
-                Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
+                Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame || !targetObject.activeSelf) return;
             var camera = Camera.main;
             if (camera == null) return;
             var point = Mouse.current.position.ReadValue();

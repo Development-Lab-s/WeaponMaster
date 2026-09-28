@@ -2940,8 +2940,8 @@ RectTransform:
   - {fileID: 1021118048}
   - {fileID: 515334533}
   - {fileID: 1316849586}
-  - {fileID: 1215735923}
   - {fileID: 1111212566}
+  - {fileID: 1215735923}
   - {fileID: 273949191}
   - {fileID: 589600700}
   - {fileID: 478612853}
@@ -27138,7 +27138,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 528.3634}
+  m_AnchoredPosition: {x: 0, y: 528.36304}
   m_SizeDelta: {x: 0, y: 1275.3688}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &782535740
@@ -33200,6 +33200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.FacePersistence.BrushFaceDrawButton
   characterEditor: {fileID: 628117237}
+  targetObject: {fileID: 1855442423}
 --- !u!1 &894360988
 GameObject:
   m_ObjectHideFlags: 0
@@ -38851,8 +38852,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209252343}
   m_HandleRect: {fileID: 209252342}
   m_Direction: 3
-  m_Value: -0.0000009241398
-  m_Size: 0.5856962
+  m_Value: 0
+  m_Size: 0.5857175
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
