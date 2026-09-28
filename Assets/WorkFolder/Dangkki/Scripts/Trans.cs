@@ -17,7 +17,6 @@ public class Trans : MonoBehaviour
     [Header("타이밍")]
     [SerializeField] private float coverDuration = 0.6f;
     [SerializeField] private Ease coverEase = Ease.InOutCubic;
-    [SerializeField] private float holdDuration = 0.3f;
     [SerializeField] private float revealDuration = 0.6f;
     [SerializeField] private Ease revealEase = Ease.InOutCubic;
     
@@ -59,7 +58,7 @@ public class Trans : MonoBehaviour
         if (Instance == this) Instance = null;
     }
     
-    public void Play(Action onCoveredAction = null, Action onFinishedAction = null)
+    public void Play(Action onCoveredAction = null)
     {
         Begin();
 
@@ -70,7 +69,11 @@ public class Trans : MonoBehaviour
             onCoveredAction?.Invoke();
             onCovered?.Invoke();
         });
-        if (holdDuration > 0f) seq.AppendInterval(holdDuration);
+    }
+
+    public void DePlay(Action onFinishedAction = null)
+    {
+        seq = DOTween.Sequence().SetLink(gameObject);
         seq.Append(BuildRevealTween());
         seq.OnComplete(() =>
         {
