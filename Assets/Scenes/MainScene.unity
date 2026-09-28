@@ -3670,8 +3670,8 @@ MonoBehaviour:
   orbitDistanceRatio: 1
   orbitHeightRatio: 0.15
   orbitLookHeightRatio: 0.1
-  distanceRatio: 0.55
-  heightRatio: 0
+  distanceRatio: 0.3
+  heightRatio: -0.2
   sideRatio: 0
   lookHeightRatio: 0
   reverseForward: 0
@@ -20099,6 +20099,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1807393825914752040, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+    - target: {fileID: 1807393825914752040, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5801631636661270881, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+    - target: {fileID: 1807393825914752040, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2287536936489538922, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_Value
       value: 1
@@ -20137,6 +20149,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7352916859412224589, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7475149251559229582, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+    - target: {fileID: 7475149251559229582, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5801631636661270881, guid: ab7eb6489adb2bc4e996382a5db7dc60, type: 2}
+    - target: {fileID: 7475149251559229582, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7685780543838056668, guid: db100d8fb8cc80741a974b8f30664dad, type: 3}
