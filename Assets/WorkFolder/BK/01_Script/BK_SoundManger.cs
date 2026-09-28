@@ -21,6 +21,7 @@ public enum SfxSoundEnum
   EntryBattle,
   Click,
   Impact,
+  HitAss
 }
 
 public enum BGMSoundEnum
@@ -45,6 +46,7 @@ public class BK_SoundManger : MonoBehaviour
   public AudioClip[] entrySoundClips;
   public AudioClip[] clickSoundClips;
   public AudioClip[] impactSoundClips;
+  public AudioClip[] hitAssSoundClips;
   
   
   private SfxSoundEnum sfxSoundEnum;
@@ -91,6 +93,7 @@ public class BK_SoundManger : MonoBehaviour
     sfxSoundClips[SfxSoundEnum.Click] = clickSoundClips;
     sfxSoundClips[SfxSoundEnum.EntryBattle] = entrySoundClips;
     sfxSoundClips[SfxSoundEnum.Impact] = impactSoundClips;
+    sfxSoundClips[SfxSoundEnum.HitAss] = hitAssSoundClips;
     
     
     //bgm
