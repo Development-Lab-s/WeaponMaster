@@ -22,7 +22,12 @@ public static class FaceDrawShared
     public static void ProjectFaceUV(SkinnedMeshRenderer renderer, int faceSubMesh)
     {
         Mesh source = renderer.sharedMesh;
-        if (source == null || ProjectedMeshes.ContainsValue(source)) return;
+        if (source == null) throw new InvalidOperationException("Face renderer has no mesh.");
+        if (!source.isReadable)
+            throw new InvalidOperationException($"Face mesh '{source.name}' requires Read/Write Enabled in the model import settings.");
+        if (faceSubMesh < 0 || faceSubMesh >= source.subMeshCount)
+            throw new ArgumentOutOfRangeException(nameof(faceSubMesh));
+        if (ProjectedMeshes.ContainsValue(source)) return;
         
 
         if (!ProjectedMeshes.TryGetValue((source, faceSubMesh), out Mesh projected) || projected == null)
@@ -97,12 +102,36 @@ public static class FaceDrawShared
 
     public static Color GetColor(Material material)
     {
+        // The body palette uses glTF materials; use its actual tint, not a fallback property.
+        if (material.HasProperty("baseColorFactor")) return material.GetColor("baseColorFactor");
         foreach (string prop in ColorProps)
         {
             if (material.HasProperty(prop))
                 return material.GetColor(prop);
         }
         return Color.white;
+    }
+
+    public static void ApplySkinBackground(Texture2D texture, Color oldBackground, Color skin)
+    {
+        Color32 previous = oldBackground;
+        Color32 fill = skin;
+        fill.a = 255;
+        var pixels = texture.GetPixels32();
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            var pixel = pixels[i];
+            // Legacy PNGs have a baked white background. Do not tint colored strokes.
+            if (pixel.r == previous.r && pixel.g == previous.g && pixel.b == previous.b)
+                pixels[i] = fill;
+            else if (pixel.a < 255)
+            {
+                pixels[i] = Color32.Lerp(fill, pixel, pixel.a / 255f);
+                pixels[i].a = 255;
+            }
+        }
+        texture.SetPixels32(pixels);
+        texture.Apply(false);
     }
     
     public static void ApplyTexture(Material material, Texture texture)
