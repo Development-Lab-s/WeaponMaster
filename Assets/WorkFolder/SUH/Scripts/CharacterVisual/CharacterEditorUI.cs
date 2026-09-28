@@ -5,6 +5,7 @@
     using TMPro;
     using UnityEngine;
     using UnityEngine.Events;
+    using Unity.Services.Authentication;
     using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
     using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
     using WorkFolder.SUH.Scripts.FacePersistence;
@@ -26,6 +27,24 @@
             [SerializeField] private GameObject faceDrawPanel;
             private bool saving;
             private bool ready;
+            private CharacterFacePreview facePreview;
+            private SavedFace previewFace;
+
+            private void ApplyPreview()
+            {
+                facePreview ??= new CharacterFacePreview(_meshRenderer);
+                facePreview.Apply(_bodyMaterials[BodyColor], previewFace);
+            }
+
+            private async System.Threading.Tasks.Task RefreshSavedFace()
+            {
+                var saved = await FaceStore.Load(AuthenticationService.Instance.PlayerId);
+                if (this == null) return;
+                previewFace = saved;
+                ApplyPreview();
+            }
+
+            private void OnDestroy() => facePreview?.Dispose();
             
             
             private uint HairStyleIndex = 0;
@@ -33,6 +52,7 @@
             private string PlayerName;
     private Vector2 originalPos;
     public UnityEvent OnFinishSave;
+    public UnityEvent OnReturnFromFaceDraw;
             
 
             public void ChangeBtnHair(string count)
@@ -56,8 +76,9 @@
                     BodyColor = await service.GetAsync<uint>("BodyColor");
                     HairStyleIndex = await service.GetAsync<uint>("HairStyle");
                     if (this == null) return;
-                    _meshRenderer.material = _bodyMaterials[BodyColor];
+                    ApplyPreview();
                     ready = true;
+                    await RefreshSavedFace();
                 }
                 catch (Exception ex) { Debug.LogException(ex, this); }
             }
@@ -134,8 +155,20 @@
                 try
                 {
                     // Opening the brush does not implicitly save the character profile.
-                    if (await LobbyFaceDrawFlow.OpenAsync(gameObject.scene, faceDrawPanel) && this != null)
-                        OnFinishSave?.Invoke();
+                    if (!ready)
+                    {
+                        var service = ServiceLocator.Get<IDataStoreService>();
+                        BodyColor = await service.GetAsync<uint>("BodyColor");
+                        HairStyleIndex = await service.GetAsync<uint>("HairStyle");
+                        if (this == null) return;
+                        ready = true;
+                    }
+                    var faceController = faceDrawPanel.GetComponentInChildren<FaceSaveController>(true);
+                    faceController.SetPreviewSkin(BodyColor, _bodyMaterials[BodyColor]);
+                    await LobbyFaceDrawFlow.OpenAsync(gameObject.scene, faceDrawPanel);
+                    if (this == null) return;
+                    OnReturnFromFaceDraw?.Invoke();
+                    await RefreshSavedFace();
                 }
                 catch (Exception ex)
                 {
@@ -162,9 +195,10 @@
 
             public void BodyColorIndexChange(string bodyColorIndex)
             {
+                if (!ready || saving) return;
                 BodyColor = uint.Parse(bodyColorIndex);
                 _particleSystem[Convert.ToInt32(bodyColorIndex)].Play();
-                _meshRenderer.material = _bodyMaterials[Convert.ToInt32(bodyColorIndex)];
+                ApplyPreview();
             }
         }
     }

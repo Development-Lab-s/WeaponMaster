@@ -28,6 +28,37 @@ internal static class FacePersistenceValidation
                 if (root.GetComponentInChildren<WorkFolder.SUH.Scripts.CharacterVisual.CharacterEditorUI>(true) is { } found)
                     editor = found;
             if (editor == null) throw new Exception("Lobby customization UI missing.");
+            var editorData = new SerializedObject(editor);
+            var previewRenderer = (SkinnedMeshRenderer)editorData.FindProperty("_meshRenderer").objectReferenceValue;
+            if (!previewRenderer.sharedMesh.isReadable) throw new Exception("Lobby preview mesh must be readable.");
+            var skins = editorData.FindProperty("_bodyMaterials");
+            var lightSkin = (Material)skins.GetArrayElementAtIndex(0).objectReferenceValue;
+            var darkSkin = (Material)skins.GetArrayElementAtIndex(4).objectReferenceValue;
+            var testTexture = new Texture2D(512, 512, TextureFormat.RGBA32, false);
+            try
+            {
+                var testPixels = new Color32[512 * 512];
+                Color32 light = FaceDrawShared.GetColor(lightSkin);
+                for (int i = 0; i < testPixels.Length; i++) testPixels[i] = light;
+                testPixels[1] = Color.black;
+                testTexture.SetPixels32(testPixels);
+                testTexture.Apply();
+                var face = new SavedFace { BackgroundColor = FaceDrawShared.GetColor(lightSkin), Png = Convert.ToBase64String(testTexture.EncodeToPNG()) };
+                using (var preview = new CharacterFacePreview(previewRenderer))
+                {
+                    preview.Apply(lightSkin, null);
+                    preview.Apply(darkSkin, face);
+                    var faceMaterial = previewRenderer.sharedMaterials[1];
+                    var result = (Texture2D)faceMaterial.GetTexture("baseColorTexture");
+                    var resultPixels = result.GetPixels32();
+                    if (previewRenderer.sharedMaterials[0] != darkSkin ||
+                        !resultPixels[0].Equals((Color32)FaceDrawShared.GetColor(darkSkin)) ||
+                        !resultPixels[1].Equals((Color32)Color.black))
+                        throw new Exception("Preview body/face skin sync or stroke preservation failed.");
+                }
+                Debug.Log("[Character Face Preview Validation] PASS: current palette applied to body and saved-face background; black drawing preserved.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(testTexture); }
             var panel = new SerializedObject(editor).FindProperty("faceDrawPanel").objectReferenceValue as GameObject;
             if (panel == null || panel.scene != lobby || panel.activeSelf || panel.GetComponentInChildren<FaceSaveController>(true) == null)
                 throw new Exception("Lobby must reference its own inactive face panel instance.");

@@ -18,6 +18,13 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         [SerializeField] private Button returnButton;
         private int loadVersion;
         private uint bodyColor;
+        private uint? previewBodyColor;
+        private Material previewSkin;
+        public void SetPreviewSkin(uint index, Material skin)
+        {
+            previewBodyColor = index;
+            previewSkin = skin;
+        }
         private string status = "얼굴 불러오는 중...";
         private bool ready;
         private bool savedThisSession;
@@ -76,14 +83,14 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
                 if (this == null || version != loadVersion) return;
                 var service = ServiceLocator.Get<IDataStoreService>();
                 if (service == null) throw new InvalidOperationException("IDataStoreService is missing.");
-                bodyColor = await service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+                bodyColor = previewBodyColor ?? await service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
                 if (this == null || version != loadVersion) return;
                 if (bodyColor >= bodyMaterials.Length || bodyMaterials[bodyColor] == null)
                     throw new InvalidOperationException("BodyColor material index is out of range.");
                 var saved = await FaceStore.Load(AuthenticationService.Instance.PlayerId);
                 if (this == null || version != loadVersion) return;
                 // Keep the drawing even when only BodyColor changed; replace its old background.
-                faceDraw.InitializeCanvas(bodyMaterials[bodyColor],
+                faceDraw.InitializeCanvas(previewSkin != null ? previewSkin : bodyMaterials[bodyColor],
                     saved?.Decode(),
                     saved?.StoredBackground);
                 faceDraw.InputLocked = false;
