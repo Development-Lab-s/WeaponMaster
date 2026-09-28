@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Lobby.unity
+    path: Assets/WorkFolder/KJS/Server/02.Scenes/Lobby.unity
     guid: d405999e702296449add9e0121520df3
   - enabled: 1
     path: Assets/WorkFolder/Jun/Scene/NewIntro.unity
