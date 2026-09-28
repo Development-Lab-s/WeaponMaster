@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MapCatalog
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.MapSystem.MapCatalogSO
   maps:
-  - displayName: Map_MainScene
+  - displayName: "\uCF5C\uB85C\uC138\uC6C0"
     prefab: {fileID: 7151664250987953334, guid: 8cf40f42c161db34495b4b39a7c4427c, type: 3}

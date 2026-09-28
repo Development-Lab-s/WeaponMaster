@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DevLib.ServiceLocator;
 using Fusion;
 using UnityEngine;
@@ -7,6 +8,7 @@ using WorkFolder.PAP.Scripts.MapSystem;
 using WorkFolder.PAP.Scripts.Network;
 using WorkFolder.PAP.Scripts.SO.DataFolder;
 using WorkFolder.PAP.Scripts.WeaponSystem;
+using Random = UnityEngine.Random;
 
 namespace WorkFolder.PAP.Scripts.SelectUIScene
 {
@@ -16,6 +18,8 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
         [SerializeField] private NetworkObject playerPrefab;
         [SerializeField] private PartOffsetDataSO[] partDataList;
         [SerializeField] private Transform[] playerSpawnPoints;
+            
+        private Action end;
         
         Transform FindChildHelper(Transform current, string targetName)
         {
@@ -29,8 +33,18 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
 
             return null;
         }
-        
+
+        private void Awake()
+        {
+            end += HandleSpawnCharacter;
+        }
+
         public void SpawnCharacter()
+        {
+            Trans.Instance.Play(end);
+        }
+
+        private void HandleSpawnCharacter()
         {
             NetworkRunner runner = null;
 
@@ -52,6 +66,7 @@ namespace WorkFolder.PAP.Scripts.SelectUIScene
             Player playerHandler = player.GetComponent<Player>();
             PartOffsetDataSO partData = partDataList[pack.Item1];
             playerHandler.SetInitialize(partData,FindChildHelper(player.transform,partData.targetPartName).transform.GetComponent<NetworkObject>(),pack.Item2.ItemPrefab);
+            Trans.Instance.DePlay();
         }
 
         // 방을 만들 때 고른 맵이 생성돼 있으면 그 맵의 스폰 지점 중 다른 플레이어에게서

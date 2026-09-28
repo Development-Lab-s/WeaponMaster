@@ -70,14 +70,27 @@ public abstract class ItemContainer : MonoBehaviour
         return -1;
     }
 
-    public void ChangePart(int bodyPartIndex, int weaponIndex)
+    public virtual void ChangePart(int bodyPartIndex, int weaponIndex)
     {
-        GameObject targetPart = Instantiate(weaponPrefabs[weaponIndex],targetParts[bodyPartIndex]);
-        targetPart.transform.localPosition = Vector3.zero;
-        targetPart.transform.localRotation = Quaternion.identity;
+        SpawnPart(weaponIndex, targetParts[bodyPartIndex], 1f);
     }
 
-    public void TryRemovePart(int bodyPartIndex)
+    protected Transform GetTargetPart(int bodyPartIndex) =>
+        targetParts != null && bodyPartIndex >= 0 && bodyPartIndex < targetParts.Length
+            ? targetParts[bodyPartIndex]
+            : null;
+
+    // 장착 칸 위치에 무기 미리보기를 꽂는다. scale은 프리팹 크기에 곱하는 배율이다.
+    protected GameObject SpawnPart(int weaponIndex, Transform parent, float scale)
+    {
+        GameObject targetPart = Instantiate(weaponPrefabs[weaponIndex],parent);
+        targetPart.transform.localPosition = Vector3.zero;
+        targetPart.transform.localRotation = Quaternion.identity;
+        targetPart.transform.localScale *= scale;
+        return targetPart;
+    }
+
+    public virtual void TryRemovePart(int bodyPartIndex)
     {
         if (targetParts[bodyPartIndex].GetChild(0))
         {
