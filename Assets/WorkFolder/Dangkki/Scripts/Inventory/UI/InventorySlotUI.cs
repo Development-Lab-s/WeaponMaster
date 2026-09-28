@@ -11,9 +11,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [SerializeField] private RawImage icon;
     [SerializeField] private bool canInteract;
 
-    private Color NormalColor = new Color(1f, 1f, 1f, 0f);
-    private Color HoverColor = new Color(1f, 1f, 1f, 0f);
-    private Color DragSourceColor = new Color(1f, 1f, 1f, 0f);
+    private Color NormalColor = new Color(0f, 0f, 0f, 0.5f);
+    private Color HoverColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+    private Color DragSourceColor = new Color(0.5f, 0.5f, 0f, 0.5f);
 
     private ItemContainer _container;
     private int _index = -1;
@@ -54,6 +54,11 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private void UpdateBackground()
     {
         if (background == null) return;
+        if (canInteract)
+        {
+            background.color = Color.clear;
+            return;
+        }
 
         if (_isDragSource) { background.color = DragSourceColor; return; }
 

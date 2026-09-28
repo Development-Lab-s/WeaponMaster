@@ -14,6 +14,8 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
     {
         public Transform visualRoot;
         public InventorySlotUI dragSlot;
+        [Tooltip("이 무기 앞에 표시할 장식용 빈 통 개수입니다. 빈 통에는 드래그 슬롯을 만들지 않습니다.")]
+        [Min(0)] public int emptyBarrelsBefore = 0;
         [Tooltip("선택 사항: 원통 안의 실제 연결 지점. 비우면 원통의 긴 축에서 자동 계산합니다.")]
         public Transform weaponSocket;
         [Tooltip("연결 지점 기준 보정. 무기 종류별 보정은 아래 Weapon Styles에서 합니다.")]
@@ -61,7 +63,7 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
     [Header("크기 / 스크롤")]
     [Min(0.05f)] [SerializeField] private float topScale = 0.7f;
     [Min(0.05f)] [SerializeField] private float bottomScale = 1.3f;
-    [Tooltip("휠 입력 한 번의 이동량(칸 단위). 새 입력은 현재 위치에서 이 거리만큼 이동하도록 갱신합니다.")]
+    [Tooltip("휠 입력 한 번의 이동량(빈 통을 포함한 통 한 칸 단위). 새 입력은 현재 위치에서 이 거리만큼 이동하도록 갱신합니다.")]
     [SerializeField] private float wheelStep = 1f;
     [Tooltip("마지막 입력 후 이동을 마무리하는 시간(초). 0.1 권장. 미처리 이동은 누적하지 않습니다.")]
     [Range(0.03f, 0.2f)] [SerializeField] private float smoothDuration = 0.1f;
@@ -135,6 +137,7 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
         public Rect originalUV;
         public MaskState mask;
         public readonly List<DisplayCopy> copies = new List<DisplayCopy>();
+        public readonly List<DisplayCopy> emptyCopies = new List<DisplayCopy>();
         public Renderer[] renderers;
         public Quaternion rotation;
         public Vector3 position, scale, localCenter, axisA, axisB;
@@ -164,6 +167,14 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
             foreach (Renderer renderer in renderers) if (renderer) renderer.enabled = value;
             if (icon) icon.enabled = value && icon.texture;
             if (hit) hit.raycastTarget = value;
+        }
+
+        public void Dispose()
+        {
+            if (!generated) return;
+            if (root) Destroy(root.gameObject);
+            if (slot) Destroy(slot.gameObject);
+            foreach (Mesh mesh in ownedMeshes) if (mesh) Destroy(mesh);
         }
     }
 
@@ -221,7 +232,7 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
         }
 
         // 마지막 입력 후 짧은 시간 안에 끝납니다. 오래된 목표를 계속 따라가지 않습니다.
-        offset = Mathf.Repeat(offset + wheelMotion.Advance(Time.unscaledDeltaTime), rows.Length);
+        offset += wheelMotion.Advance(Time.unscaledDeltaTime);
         Layout();
     }
 
@@ -400,7 +411,11 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
     {
         Vector2 size = viewportSize * listScale;
         float pitch = rowSpacing * listScale;
-        float cycle = rows.Length * pitch;
+        // 무기 슬롯의 수는 유지하고, 빈 통까지 포함한 표시 칸 수로 순환합니다.
+        float totalRows = rows.Length;
+        foreach (RowState row in rows) totalRows += Mathf.Max(0, row.entry.emptyBarrelsBefore);
+        offset = Mathf.Repeat(offset, totalRows);
+        float cycle = totalRows * pitch;
         grid.anchorMin = grid.anchorMax = new Vector2(1f, 0.5f);
         grid.pivot = new Vector2(1f, 0.5f);
         grid.localScale = Vector3.one;
@@ -423,6 +438,7 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
         float pixelsX = imageRect.rect.width /
             (2f * previewCamera.orthographicSize * previewCamera.aspect * uv.width);
 
+        float firstRow = 0f;
         for (int i = 0; i < rows.Length; i++)
         {
             RowState row = rows[i];
@@ -440,7 +456,11 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
             float reach = Mathf.Sqrt(reachX * reachX + reachY * reachY);
             float margin = maxZoom * (reach + pose.correction.magnitude +
                            barrelWidth + barrelHeight * listScale) + pitch;
-            float baseTop = (i + 0.5f - offset) * pitch;
+            int emptyCount = Mathf.Max(0, row.entry.emptyBarrelsBefore);
+            float emptyMargin = maxZoom * (barrelWidth + barrelHeight * listScale) + pitch;
+            LayoutEmptyBarrels(row, firstRow, emptyCount, pitch, cycle, emptyMargin, size, pixelsX, pixelsY);
+            float baseTop = (firstRow + emptyCount + 0.5f - offset) * pitch;
+            firstRow += emptyCount + 1f;
             int first = BKWeaponListLayout.FirstRepeat(baseTop, cycle, margin);
             int last = BKWeaponListLayout.LastRepeat(baseTop, cycle, size.y, margin);
             int count = Mathf.Max(0, last - first + 1);
@@ -453,24 +473,9 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
                 if (copy.generated) copy.icon.texture = row.icon.texture;
                 copy.Show(true);
                 float fromTop = baseTop + (first + copyIndex) * cycle;
-                float zoom = Mathf.Lerp(topScale, bottomScale,
-                    Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(fromTop / size.y)));
-                float modelScale = barrelHeight * listScale * zoom / (row.worldHeight * pixelsY);
-                float width = row.worldWidth * pixelsX * modelScale;
-                Vector2 center = new Vector2(
-                    grid.rect.xMax - barrelRightInset * listScale - width * 0.5f,
-                    grid.rect.yMax - fromTop);
+                float zoom;
+                Vector2 center = PlaceBarrel(row, copy, fromTop, size, pixelsX, pixelsY, out zoom);
                 Transform root = copy.root;
-                root.localScale = row.scale * modelScale;
-                Vector3 imagePoint = imageRect.InverseTransformPoint(grid.TransformPoint(center));
-                // 겹치는 통 표면이 같은 깊이에서 깜빡이지 않도록 아래쪽을 조금 앞에 둡니다.
-                float depth = Mathf.Clamp(cameraDistance - Mathf.Clamp01(fromTop / size.y) * 0.02f,
-                    previewCamera.nearClipPlane + 0.01f, previewCamera.farClipPlane - 0.01f);
-                Vector3 world = previewCamera.ViewportToWorldPoint(new Vector3(
-                    uv.x + (imagePoint.x - imageRect.rect.xMin) / imageRect.rect.width * uv.width,
-                    uv.y + (imagePoint.y - imageRect.rect.yMin) / imageRect.rect.height * uv.height,
-                    depth));
-                root.position = world - root.TransformVector(row.localCenter);
 
                 RectTransform slot = copy.slot;
                 slot.anchorMin = slot.anchorMax = new Vector2(0.5f, 0.5f);
@@ -493,6 +498,56 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
                 PlaceIcon(copy, pose, socket, angle, zoom);
             }
         }
+    }
+
+    private void LayoutEmptyBarrels(RowState row, float firstRow, int emptyCount, float pitch,
+                                    float cycle, float margin, Vector2 size, float pixelsX, float pixelsY)
+    {
+        int used = 0;
+        for (int emptyIndex = 0; emptyIndex < emptyCount; emptyIndex++)
+        {
+            float baseTop = (firstRow + emptyIndex + 0.5f - offset) * pitch;
+            int first = BKWeaponListLayout.FirstRepeat(baseTop, cycle, margin);
+            int last = BKWeaponListLayout.LastRepeat(baseTop, cycle, size.y, margin);
+            for (int repeat = first; repeat <= last; repeat++)
+            {
+                if (used == row.emptyCopies.Count)
+                    row.emptyCopies.Add(CreateBarrelCopy(row,
+                        "BK Empty Barrel " + row.entry.visualRoot.name + " " + used));
+                DisplayCopy copy = row.emptyCopies[used++];
+                copy.Show(true);
+                float zoom;
+                PlaceBarrel(row, copy, baseTop + repeat * cycle, size, pixelsX, pixelsY, out zoom);
+            }
+        }
+        // 실행 중 개수를 줄이거나 표시 영역이 작아지면 남는 복사본을 숨깁니다.
+        for (int i = used; i < row.emptyCopies.Count; i++) row.emptyCopies[i].Show(false);
+    }
+
+    private Vector2 PlaceBarrel(RowState row, DisplayCopy copy, float fromTop, Vector2 size,
+                                float pixelsX, float pixelsY, out float zoom)
+    {
+        zoom = Mathf.Lerp(topScale, bottomScale,
+            Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(fromTop / size.y)));
+        float modelScale = barrelHeight * listScale * zoom / (row.worldHeight * pixelsY);
+        float width = row.worldWidth * pixelsX * modelScale;
+        Vector2 center = new Vector2(
+            grid.rect.xMax - barrelRightInset * listScale - width * 0.5f,
+            grid.rect.yMax - fromTop);
+        Transform root = copy.root;
+        root.localScale = row.scale * modelScale;
+        RectTransform imageRect = previewImage.rectTransform;
+        Rect uv = previewImage.uvRect;
+        Vector3 imagePoint = imageRect.InverseTransformPoint(grid.TransformPoint(center));
+        // 빈 통도 같은 깊이/크기 규칙을 사용해 무기 통과 자연스럽게 이어집니다.
+        float depth = Mathf.Clamp(cameraDistance - Mathf.Clamp01(fromTop / size.y) * 0.02f,
+            previewCamera.nearClipPlane + 0.01f, previewCamera.farClipPlane - 0.01f);
+        Vector3 world = previewCamera.ViewportToWorldPoint(new Vector3(
+            uv.x + (imagePoint.x - imageRect.rect.xMin) / imageRect.rect.width * uv.width,
+            uv.y + (imagePoint.y - imageRect.rect.yMin) / imageRect.rect.height * uv.height,
+            depth));
+        root.position = world - root.TransformVector(row.localCenter);
+        return center;
     }
 
     private Vector2 ProjectToSlot(Vector3 world, RectTransform slot)
@@ -650,45 +705,8 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
             });
         while (row.copies.Count < count)
         {
-            DisplayCopy copy = new DisplayCopy { generated = true };
-            // Transform/MeshRenderer만 새로 만듭니다. 무기/네트워크/물리 스크립트는 복제하지 않습니다.
-            var rootObject = new GameObject("BK Barrels " + row.entry.visualRoot.name + " " + row.copies.Count);
-            rootObject.layer = row.entry.visualRoot.gameObject.layer;
-            copy.root = rootObject.transform;
-            copy.root.SetParent(row.entry.visualRoot.parent, false);
-            copy.root.localPosition = row.position;
-            copy.root.localRotation = row.rotation;
-            copy.root.localScale = row.scale;
-            var transforms = new Dictionary<Transform, Transform> { { row.entry.visualRoot, copy.root } };
-            var renderers = new List<Renderer>();
-            foreach (Renderer original in row.renderers)
-            {
-                Transform target = CopyTransform(original.transform, row.entry.visualRoot, transforms);
-                Mesh mesh = null;
-                MeshFilter sourceFilter = original.GetComponent<MeshFilter>();
-                if (sourceFilter) mesh = sourceFilter.sharedMesh;
-                else if (original is SkinnedMeshRenderer skin && skin.sharedMesh)
-                {
-                    mesh = new Mesh();
-                    skin.BakeMesh(mesh);
-                    copy.ownedMeshes.Add(mesh);
-                }
-                if (!mesh) continue;
-                target.gameObject.AddComponent<MeshFilter>().sharedMesh = mesh;
-                MeshRenderer renderer = target.gameObject.AddComponent<MeshRenderer>();
-                renderer.sharedMaterials = original.sharedMaterials;
-                renderer.shadowCastingMode = original.shadowCastingMode;
-                renderer.receiveShadows = original.receiveShadows;
-                renderer.lightProbeUsage = original.lightProbeUsage;
-                renderer.reflectionProbeUsage = original.reflectionProbeUsage;
-                renderer.renderingLayerMask = original.renderingLayerMask;
-                var properties = new MaterialPropertyBlock();
-                original.GetPropertyBlock(properties);
-                renderer.SetPropertyBlock(properties);
-                renderers.Add(renderer);
-            }
-            copy.renderers = renderers.ToArray();
-
+            DisplayCopy copy = CreateBarrelCopy(row,
+                "BK Barrels " + row.entry.visualRoot.name + " " + row.copies.Count);
             var uiObject = new GameObject("BK Display " + row.entry.dragSlot.name + " " + row.copies.Count,
                 typeof(RectTransform), typeof(Image), typeof(BKWeaponScrollSlotProxy));
             copy.slot = (RectTransform)uiObject.transform;
@@ -705,6 +723,49 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
             copy.icon.raycastTarget = false;
             row.copies.Add(copy);
         }
+    }
+
+    private DisplayCopy CreateBarrelCopy(RowState row, string name)
+    {
+        DisplayCopy copy = new DisplayCopy { generated = true };
+        // 표시용 메시만 복제합니다. 빈 통에는 UI/드래그/물리/무기 스크립트가 없습니다.
+        var rootObject = new GameObject(name);
+        rootObject.layer = row.entry.visualRoot.gameObject.layer;
+        copy.root = rootObject.transform;
+        copy.root.SetParent(row.entry.visualRoot.parent, false);
+        copy.root.localPosition = row.position;
+        copy.root.localRotation = row.rotation;
+        copy.root.localScale = row.scale;
+        var transforms = new Dictionary<Transform, Transform> { { row.entry.visualRoot, copy.root } };
+        var renderers = new List<Renderer>();
+        foreach (Renderer original in row.renderers)
+        {
+            Transform target = CopyTransform(original.transform, row.entry.visualRoot, transforms);
+            Mesh mesh = null;
+            MeshFilter sourceFilter = original.GetComponent<MeshFilter>();
+            if (sourceFilter) mesh = sourceFilter.sharedMesh;
+            else if (original is SkinnedMeshRenderer skin && skin.sharedMesh)
+            {
+                mesh = new Mesh();
+                skin.BakeMesh(mesh);
+                copy.ownedMeshes.Add(mesh);
+            }
+            if (!mesh) continue;
+            target.gameObject.AddComponent<MeshFilter>().sharedMesh = mesh;
+            MeshRenderer renderer = target.gameObject.AddComponent<MeshRenderer>();
+            renderer.sharedMaterials = original.sharedMaterials;
+            renderer.shadowCastingMode = original.shadowCastingMode;
+            renderer.receiveShadows = original.receiveShadows;
+            renderer.lightProbeUsage = original.lightProbeUsage;
+            renderer.reflectionProbeUsage = original.reflectionProbeUsage;
+            renderer.renderingLayerMask = original.renderingLayerMask;
+            var properties = new MaterialPropertyBlock();
+            original.GetPropertyBlock(properties);
+            renderer.SetPropertyBlock(properties);
+            renderers.Add(renderer);
+        }
+        copy.renderers = renderers.ToArray();
+        return copy;
     }
 
     private static Transform CopyTransform(Transform source, Transform sourceRoot,
@@ -788,6 +849,7 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
         {
             foreach (DisplayCopy copy in row.copies)
                 if (copy.generated) copy.Show(false);
+            foreach (DisplayCopy copy in row.emptyCopies) copy.Show(false);
             foreach (Renderer renderer in row.renderers)
                 if (renderer) renderer.enabled = true;
             if (row.entry.visualRoot)
@@ -821,13 +883,8 @@ public sealed class BKWeaponScroll : MonoBehaviour, IScrollHandler
             {
                 if (row == null) continue;
                 row.mask?.Dispose();
-                foreach (DisplayCopy copy in row.copies)
-                {
-                    if (!copy.generated) continue;
-                    if (copy.root) Destroy(copy.root.gameObject);
-                    if (copy.slot) Destroy(copy.slot.gameObject);
-                    foreach (Mesh mesh in copy.ownedMeshes) if (mesh) Destroy(mesh);
-                }
+                foreach (DisplayCopy copy in row.copies) copy.Dispose();
+                foreach (DisplayCopy copy in row.emptyCopies) copy.Dispose();
             }
         gridMask?.Dispose();
         if (createdGridInput && gridInput) Destroy(gridInput);

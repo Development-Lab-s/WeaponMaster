@@ -17,6 +17,7 @@ namespace WorkFolder.PAP.Scripts.MainSystems
                 DamageData damageData = new DamageData();
                 damageData.DeathMent = _deathMent[Random.Range(0, _deathMent.Length)];
                 damageData.Damage = 999999999;
+                damageData.IsNone = true;
                 hitBox.Damageable.RpcTakeDamage(damageData);
             }
         }

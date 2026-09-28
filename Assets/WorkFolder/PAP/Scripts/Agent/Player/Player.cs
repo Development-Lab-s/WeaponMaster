@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Leaderboards;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
@@ -14,6 +16,7 @@ using WorkFolder.PAP.Scripts.WeaponSystem;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
 {
@@ -31,6 +34,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [field:SerializeField] public SettingValueSO SettingValue;
         [SerializeField]private Transform targetPuppet;
         [SerializeField] private TextMeshPro nameTag;
+        [SerializeField] private GameObject nameTitleObj;
 
         public static List<Player> All { get; private set; }
         public IAgentMovement AgentMover { get; private set; }
@@ -57,6 +61,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked, OnChangedRender(nameof(ColorChanged))] 
         public Color NetWorkedColor{ get; set;}
+
+        [Networked] public int KillStreak { get; set; }
         
         private uint HairStyleIndex { get; set; }
         
@@ -233,8 +239,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         void NameChanged()
         {
             nameTag.SetText(playerName.ToString());
+
         }
-        
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
+        }
+
         private void AttachWeaponLocal()
         {
             NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
@@ -302,6 +314,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
+
+            
             if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
                 rootBody.linearVelocity = Vector3.zero;
@@ -309,9 +323,22 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 rootBody.isKinematic = true;
                 rootBody.interpolation = RigidbodyInterpolation.None;
             }
-            
+
             if (HasStateAuthority)
+            {
+                nameTitleObj.SetActive(false);
                 TeleportTo(transform.position, transform.rotation);
+                
+                playerInput.OnAttackKeyPressed += HandleAttack;
+                KillStreak = 0;
+            
+                playerId = AuthenticationService.Instance.PlayerId;
+                _service = ServiceLocator.Get<IDataStoreService>();
+                playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
+                NetWorkedColor = _bodyMaterials[value].color;
+                HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            }
 
             if (!HasStateAuthority)
             {
@@ -325,16 +352,31 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
 
-            if (!HasInputAuthority) return;
-            playerInput.OnAttackKeyPressed += HandleAttack;
-            
-            playerId = AuthenticationService.Instance.PlayerId;
-            _service = ServiceLocator.Get<IDataStoreService>();
-            playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
-            uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
-            NetWorkedColor = _bodyMaterials[value].color;
+        }
+
+        private void Start()
+        {
             ColorChanged();
-            HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            NameChanged();
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
+        public void RpcKilled(int score)
+        {
+            _ = UpdateKillCountAsync(score);
+        }
+        public async Task UpdateKillCountAsync(int score)
+        {
+            uint currentKill = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            uint currentScore = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.Score));
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.Score), (uint)(currentScore + score + 20 * KillStreak));
+            await ServiceLocator.Get<IDataStoreService>().SaveAsync();
+            KillStreak += 1;
         }
 
 

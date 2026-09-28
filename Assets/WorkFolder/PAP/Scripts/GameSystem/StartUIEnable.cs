@@ -1,9 +1,14 @@
-﻿using System;
+﻿ using System;
 using DevLib.ServiceLocator;
 using Fusion;
+using Unity.Services.Authentication;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.MainSystems;
 using WorkFolder.PAP.Scripts.Network;
+using WorkFolder.SUH.Scripts.DataStoreService;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.GameSystem
 {
@@ -11,24 +16,29 @@ namespace WorkFolder.PAP.Scripts.GameSystem
     {        
         private ICameraService _service;
         private bool _isFirstTime = true;
+        NetworkRunner runner = null;
+        [SerializeField] private GameObject targetEnable;
 
         private void Start()
         {
             _service = ServiceLocator.Get<ICameraService>();
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
+
         }
 
         private void OnEnable()
         {
+            targetEnable.SetActive(false);
             if (_isFirstTime)
             {
                 _isFirstTime = false;
                 return;
             }
+            
             _service.SwitchLobbyCam();
             BK_SoundManger.instance.UpdateBGMSoundState(BGMSoundEnum.EquipmentScene);
-            NetworkRunner runner = null;
+
 
             foreach (NetworkRunner candidate in
                      FindObjectsByType<NetworkRunner>(FindObjectsSortMode.None))
@@ -39,7 +49,6 @@ namespace WorkFolder.PAP.Scripts.GameSystem
                     break;
                 }
             }
-
             if (runner == null) return;
             
             NetworkObject[] allNetworkObjects = runner.SimulationUnityScene.GetComponents<NetworkObject>(true);
@@ -55,6 +64,7 @@ namespace WorkFolder.PAP.Scripts.GameSystem
 
         private void OnDisable()
         {
+            targetEnable.SetActive(true);
             _service.SwitchMainCam();
         }
     }

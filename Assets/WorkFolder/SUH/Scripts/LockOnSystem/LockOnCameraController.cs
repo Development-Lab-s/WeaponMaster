@@ -9,6 +9,8 @@ namespace WorkFolder.SUH.Scripts.LockOnSystem
         [SerializeField] private CinemachineCamera freeLookCamera;
         [SerializeField] private CinemachineCamera lookOnCamera;
 
+        public CinemachineCamera FreeLookCam => freeLookCamera;
+
         public void EnterLookOn(Transform trackingTarget,Transform lookAtTarget)
         {
             lookOnCamera.Target.TrackingTarget = trackingTarget;

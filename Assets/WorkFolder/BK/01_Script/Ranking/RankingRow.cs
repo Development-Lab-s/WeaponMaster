@@ -14,7 +14,10 @@ public class RankingRow : MonoBehaviour
         int score,
         int kills)
     {
-        rankText.text = rank.ToString();
+        if (rank == 0)
+            rankText.SetText("-");
+        else
+            rankText.text = rank.ToString();
         nameText.text = playerName;
         scoreText.text = score.ToString();
         killText.text = kills.ToString();

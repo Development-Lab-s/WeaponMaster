@@ -1,10 +1,12 @@
 using System;
+using DevLib.ServiceLocator;
 using Newtonsoft.Json;
 using Photon.Client.StructWrapping;
 using Unity.Services.Leaderboards;
 using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.Leaderboard.Global.Lib.Interface.ServiceLocator;
+using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
 using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 
@@ -45,6 +47,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
         }
         public async void GetTopRanker()
         {
+            await ServiceLocator.Get<ILeaderboardSender>().TryUpdatePlayer();
             try
             {
                 var scoresResponse =

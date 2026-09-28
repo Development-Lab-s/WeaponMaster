@@ -40,6 +40,11 @@ public sealed class FootStepController : MonoBehaviour
     [SerializeField, Min(0f)] private float terrainSearchHeight = 1.5f;
     // 한 걸음에 반영할 지면 높이 차의 상한. 이보다 크면 낭떠러지나 벽 윗면으로 보고 무시한다.
     [SerializeField, Min(0f)] private float maximumTerrainStep = 0.9f;
+    // 착지점이 벽을 넘지 않게 검사하는 높이(루트 기준)와 굵기, 벽 앞에 남길 여유.
+    // 이 높이보다 낮은 턱은 벽이 아니라 디딤판으로 보고 지형 보정에 맡긴다.
+    [SerializeField, Min(0f)] private float obstacleProbeHeight = 0.5f;
+    [SerializeField, Min(0.01f)] private float obstacleProbeRadius = 0.12f;
+    [SerializeField, Min(0f)] private float obstacleClearance = 0.15f;
 
     [Header("Teleport")]
     // 한 물리 스텝에 루트가 이보다 멀리 움직이면 걷기가 아니라 순간이동으로 보고 발을 다시 심는다.
@@ -162,9 +167,11 @@ public sealed class FootStepController : MonoBehaviour
 
     private bool NeedsStep(FootState foot)
     {
-        Vector3 homePosition = foot.GetHomePosition(
-            movementRoot,
-            _landingOffset);
+        // 착지점과 같은 벽 제한을 걸어야 벽 앞에 선 발이 닿을 수 없는 목표를 향해
+        // 제자리걸음을 끝없이 반복하지 않는다.
+        Vector3 homePosition = LimitToObstacles(
+            foot,
+            foot.GetHomePosition(movementRoot, _landingOffset));
         Vector3 offset = Vector3.ProjectOnPlane(
             homePosition - foot.Position,
             movementRoot.up);
@@ -195,6 +202,7 @@ public sealed class FootStepController : MonoBehaviour
         _stepStartPosition = foot.Position;
         _stepStartRotation = foot.Rotation;
         _stepEndPosition = foot.GetHomePosition(movementRoot, _landingOffset);
+        _stepEndPosition = LimitToObstacles(foot, _stepEndPosition);
         _stepEndPosition += movementRoot.up
                           * GetTerrainHeightOffset(foot, _stepEndPosition);
         _stepEndRotation = foot.GetHomeRotation(movementRoot);
@@ -244,6 +252,70 @@ public sealed class FootStepController : MonoBehaviour
 
         _stepLiftPosition = liftPosition;
         _activeStepDuration = _predictedDuration;
+    }
+
+    // 착지점은 몸이 스윙 동안 갈 거리만큼 앞(걷기 약 1.4 m)에 잡힌다. 벽 앞에서는 그 점이
+    // 벽 속에 떨어져, 발 목표가 벽 안에 박히고 퍼펫 다리가 최대 힘으로 벽을 밀며 접촉과 싸운다.
+    // 발 기본 위치에서 착지점까지 사이에 벽이 있으면 벽 앞에서 멈춘다. 벽이 없으면 그대로다.
+    private Vector3 LimitToObstacles(FootState foot, Vector3 endPosition)
+    {
+        FootTargetSolver solver = foot.Solver;
+        if (solver == null)
+            return endPosition;
+
+        Vector3 up = movementRoot.up;
+        Vector3 reference = foot.GetHomePosition(movementRoot, Vector3.zero);
+        Vector3 travel = Vector3.ProjectOnPlane(endPosition - reference, up);
+        if (travel.sqrMagnitude < 0.0001f)
+            return endPosition;
+
+        Vector3 probeLift = up * obstacleProbeHeight;
+        if (!solver.TrySweepForObstacle(
+                reference + probeLift,
+                reference + travel + probeLift,
+                obstacleProbeRadius,
+                up,
+                out float obstacleDistance,
+                out Vector3 wallNormal))
+            return endPosition;
+
+        // 벽까지는 그대로 가고, 남은 이동 중 벽을 파고드는 성분만 버린다. 정면이면 벽 앞에
+        // 서고, 비스듬히 벽을 타고 미끄러질 때는 벽을 따라 몸과 함께 발을 옮긴다.
+        Vector3 direction = travel.normalized;
+        float allowed = Mathf.Max(0f, obstacleDistance - obstacleClearance);
+        Vector3 blockedTravel = direction * allowed;
+        Vector3 slide = Vector3.ProjectOnPlane(travel - blockedTravel, up);
+        Vector3 flatNormal = Vector3.ProjectOnPlane(wallNormal, up);
+        if (flatNormal.sqrMagnitude > 0.0001f)
+        {
+            flatNormal.Normalize();
+            float intoWall = Vector3.Dot(slide, flatNormal);
+            if (intoWall < 0f)
+                slide -= flatNormal * intoWall;
+        }
+        else
+        {
+            slide = Vector3.zero;
+        }
+
+        Vector3 limitedTravel = blockedTravel + slide;
+
+        // 벽을 따라 미는 구간에 모서리(다른 벽)가 있으면 거기서 멈춘다.
+        if (slide.sqrMagnitude > 0.0001f
+            && solver.TrySweepForObstacle(
+                reference + blockedTravel + probeLift,
+                reference + limitedTravel + probeLift,
+                obstacleProbeRadius,
+                up,
+                out float slideDistance,
+                out _))
+        {
+            limitedTravel = blockedTravel
+                          + slide.normalized
+                          * Mathf.Max(0f, slideDistance - obstacleClearance);
+        }
+
+        return endPosition - travel + limitedTravel;
     }
 
     // 착지점은 루트 높이의 평면 위에서 계산된다. 경사에서는 그 평면과 실제 지면이

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
+using DevLib.ServiceLocator;
 using Fusion;
 using S2;
+using Unity.Services.Leaderboards;
+using Unity.Services.Leaderboards.Models;
 using UnityEngine;
 using WorkFolder.KJS._01.Scripts;
 using WorkFolder.PAP.Scripts.Agent.Player;
 using WorkFolder.PAP.Scripts.Effects;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
 using Random = UnityEngine.Random;
 
 namespace WorkFolder.PAP.Scripts.WeaponSystem
@@ -15,13 +21,15 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
     public class WeaponCollideModule : MonoBehaviour
     {
         [SerializeField] private string[] deathMents;
-        private float swingStartSpeed = 200f;
-        private float swingEndSpeed = 30f;
+        [SerializeField] private float hitCooldown = 0.25f;
+        private float _damageSpeed = 8f;
         private Rigidbody _swordRb;
         private Collider[] _swordCol;
-        private HashSet<IDamageable> _damagables = new HashSet<IDamageable>();
+        private readonly Dictionary<IDamageable, float> _lastHitTime = new Dictionary<IDamageable, float>();
         private bool _isEnabled;
-        private NetworkOwner _owner;
+        private Player _owner;
+
+        private float _lastSwingSpeed;
 
         private void Awake()
         {
@@ -44,23 +52,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         
         private void FixedUpdate()
         {
-            float currentSpeed = _swordRb.GetPointVelocity(_swordRb.centerOfMass).sqrMagnitude;
-            if (currentSpeed > swingStartSpeed && !_isEnabled)
-            {
-                _isEnabled = true;
-            }
-            else if (currentSpeed < swingEndSpeed && _isEnabled)
-            {
-                _isEnabled = false;
-                _damagables.Clear();
-            }
+            _lastSwingSpeed = _swordRb.linearVelocity.magnitude;
         }
         
         
         
         private void OnCollisionEnter(Collision collision)
         {
-            if (_owner == null || !_owner.HasInputAuthority || !_isEnabled) return;
+            if (_owner == null || !_owner.HasInputAuthority) return;
             var contact = collision.contacts[0];
             if (contact.otherCollider.CompareTag("Weapon") && contact.thisCollider.CompareTag("Weapon"))
             {
@@ -70,13 +69,18 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             }
             if (collision.transform.CompareTag("Player") && contact.thisCollider.CompareTag("Weapon"))
             {
-                if (contact.otherCollider.TryGetComponent(out HitBox hitBox) && !_damagables.Contains(hitBox.Damageable))
+                if (contact.otherCollider.TryGetComponent(out HitBox hitBox))
                 {
-                    _damagables.Add(hitBox.Damageable);
+                    if (_lastSwingSpeed < _damageSpeed) return;
+                    if (_lastHitTime.TryGetValue(hitBox.Damageable, out float t)
+                        && Time.time - t < hitCooldown) return;     
+                    
+                    _lastHitTime[hitBox.Damageable] = Time.time;
                     DamageData data = new DamageData();
                     data.DeathMent = deathMents[Random.Range(0, deathMents.Length)];
-                    data.Damage = (int)(hitBox.Part.DamageMultiplier * 20f + _swordRb.linearVelocity.magnitude);
+                    data.Damage = (int)(hitBox.Part.DamageMultiplier * 3f + _lastSwingSpeed);
                     data.Owner = _owner.Runner.LocalPlayer;
+                    data.ScoreMultiplier = hitBox.Part.DamageMultiplier;
                     hitBox.Damageable.RpcTakeDamage(data);
                     if (_owner.HasInputAuthority)
                         BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);

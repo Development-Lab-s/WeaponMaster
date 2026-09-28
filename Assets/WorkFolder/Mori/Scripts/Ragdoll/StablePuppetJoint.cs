@@ -8,6 +8,9 @@ public sealed class StablePuppetJoint : MonoBehaviour
     private const int MinimumSolverVelocityIterations = 4;
     private const float MinimumAxisMagnitudeSqr = 0.0001f;
     private const float LowerBodyPositionGain = 2.5f;
+    private const int MaximumWallContacts = 4;
+    // 위쪽과 이 각도 이상 벌어진 면만 벽으로 본다. 바닥·걸을 수 있는 경사는 제외한다.
+    private const float WallMinimumAngle = 50f;
 
     [Header("Target")]
     [SerializeField] private Transform animatedBone;
@@ -40,6 +43,8 @@ public sealed class StablePuppetJoint : MonoBehaviour
     private bool _proxyMode;
     private Vector3 _previousPositionError;
     private bool _hasPreviousPositionError;
+    private readonly Vector3[] _wallNormals = new Vector3[MaximumWallContacts];
+    private int _wallNormalCount;
 
     public Transform AnimatedBone => animatedBone;
 
@@ -85,6 +90,55 @@ public sealed class StablePuppetJoint : MonoBehaviour
 
         _joint.targetRotation = _smoothedTargetRotation;
         FollowAnimatedCenterOfMass();
+
+        // 접촉은 물리 스텝 뒤 OnCollision 콜백에서 다시 모인다. 이번 스텝에 쓴 것은 버린다.
+        _wallNormalCount = 0;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        CollectWallContacts(collision);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        CollectWallContacts(collision);
+    }
+
+    // 벽·지형 같은 정적 콜라이더만 모은다. 다른 플레이어·무기처럼 Rigidbody가 있는
+    // 상대와의 충돌 반응(밀기, 맞기)은 기존 그대로 둔다.
+    private void CollectWallContacts(Collision collision)
+    {
+        if (collision.rigidbody != null)
+            return;
+
+        int contactCount = collision.contactCount;
+        for (int i = 0;
+             i < contactCount && _wallNormalCount < MaximumWallContacts;
+             i++)
+        {
+            Vector3 normal = collision.GetContact(i).normal;
+            if (Vector3.Angle(normal, Vector3.up) < WallMinimumAngle)
+                continue;
+
+            _wallNormals[_wallNormalCount++] = normal;
+        }
+    }
+
+    // 드라이버는 콜라이더가 없어 벽을 통과한다. 목표가 벽 너머에 있으면 추종 힘이 최대치로
+    // 벽을 밀고, 접촉이 매 스텝 그걸 되밀어 둘이 싸우며 떨린다. 이 뼈가 벽에 닿아 있는 동안만
+    // 벽 안쪽으로 미는 성분을 뺀다. 벽을 따라 미끄러지거나 벽에서 떨어지는 성분은 그대로 둔다.
+    private Vector3 RemoveWallPush(Vector3 acceleration)
+    {
+        for (int i = 0; i < _wallNormalCount; i++)
+        {
+            Vector3 normal = _wallNormals[i];
+            float intoWall = Vector3.Dot(acceleration, normal);
+            if (intoWall < 0f)
+                acceleration -= normal * intoWall;
+        }
+
+        return acceleration;
     }
 
     public void SetStrength(float strength)
@@ -260,6 +314,7 @@ public sealed class StablePuppetJoint : MonoBehaviour
         acceleration = Vector3.ClampMagnitude(
             acceleration,
             maximumAcceleration * positionGain * _currentStrength);
+        acceleration = RemoveWallPush(acceleration);
 
         _body.AddForce(acceleration, ForceMode.Acceleration);
         _previousTargetCenterOfMass = targetCenterOfMass;

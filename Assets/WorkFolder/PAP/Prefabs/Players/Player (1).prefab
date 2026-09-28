@@ -4753,6 +4753,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a4583d4aa976b34eaa6d42e97fe37c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProximityVoicePlayer
+  microphoneIcon: {fileID: 0}
+  _IsSpeaking:
+    RawValue: 0
 --- !u!1 &7763291826933135090
 GameObject:
   m_ObjectHideFlags: 0
@@ -4976,6 +4979,11 @@ MonoBehaviour:
   maximumTouchdownLead: 0.6
   sideStrideScale: 1
   backwardStrideScale: 1.2
+  terrainSearchHeight: 1.5
+  maximumTerrainStep: 0.9
+  obstacleProbeHeight: 0.5
+  obstacleProbeRadius: 0.12
+  obstacleClearance: 0.15
   teleportDistance: 1
 --- !u!1 &7849872694032200681
 GameObject:
@@ -5341,11 +5349,11 @@ GameObject:
   - component: {fileID: 8629975493594748409}
   - component: {fileID: 6000069258487603756}
   - component: {fileID: 173528877312612209}
-  - component: {fileID: 5041765568768728514}
   - component: {fileID: 7068866707602495005}
   - component: {fileID: 791070000826183352}
   - component: {fileID: 6583043841087276679}
   - component: {fileID: 430697068044884134}
+  - component: {fileID: 143229610051247570}
   m_Layer: 3
   m_Name: Player (1)
   m_TagString: Player
@@ -5521,30 +5529,11 @@ MonoBehaviour:
   pelvisLiftAcceleration: 7
   maximumSlope: 15
   airborneGravity: 20
+  driverRoot: {fileID: 0}
+  maximumPelvisDrop: 0.35
+  pelvisDropDeadZone: 0.03
+  pelvisDropResponse: 10
   IsReadyWeapon: 0
---- !u!136 &5041765568768728514
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8729207244763384829}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 256
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 255
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Height: 3.4
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.81, z: 0}
 --- !u!114 &7068866707602495005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5561,6 +5550,7 @@ MonoBehaviour:
   SettingValue: {fileID: 11400000, guid: 5588e616e0823b74bb516af01aec5aee, type: 2}
   targetPuppet: {fileID: 3806932547755281271}
   nameTag: {fileID: 996758378046940572}
+  nameTitleObj: {fileID: 6763116108920330518}
   MeshRenderer: {fileID: 5652856024669799113}
   _NetLeftGoalLocal: {x: 0, y: 0, z: 0}
   _NetRightGoalLocal: {x: 0, y: 0, z: 0}
@@ -5579,6 +5569,7 @@ MonoBehaviour:
     _data:
       Data: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _NetWorkedColor: {r: 0, g: 0, b: 0, a: 0}
+  _KillStreak: 0
   _bodyMaterials:
   - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
   - {fileID: 2100000, guid: 7640522a6eec417498e8709927fe28c4, type: 2}
@@ -5670,6 +5661,29 @@ MonoBehaviour:
   - {fileID: 5185040990925157531}
   - {fileID: 13547621964626249}
   ForceRemoteRenderTimeframe: 0
+--- !u!136 &143229610051247570
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8729207244763384829}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 2.4
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.3, z: 0}
 --- !u!1 &8893227280485621473
 GameObject:
   m_ObjectHideFlags: 0
