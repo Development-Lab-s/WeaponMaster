@@ -140,8 +140,13 @@ public class RagdollPlayerMovement : NetworkBehaviour
             _hasCommandedVelocity = false;
             return;
         }
-        Vector2 moveInput = _input.MoveDirection;
-        Quaternion cameraYawRotation = RotateTowardCamera();
+        // 개발자 프리캠 중에는 이동 입력을 버리고 카메라를 따라 돌지도 않는다.
+        // 이동 처리 자체는 계속 돌아 캐릭터가 땅을 딛고 제자리에 선다.
+        bool freeCamera = WorkFolder.PAP.Scripts.Camera.DevFreeCamera.IsActive;
+        Vector2 moveInput = freeCamera ? Vector2.zero : _input.MoveDirection;
+        Quaternion cameraYawRotation = freeCamera
+            ? _rigidbody.rotation
+            : RotateTowardCamera();
         Vector3 localDirection = new Vector3(moveInput.x, 0, moveInput.y);
         bool hasWalkableGround = TryGetWalkableGround(
             out Vector3 groundNormal);

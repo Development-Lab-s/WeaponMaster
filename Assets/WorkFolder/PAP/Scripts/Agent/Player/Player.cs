@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Leaderboards;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Part;
 using WorkFolder.PAP.Scripts.Camera;
@@ -23,6 +25,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     {
         public Vector2 DriveX;
         public Vector3 Offset;
+        // Vector3.zero가 아니면 같은 무기를 이 위치에 하나 더 단다.
+        public Vector3 Offset2;
         public Vector3 EulerAngles;
     }
 
@@ -45,6 +49,18 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] private NetworkedPartData NetPartData { get; set; }
         [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
         [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
+        [Networked] private NetworkObject NetSpawnedWeapon2 { get; set; } // offset2 위치의 두 번째 무기
+
+        private bool HasSecondWeapon => NetPartData.Offset2 != Vector3.zero;
+
+        [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.75f;
+
+        // 무기 회전 관성이 척추의 몇 배까지 그대로 둘지. 넘는 무기만 척추가 느끼는 관성을 줄인다.
+        // 실행하면 무기마다 측정값이 콘솔에 찍히니 그걸 보고 맞춘다.
+        [SerializeField, Min(1f)] private float maximumWeaponInertiaRatio = 8f;
+
+        // 무기가 다른 몸·무기와 겹쳤을 때 튕겨 나오는 최대 속도(PhysX 기본 10).
+        [SerializeField, Min(0.1f)] private float weaponMaxDepenetrationVelocity = 3f;
 
         [Networked] public Vector3 NetLeftGoalLocal { get; private set; }
         [Networked] public Vector3 NetRightGoalLocal { get; private set; }
@@ -59,6 +75,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked, OnChangedRender(nameof(ColorChanged))] 
         public Color NetWorkedColor{ get; set;}
+
+        [Networked] public int KillStreak { get; set; }
         
         private uint HairStyleIndex { get; set; }
         
@@ -96,9 +114,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
             NetPartData = new NetworkedPartData 
             { 
-                DriveX = partData.driveX, 
-                Offset = partData.offset, 
-                EulerAngles = partData.eulerAngles 
+                DriveX = partData.driveX,
+                Offset = partData.offset,
+                Offset2 = partData.offset2,
+                EulerAngles = partData.eulerAngles
             };
             NetTargetPartId = targetPartNetObj.Id;
             NetCanInitialize = true;
@@ -123,9 +142,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void FixedUpdateNetwork()
         {
-            if (HasStateAuthority && NetCanInitialize && NetSpawnedWeapon == null)
+            if (HasStateAuthority && NetCanInitialize)
             {
-                NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+                if (NetSpawnedWeapon == null)
+                    NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+
+                if (HasSecondWeapon && NetSpawnedWeapon2 == null)
+                    NetSpawnedWeapon2 = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
             }
 
             CaptureFootGoals();
@@ -158,6 +181,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetLeftGoalLocal = transform.InverseTransformPoint(left.position);
             NetLeftGoalLocalRotation = inverseRoot * left.rotation;
             NetRightGoalLocal = transform.InverseTransformPoint(right.position);
+            NetRightGoalLocalRotation = inverseRoot * right.rotation;
 
             FootTargetSolver leftSolver = _footStepper.LeftSolver;
             FootTargetSolver rightSolver = _footStepper.RightSolver;
@@ -218,13 +242,22 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Render()
         {
+            // 무기는 각자 따로 스폰되어 도착 순서가 다를 수 있으니 하나씩 따로 붙인다.
             if (NetSpawnedWeapon != null && NetSpawnedWeapon.transform.parent == null)
-            {
-                AttachWeaponLocal();
-            }
+                AttachWeaponLocal(NetSpawnedWeapon, NetPartData.Offset);
+
+            if (NetSpawnedWeapon2 != null && NetSpawnedWeapon2.transform.parent == null)
+                AttachWeaponLocal(NetSpawnedWeapon2, NetPartData.Offset2);
             OnPartDataIdChanged();
 
             ApplyFootGoals();
+        }
+
+        public Color GetBodyPaletteColor(uint index)
+        {
+            if (index >= _bodyMaterials.Length || _bodyMaterials[index] == null)
+                throw new System.ArgumentOutOfRangeException(nameof(index));
+            return FaceDrawShared.GetColor(_bodyMaterials[index]);
         }
 
         void ColorChanged()
@@ -243,17 +276,39 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
         }
 
-        private void AttachWeaponLocal()
+        private void AttachWeaponLocal(NetworkObject weapon, Vector3 localOffset)
         {
-            NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
-            NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
-            NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
+            weapon.transform.SetParent(WeaponModule.GameObject.transform);
 
-            if (!HasStateAuthority)
+            // 이 함수는 무기마다 한 번만(부모가 없을 때) 불리므로 배율도 한 번만 곱해진다.
+            // 조인트를 연결하기 전에 줄여야 콜라이더와 연결 앵커가 줄어든 크기 기준으로 잡힌다.
+            if (HasSecondWeapon)
             {
-                foreach (Rigidbody weaponBody in
-                         NetSpawnedWeapon.GetComponentsInChildren<Rigidbody>(true))
-                    weaponBody.interpolation = RigidbodyInterpolation.None;
+                weapon.transform.localScale *= dualWeaponScale;
+
+                // 질량도 크기와 같은 배율로 줄인다. 부피대로(배율의 세제곱) 줄이면 척추 대비
+                // 너무 가벼워져서, 무기끼리 부딪혀도 막히지 않고 뚫리던 문제가 다시 생긴다.
+                foreach (Rigidbody weaponBody in weapon.GetComponentsInChildren<Rigidbody>(true))
+                    weaponBody.mass *= dualWeaponScale;
+            }
+
+            weapon.transform.localPosition = localOffset;
+            weapon.transform.localEulerAngles = NetPartData.EulerAngles;
+
+            foreach (Rigidbody weaponBody in
+                     weapon.GetComponentsInChildren<Rigidbody>(true))
+            {
+                // 소유자: 퍼펫 몸은 보간으로 화면 프레임마다 부드럽게 그려지는데 무기 프리팹은 보간이
+                // 꺼져 있어 물리 스텝(50Hz) 단위로 뚝뚝 움직였다. 뛸수록 스텝 사이 이동이 커져 버벅인다.
+                // 프록시: 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 끈다(퍼펫과 같은 이유).
+                weaponBody.interpolation = HasStateAuthority
+                    ? RigidbodyInterpolation.Interpolate
+                    : RigidbodyInterpolation.None;
+
+                // 대검처럼 굵고 긴 날은 휘두를 때 몸·무기에 깊이 파고든다. PhysX는 겹친 만큼을
+                // 기본 최대 10 m/s로 튕겨내는데, 그 반동이 척추에 고정된 조인트로 전해져 몸이 날뛴다.
+                // 겹치지 않은 평소에는 영향이 없다.
+                weaponBody.maxDepenetrationVelocity = weaponMaxDepenetrationVelocity;
             }
 
             Transform rotPart = FindChildHelper(targetPuppet, "spine");
@@ -269,19 +324,30 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             
             if (Runner.TryFindObject(NetTargetPartId, out var targetNetObj))
             {
-                if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
+                if (weapon.TryGetComponent<Joint>(out var weaponJoint))
                 {
                     Rigidbody partBody = targetNetObj.GetComponent<Rigidbody>();
 
                     if (weaponJoint is ConfigurableJoint configurableJoint)
                     {
-                        if (!NetSpawnedWeapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
-                            edgeAligner = NetSpawnedWeapon.gameObject.AddComponent<WeaponEdgeAligner>();
+                        // 무기가 척추에서 크게 벌어지는(폭발) 순간에만 제자리로 붙잡는 안전장치다.
+                        // 프로젝션은 순간이동이라 기준이 작으면 뛸 때의 평범한 흔들림에도 매 스텝
+                        // 발동해 무기가 두두둑 튄다. 정상 동작에서는 절대 넘지 않을 만큼 크게 잡는다.
+                        configurableJoint.projectionMode = JointProjectionMode.PositionAndRotation;
+                        configurableJoint.projectionDistance = 0.3f;
+                        configurableJoint.projectionAngle = 30f;
+
+                        if (!weapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
+                            edgeAligner = weapon.gameObject.AddComponent<WeaponEdgeAligner>();
 
                         edgeAligner.Bind(configurableJoint, partBody, GetComponent<Rigidbody>());
                     }
 
                     weaponJoint.connectedBody = partBody;
+
+                    if (!weapon.TryGetComponent(out WeaponInertiaLimiter inertiaLimiter))
+                        inertiaLimiter = weapon.gameObject.AddComponent<WeaponInertiaLimiter>();
+                    inertiaLimiter.Bind(weaponJoint, partBody, maximumWeaponInertiaRatio);
                 }
             }
 
@@ -326,14 +392,18 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 TeleportTo(transform.position, transform.rotation);
                 
                 playerInput.OnAttackKeyPressed += HandleAttack;
+                KillStreak = 0;
             
                 playerId = AuthenticationService.Instance.PlayerId;
                 _service = ServiceLocator.Get<IDataStoreService>();
-                playerName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                string savedName = await _service.GetAsync<string>(nameof(PlayerDataStore.PlayerName));
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
+                playerName = savedName;
                 uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
-                NetWorkedColor = _bodyMaterials[value].color;
-                ColorChanged();
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
+                NetWorkedColor = GetBodyPaletteColor(value);
                 HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+                if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
             }
 
             if (!HasStateAuthority)
@@ -348,6 +418,28 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
 
+            // Initial network state is available here, not in Unity Start().
+            ColorChanged();
+            NameChanged();
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
+        public void RpcKilled(int score)
+        {
+            _ = UpdateKillCountAsync(score);
+        }
+        public async Task UpdateKillCountAsync(int score)
+        {
+            uint currentKill = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.KillCount));
+            uint currentScore = await ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.Score));
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
+            await ServiceLocator.Get<IDataStoreService>()
+                .SetAsync<uint>(nameof(PlayerDataStore.Score), (uint)(currentScore + score + 20 * KillStreak));
+            await ServiceLocator.Get<IDataStoreService>().SaveAsync();
+            KillStreak += 1;
         }
 
 

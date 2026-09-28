@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using DevLib.ModuleSystem;
 using DevLib.ServiceLocator;
 using Fusion;
@@ -45,6 +46,8 @@ namespace WorkFolder.KJS._01.Scripts
         [SerializeField] private GameObject killObject;
 
         private Player _player;
+
+        private Coroutine _healthRegenRoutine;
         
         public override void Spawned()
         {
@@ -62,8 +65,8 @@ namespace WorkFolder.KJS._01.Scripts
         public void TakeDamage(DamageData data)
         {
             if(data.Damage <= 0 || _isDead) return;
-
-            
+            if (_healthRegenRoutine != null) StopCoroutine(_healthRegenRoutine);
+            _healthRegenRoutine = StartCoroutine(HealthRegenRoutine());
             Health = Mathf.Clamp(Health - data.Damage, 0, _maxHealth);
             HealthBar.Instance.ChangeBar(Health, _maxHealth);
             if (_iFeedable != null)
@@ -75,10 +78,24 @@ namespace WorkFolder.KJS._01.Scripts
                 {
                     Player targetPlayer = Runner.GetPlayerObject(data.Owner).GetComponent<Player>();
                     Die(data.DeathMent.ToString(),targetPlayer.playerName.ToString());
+                    targetPlayer.RpcKilled((int)(50 * data.ScoreMultiplier));
                 }
                 else
                     Die(data.DeathMent.ToString(),"");
                 KillLog.Instance.RPC_Kill(data.Owner, _player.playerName);
+            }
+        }
+
+        private IEnumerator HealthRegenRoutine()
+        {
+            yield return new WaitForSeconds(6f);
+            while (true)
+            {
+                if (Health == 0)
+                    break;
+                Health = Mathf.Clamp(Health + 1, 0, _maxHealth);
+                HealthBar.Instance.ChangeBar(Health, _maxHealth);
+                yield return new WaitForSeconds(0.5f);
             }
         }
 

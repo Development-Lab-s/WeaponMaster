@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c02bd96df04287a4ab4d2926f4163534, type: 3}
+  m_Name: MapCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.MapSystem.MapCatalogSO
+  maps:
+  - displayName: "\uCF5C\uB85C\uC138\uC6C0"
+    prefab: {fileID: 7151664250987953334, guid: 8cf40f42c161db34495b4b39a7c4427c, type: 3}

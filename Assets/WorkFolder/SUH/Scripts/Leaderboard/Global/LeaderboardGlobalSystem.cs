@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using DevLib.ServiceLocator;
 using Newtonsoft.Json;
 using Photon.Client.StructWrapping;
@@ -74,6 +75,13 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
                     
                     int rank = entry.Rank + 1;
                     string playerName = entry.PlayerName ?? "알 수 없는 닉네임";
+                    StringBuilder playerNameBuilder = new StringBuilder();
+                    string[] splitName = playerName.Split('#');
+                    for (int j = 0; j < splitName.Length - 1; j++)
+                    {
+                        playerNameBuilder.Append(splitName[j]);
+                    }
+                    playerName = playerNameBuilder.ToString();
                     double score = entry.Score;
                     uint kills = 0;
 

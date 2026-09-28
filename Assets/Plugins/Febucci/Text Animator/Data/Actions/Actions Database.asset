@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 975089f62a0f141b0b6c1e96bb49c873, type: 3}
+  m_Name: Actions Database
+  m_EditorClassIdentifier: Febucci.TextAnimator.Runtime::Febucci.UI.Actions.ActionDatabase
+  data:
+  - {fileID: 11400000, guid: d66a01e69fc56d04e94f19d6c6f6fbd9, type: 2}
+  - {fileID: 11400000, guid: 75bd30fd5ceaf7045b09fc90b38eb74d, type: 2}
+  - {fileID: 11400000, guid: e412ec31d11c9804db0b060314d84157, type: 2}

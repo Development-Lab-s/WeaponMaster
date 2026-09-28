@@ -20,8 +20,16 @@ public class AudioSettingController : MonoBehaviour
     private const string BGMParameter = "BGM";
     private const string SFXParameter = "SFX";
 
+    private SliderSnap masterSnap;
+    private SliderSnap bgmSnap;
+    private SliderSnap sfxSnap;
+
     private void OnEnable()
     {
+        masterSnap = SliderSnap.Attach(masterSlider, 0.05f);
+        bgmSnap = SliderSnap.Attach(bgmSlider, 0.05f);
+        sfxSnap = SliderSnap.Attach(sfxSlider, 0.05f);
+
         masterSlider.onValueChanged.AddListener(ChangeMasterVolume);
         bgmSlider.onValueChanged.AddListener(ChangeBGMVolume);
         sfxSlider.onValueChanged.AddListener(ChangeSFXVolume);
@@ -30,9 +38,9 @@ public class AudioSettingController : MonoBehaviour
     private void Start()
     {
         // SO 값에 맞춰 슬라이더 초기화
-        masterSlider.SetValueWithoutNotify(soundSoV2.MasterVolume);
-        bgmSlider.SetValueWithoutNotify(soundSoV2.BGMVolume);
-        sfxSlider.SetValueWithoutNotify(soundSoV2.SFXVolume);
+        soundSoV2.MasterVolume = masterSnap.SnapAndSet(soundSoV2.MasterVolume);
+        soundSoV2.BGMVolume = bgmSnap.SnapAndSet(soundSoV2.BGMVolume);
+        soundSoV2.SFXVolume = sfxSnap.SnapAndSet(soundSoV2.SFXVolume);
 
         // 게임 시작 시 SO 값을 AudioMixer에 적용
         ApplyVolume(MasterParameter, soundSoV2.MasterVolume);
@@ -49,18 +57,21 @@ public class AudioSettingController : MonoBehaviour
 
     private void ChangeMasterVolume(float value)
     {
+        value = masterSnap.SnapAndSet(value);
         soundSoV2.MasterVolume = value;
         ApplyVolume(MasterParameter, value);
     }
 
     private void ChangeBGMVolume(float value)
     {
+        value = bgmSnap.SnapAndSet(value);
         soundSoV2.BGMVolume = value;
         ApplyVolume(BGMParameter, value);
     }
 
     private void ChangeSFXVolume(float value)
     {
+        value = sfxSnap.SnapAndSet(value);
         soundSoV2.SFXVolume = value;
         ApplyVolume(SFXParameter, value);
     }

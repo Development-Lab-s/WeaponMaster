@@ -84,6 +84,8 @@ public class PlayerHipCamera : MonoBehaviour
     {
         if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
             return;
+        // 개발자 프리캠이 카메라를 쓰는 중에는 골반 카메라로 넘어가지 않는다.
+        if (WorkFolder.PAP.Scripts.Camera.DevFreeCamera.IsActive) return;
         if (state == State.Normal) EnterHipView();
         else if (state == State.Hip) ReturnToNormal();
         // Ignore input during transitions. UI clicks never trigger a return.

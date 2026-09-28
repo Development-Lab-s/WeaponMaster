@@ -5,6 +5,7 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using WorkFolder.PAP.Scripts.MapSystem;
 
 namespace _00.Scripts.Lobby
 {
@@ -23,7 +24,10 @@ namespace _00.Scripts.Lobby
         [SerializeField]private TextMeshProUGUI logText;
         
         private Coroutine _textCorutine;
-        
+
+        // 방 만들기 UI의 맵 드롭다운(MapSelectDropdown)이 고른 맵 번호. MapCatalog 순서와 같다.
+        public int SelectedMapIndex { get; set; }
+
         #region LifeCycle
         
         private void Awake()
@@ -47,7 +51,9 @@ namespace _00.Scripts.Lobby
             loading.SetActive(true);
             var properties = new Dictionary<string, SessionProperty>()
             {
-                { "private", isPrivate ? 1 : 0 }
+                { "private", isPrivate ? 1 : 0 },
+                // 게임 씬의 MapLoader가 이 값을 읽어 같은 맵을 생성한다.
+                { MapCatalogSO.SessionPropertyKey, SelectedMapIndex }
             };
 
             if (isPrivate)
@@ -59,7 +65,7 @@ namespace _00.Scripts.Lobby
             {
                 GameMode = GameMode.Shared,
                 SessionName = roomName,
-                Scene = SceneRef.FromIndex(1),
+                Scene = SceneRef.FromIndex(2),
                 SceneManager = runner.GetComponent<NetworkSceneManagerDefault>(),
                 SessionProperties = properties
             });

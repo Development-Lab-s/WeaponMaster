@@ -29,7 +29,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             if (!HasStateAuthority) return;
             if (targetBy == "")
                 targetBy = targetByRando[Random.Range(0, targetByRando.Length)];
-            UIManager.Instance.DropDeathUI(deathMent, targetBy);
+            UIManager.Instance.DropDeathUI(deathMent, targetBy,((Player)Owner).KillStreak);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
