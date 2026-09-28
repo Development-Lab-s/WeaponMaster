@@ -80,6 +80,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                     data.DeathMent = deathMents[Random.Range(0, deathMents.Length)];
                     data.Damage = (int)(hitBox.Part.DamageMultiplier * 3f + _lastSwingSpeed);
                     data.Owner = _owner.Runner.LocalPlayer;
+                    data.ScoreMultiplier = hitBox.Part.DamageMultiplier;
                     hitBox.Damageable.RpcTakeDamage(data);
                     if (_owner.HasInputAuthority)
                         BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _swordRb.position + _swordRb.centerOfMass, _owner.Runner);
