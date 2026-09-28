@@ -48,6 +48,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
                 if (controller == null) throw new InvalidOperationException("FaceSaveController missing in Lobby panel.");
                 var completion = new TaskCompletionSource<bool>();
                 controller.FlowFinished = saved => completion.TrySetResult(saved);
+                controller.PrepareDirectDrawing();
                 panel.SetActive(true);
                 bool savedSuccessfully = await completion.Task;
                 // Finish FaceDraw.Confirm before hiding the panel or firing Lobby return events.

@@ -12,6 +12,9 @@
 
 ## Lobby customization flow
 
+- Brush opens directly into DrawPanel after the saved face finishes loading; the intermediate start button is hidden. Confirm saves the face and returns to character customization; Cancel/return leaves without saving the drawing. Only character customization Save returns to the Lobby main screen.
+- The current unsaved palette selection is explicitly passed to FaceDraw. Both FaceDraw body slot 0 and face background use that material/color. The character editor previews the saved face on slot 1, recolors its background immediately on palette selection, and refreshes the saved drawing when returning from FaceDraw. Preview materials/textures are owned per renderer; palette assets are unchanged.
+
 - Character customization Save awaits the profile save and immediately invokes the existing Lobby return events; it does not open FaceDraw. Clicking Lobby's Brush opens the existing inactive `faceDrawPanel` through `BrushFaceDrawButton` and its fitted BoxCollider using the Input System. Opening the brush does not save profile edits. Face confirmation saves the face and invokes Lobby return events. There are no runtime scene transitions, panel instantiations or panel destruction.
 - The panel copies the supplied FaceDraw scene layout, including `StartState/Text` and `UndoButton` (return to customization). FaceSaveController updates that TMP text and registers the return button; the temporary OnGUI overlay has been removed. Each opening reloads the current skin and saved face. Late results from a closed panel are ignored.
 - Lobby cameras and UI are temporarily disabled and restored when the panel closes. Lobby objects, network connections, the EventSystem and data services stay alive. The panel contains no duplicate EventSystem or data service.

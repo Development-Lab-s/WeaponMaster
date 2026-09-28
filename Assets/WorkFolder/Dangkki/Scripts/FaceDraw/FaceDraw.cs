@@ -58,6 +58,7 @@ public class FaceDraw : MonoBehaviour
     public Color BackgroundColor => background[0];
     public bool CanUndo => undoStack.Count > 0;
     public bool InputLocked { get; set; }
+    public bool SkipStartButton { get; set; }
     public System.Func<Texture2D, System.Threading.Tasks.Task> SaveAsync;
     public bool IsSaving { get; private set; }
     public string SaveError { get; private set; }
