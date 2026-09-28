@@ -10,12 +10,23 @@ using SaveOptions = Unity.Services.CloudSave.Models.Data.Player.SaveOptions;
 
 namespace WorkFolder.SUH.Scripts.FacePersistence
 {
+    // Cloud Save uses Newtonsoft, which traverses Color.linear/gamma recursively.
+    // Only primitive channels belong in the persisted DTO.
+    [Serializable]
+    public struct FaceColorData
+    {
+        public float r, g, b, a;
+        public static implicit operator FaceColorData(Color color) =>
+            new FaceColorData { r = color.r, g = color.g, b = color.b, a = color.a };
+        public static implicit operator Color(FaceColorData color) => new Color(color.r, color.g, color.b, color.a);
+    }
+
     [Serializable]
     public sealed class SavedFace
     {
         public int Version = 2;
         public uint BodyColor;
-        public Color BackgroundColor = Color.white;
+        public FaceColorData BackgroundColor = Color.white;
         public string Png;
         public byte[] Decode()
         {
@@ -30,7 +41,8 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
             return bytes;
         }
 
-        public Color StoredBackground => Version == 1 ? Color.white : BackgroundColor;
+        [Newtonsoft.Json.JsonIgnore]
+        public Color StoredBackground => Version == 1 ? Color.white : (Color)BackgroundColor;
     }
 
     // Separate key: score/name updates must not re-upload the face image.

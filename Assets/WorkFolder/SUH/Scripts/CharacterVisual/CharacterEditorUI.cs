@@ -7,6 +7,7 @@
     using UnityEngine.Events;
     using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
     using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
+    using WorkFolder.SUH.Scripts.FacePersistence;
 
     namespace WorkFolder.SUH.Scripts.CharacterVisual
     {
@@ -22,6 +23,9 @@
             [SerializeField] private ParticleSystem[] _particleSystem;
             [SerializeField] private SkinnedMeshRenderer _meshRenderer;
             [SerializeField] private Material[] _bodyMaterials;
+            [SerializeField] private GameObject faceDrawPanel;
+            private bool saving;
+            private bool ready;
             
             
             private uint HairStyleIndex = 0;
@@ -46,8 +50,16 @@
 
             private async void Start()
             {
-                uint value = await ServiceLocator.Get<IDataStoreService>().GetAsync<uint>("BodyColor");
-                _meshRenderer.material = _bodyMaterials[value];
+                try
+                {
+                    var service = ServiceLocator.Get<IDataStoreService>();
+                    BodyColor = await service.GetAsync<uint>("BodyColor");
+                    HairStyleIndex = await service.GetAsync<uint>("HairStyle");
+                    if (this == null) return;
+                    _meshRenderer.material = _bodyMaterials[BodyColor];
+                    ready = true;
+                }
+                catch (Exception ex) { Debug.LogException(ex, this); }
             }
 
             public void ChangePlayerName(string playerName)
@@ -78,20 +90,32 @@
             
             public async void SaveButtonData()
             {
-                if (!NicknameInputUI._currentSaveNickname)
-                {
-                    ShowWarning("닉네임을 저장하지 않으셨습니다.");
-                    return; 
-                }
+                if (saving || !ready) return;
+                saving = true;
                 try
                 {
-                    ServiceLocator.Get<IBodyColorInterfaceChange>()?.BodyColorInterfaceChange(BodyColor);
-                    ServiceLocator.Get<IHairStyleInterfaceChange>()?.HairStyleInterfaceChange(HairStyleIndex);
+                    await NicknameInputUI.PendingSave;
+                    if (this == null) return;
+                    if (!NicknameInputUI._currentSaveNickname)
+                    {
+                        ShowWarning("닉네임을 저장하지 않으셨습니다.");
+                        return;
+                    }
+                    var service = ServiceLocator.Get<IDataStoreService>();
+                    if (service == null) throw new InvalidOperationException("IDataStoreService missing.");
+                    await service.SetAsync<uint>("BodyColor", BodyColor);
+                    await service.SetAsync<uint>("HairStyle", HairStyleIndex);
                     var names = ServiceLocator.Get<IPlayerNameInterfaceChange>();
                     if (names != null && !string.IsNullOrWhiteSpace(PlayerName))
                     {
-                        if (!await names.PlayerNameChange(PlayerName)) Debug.LogWarning("이미 있는 닉네임입니다.");
+                        if (!await names.PlayerNameChange(PlayerName))
+                        {
+                            ShowWarning("이미 있는 닉네임입니다.");
+                            return;
+                        }
                     }
+                    await service.SaveAsync();
+                    if (this == null) return;
                     OnFinishSave?.Invoke();
                 }
                 catch (System.Exception exception)
@@ -100,6 +124,25 @@
                     Debug.Log("닉네임에 변경에 오류뜸 텍스트 표시");
                     ShowWarning("저장에 실패했습니다. 다시 시도해주세요.");
                 }
+                finally { saving = false; }
+            }
+
+            public async void OpenFaceDraw()
+            {
+                if (saving || LobbyFaceDrawFlow.IsOpen) return;
+                saving = true;
+                try
+                {
+                    // Opening the brush does not implicitly save the character profile.
+                    if (await LobbyFaceDrawFlow.OpenAsync(gameObject.scene, faceDrawPanel) && this != null)
+                        OnFinishSave?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex, this);
+                    if (this != null) ShowWarning("얼굴 편집을 열지 못했습니다. 다시 시도해주세요.");
+                }
+                finally { saving = false; }
             }
             
             private void BodyColorUserInterfaceChange()

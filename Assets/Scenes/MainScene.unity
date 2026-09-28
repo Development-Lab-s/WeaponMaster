@@ -17686,6 +17686,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5d6e77311423c944bb1ed1964c5f9988, type: 3}
   - {fileID: 8300000, guid: f853616f4b04f5648aae44357b890daa, type: 3}
   - {fileID: 8300000, guid: e3204c0498c0e1b41a32939bdc4f0993, type: 3}
+  drawSoundClips: []
+  killSoundClips: []
   sfxPrefab: {fileID: 876470313289951931, guid: b9e125b2add1e4d49b252d6df3301753, type: 3}
   sfxPrefabLocal: {fileID: -5049269069515123218, guid: 4c16bea2b6b5c634db1f1d7a8c14c7ba, type: 3}
   bgmSource: {fileID: 1879776281}
