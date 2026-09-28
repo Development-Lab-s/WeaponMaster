@@ -274,7 +274,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6047679949654826449}
   serializedVersion: 5
-  m_Mass: 0.15
+  m_Mass: 0.5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -430,3 +430,4 @@ MonoBehaviour:
   - "\uCC14\uB824 \uC8FD\uC74C!"
   - "\uAC00\uC2B4\uC5D0 \uCC3D\uC774 \uBC15\uD798!"
   - "\uBAB8\uD1B5\uC5D0 \uAD6C\uBA4D\uC774 \uB0A8!"
+  hitCooldown: 0.25

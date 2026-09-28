@@ -25,6 +25,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
     {
         public Vector2 DriveX;
         public Vector3 Offset;
+        // Vector3.zero가 아니면 같은 무기를 이 위치에 하나 더 단다.
+        public Vector3 Offset2;
         public Vector3 EulerAngles;
     }
 
@@ -47,6 +49,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [Networked] private NetworkedPartData NetPartData { get; set; }
         [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
         [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
+        [Networked] private NetworkObject NetSpawnedWeapon2 { get; set; } // offset2 위치의 두 번째 무기
+
+        private bool HasSecondWeapon => NetPartData.Offset2 != Vector3.zero;
+
+        // 무기를 두 개 달 때 각 무기의 크기 배율. 두 개 여부가 동기화된 Offset2로 정해지고
+        // 모든 클라이언트가 붙일 때 같은 배율을 적용하므로 따로 보낼 값이 없다.
+        [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.5f;
 
         [Networked] public Vector3 NetLeftGoalLocal { get; private set; }
         [Networked] public Vector3 NetRightGoalLocal { get; private set; }
@@ -100,9 +109,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
             NetPartData = new NetworkedPartData 
             { 
-                DriveX = partData.driveX, 
-                Offset = partData.offset, 
-                EulerAngles = partData.eulerAngles 
+                DriveX = partData.driveX,
+                Offset = partData.offset,
+                Offset2 = partData.offset2,
+                EulerAngles = partData.eulerAngles
             };
             NetTargetPartId = targetPartNetObj.Id;
             NetCanInitialize = true;
@@ -127,9 +137,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void FixedUpdateNetwork()
         {
-            if (HasStateAuthority && NetCanInitialize && NetSpawnedWeapon == null)
+            if (HasStateAuthority && NetCanInitialize)
             {
-                NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+                if (NetSpawnedWeapon == null)
+                    NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+
+                if (HasSecondWeapon && NetSpawnedWeapon2 == null)
+                    NetSpawnedWeapon2 = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
             }
 
             CaptureFootGoals();
@@ -162,6 +176,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             NetLeftGoalLocal = transform.InverseTransformPoint(left.position);
             NetLeftGoalLocalRotation = inverseRoot * left.rotation;
             NetRightGoalLocal = transform.InverseTransformPoint(right.position);
+            NetRightGoalLocalRotation = inverseRoot * right.rotation;
 
             FootTargetSolver leftSolver = _footStepper.LeftSolver;
             FootTargetSolver rightSolver = _footStepper.RightSolver;
@@ -222,10 +237,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Render()
         {
+            // 무기는 각자 따로 스폰되어 도착 순서가 다를 수 있으니 하나씩 따로 붙인다.
             if (NetSpawnedWeapon != null && NetSpawnedWeapon.transform.parent == null)
-            {
-                AttachWeaponLocal();
-            }
+                AttachWeaponLocal(NetSpawnedWeapon, NetPartData.Offset);
+
+            if (NetSpawnedWeapon2 != null && NetSpawnedWeapon2.transform.parent == null)
+                AttachWeaponLocal(NetSpawnedWeapon2, NetPartData.Offset2);
             OnPartDataIdChanged();
 
             ApplyFootGoals();
@@ -247,16 +264,22 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
         }
 
-        private void AttachWeaponLocal()
+        private void AttachWeaponLocal(NetworkObject weapon, Vector3 localOffset)
         {
-            NetSpawnedWeapon.transform.SetParent(WeaponModule.GameObject.transform);
-            NetSpawnedWeapon.transform.localPosition = NetPartData.Offset;
-            NetSpawnedWeapon.transform.localEulerAngles = NetPartData.EulerAngles;
+            weapon.transform.SetParent(WeaponModule.GameObject.transform);
+
+            // 이 함수는 무기마다 한 번만(부모가 없을 때) 불리므로 배율도 한 번만 곱해진다.
+            // 조인트를 연결하기 전에 줄여야 콜라이더와 연결 앵커가 줄어든 크기 기준으로 잡힌다.
+            if (HasSecondWeapon)
+                weapon.transform.localScale *= dualWeaponScale;
+
+            weapon.transform.localPosition = localOffset;
+            weapon.transform.localEulerAngles = NetPartData.EulerAngles;
 
             if (!HasStateAuthority)
             {
                 foreach (Rigidbody weaponBody in
-                         NetSpawnedWeapon.GetComponentsInChildren<Rigidbody>(true))
+                         weapon.GetComponentsInChildren<Rigidbody>(true))
                     weaponBody.interpolation = RigidbodyInterpolation.None;
             }
 
@@ -273,14 +296,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             
             if (Runner.TryFindObject(NetTargetPartId, out var targetNetObj))
             {
-                if (NetSpawnedWeapon.TryGetComponent<Joint>(out var weaponJoint))
+                if (weapon.TryGetComponent<Joint>(out var weaponJoint))
                 {
                     Rigidbody partBody = targetNetObj.GetComponent<Rigidbody>();
 
                     if (weaponJoint is ConfigurableJoint configurableJoint)
                     {
-                        if (!NetSpawnedWeapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
-                            edgeAligner = NetSpawnedWeapon.gameObject.AddComponent<WeaponEdgeAligner>();
+                        if (!weapon.TryGetComponent(out WeaponEdgeAligner edgeAligner))
+                            edgeAligner = weapon.gameObject.AddComponent<WeaponEdgeAligner>();
 
                         edgeAligner.Bind(configurableJoint, partBody, GetComponent<Rigidbody>());
                     }
