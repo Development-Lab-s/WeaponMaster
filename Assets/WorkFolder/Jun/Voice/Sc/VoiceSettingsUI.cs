@@ -11,6 +11,8 @@ public sealed class VoiceSettingsUI : MonoBehaviour
     [SerializeField] private Slider voiceOutputVolumeSlider;
 
     private VivoxManager _vivoxManager;
+    private SliderSnap microphoneSnap;
+    private SliderSnap outputSnap;
 
     private void Start()
     {
@@ -22,6 +24,13 @@ public sealed class VoiceSettingsUI : MonoBehaviour
             enabled = false;
             return;
         }
+
+        microphoneVolumeSlider.minValue = 0f;
+        microphoneVolumeSlider.maxValue = 75f;
+        voiceOutputVolumeSlider.minValue = 0f;
+        voiceOutputVolumeSlider.maxValue = 100f;
+        microphoneSnap = SliderSnap.Attach(microphoneVolumeSlider, 5f);
+        outputSnap = SliderSnap.Attach(voiceOutputVolumeSlider, 5f);
 
         InitializeUI();
 
@@ -41,13 +50,9 @@ public sealed class VoiceSettingsUI : MonoBehaviour
             !_vivoxManager.UserMicEnabled
         );
 
-        microphoneVolumeSlider.SetValueWithoutNotify(
-            _vivoxManager.InputDeviceVolume
-        );
+        microphoneSnap.SnapAndSet(_vivoxManager.InputDeviceVolume);
 
-        voiceOutputVolumeSlider.SetValueWithoutNotify(
-            _vivoxManager.OutputDeviceVolume
-        );
+        outputSnap.SnapAndSet(_vivoxManager.OutputDeviceVolume);
     }
 
     private void OnMicrophoneMuteChanged(bool isMuted)
@@ -57,11 +62,13 @@ public sealed class VoiceSettingsUI : MonoBehaviour
 
     private void OnMicrophoneVolumeChanged(float value)
     {
+        value = microphoneSnap.SnapAndSet(value);
         _vivoxManager.SetInputDeviceVolume(value);
     }
 
     private void OnVoiceOutputVolumeChanged(float value)
     {
+        value = outputSnap.SnapAndSet(value);
         _vivoxManager.SetOutputDeviceVolume(value);
     }
 

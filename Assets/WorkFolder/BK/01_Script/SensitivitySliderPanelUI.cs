@@ -14,10 +14,16 @@ public class SensitivitySliderPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text cameraValueText;
     [SerializeField] private TMP_Text weaponValueText;
 
+    private SliderSnap cameraSnap;
+    private SliderSnap weaponSnap;
+
     private void OnEnable()
     {
         if (!IsReady())
             return;
+
+        cameraSnap = SliderSnap.Attach(cameraSensitivitySlider, 0.1f);
+        weaponSnap = SliderSnap.Attach(weaponSensitivitySlider, 0.1f);
 
         cameraSensitivitySlider.onValueChanged.AddListener(SetCameraSensitivity);
         weaponSensitivitySlider.onValueChanged.AddListener(SetWeaponSensitivity);
@@ -52,8 +58,8 @@ public class SensitivitySliderPanelUI : MonoBehaviour
             weaponSensitivitySlider.minValue,
             weaponSensitivitySlider.maxValue);
 
-        cameraSensitivitySlider.SetValueWithoutNotify(cameraValue);
-        weaponSensitivitySlider.SetValueWithoutNotify(weaponValue);
+        cameraValue = cameraSnap.SnapAndSet(cameraValue);
+        weaponValue = weaponSnap.SnapAndSet(weaponValue);
         invertYToggle.SetIsOnWithoutNotify(settingSO.MouseSensitivityY < 0f);
 
         UpdateValueText(cameraValueText, cameraValue);
@@ -62,7 +68,7 @@ public class SensitivitySliderPanelUI : MonoBehaviour
 
     private void SetCameraSensitivity(float value)
     {
-        value = RoundSensitivity(value);
+        value = cameraSnap.SnapAndSet(value);
         settingSO.MouseSensitivityX = value;
         settingSO.MouseSensitivityY = invertYToggle.isOn ? -value : value;
         UpdateValueText(cameraValueText, value);
@@ -70,7 +76,7 @@ public class SensitivitySliderPanelUI : MonoBehaviour
 
     private void SetWeaponSensitivity(float value)
     {
-        value = RoundSensitivity(value);
+        value = weaponSnap.SnapAndSet(value);
         settingSO.WeaponSensitivityX = value;
         settingSO.WeaponSensitivityY = value;
         UpdateValueText(weaponValueText, value);
@@ -88,11 +94,6 @@ public class SensitivitySliderPanelUI : MonoBehaviour
             && cameraSensitivitySlider != null
             && weaponSensitivitySlider != null
             && invertYToggle != null;
-    }
-
-    private static float RoundSensitivity(float value)
-    {
-        return Mathf.Round(value * 100f) / 100f;
     }
 
     private static void UpdateValueText(TMP_Text target, float value)
