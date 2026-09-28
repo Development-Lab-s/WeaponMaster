@@ -374,7 +374,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             await ServiceLocator.Get<IDataStoreService>()
                 .SetAsync<uint>(nameof(PlayerDataStore.KillCount), currentKill + 1);
             await ServiceLocator.Get<IDataStoreService>()
-                .SetAsync<uint>(nameof(PlayerDataStore.Score), (uint)(currentScore + score));
+                .SetAsync<uint>(nameof(PlayerDataStore.Score), (uint)(currentScore + score + 20 * KillStreak));
             await ServiceLocator.Get<IDataStoreService>().SaveAsync();
             KillStreak += 1;
         }

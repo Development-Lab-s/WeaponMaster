@@ -15,4 +15,4 @@ MonoBehaviour:
   LeaderboardId: Global_Leaderboard
   MaxVisibleRank: 100
   LeaderboardFindOffset: 0
-  RefreshIntervalSeconds: 1
+  RefreshIntervalSeconds: 10

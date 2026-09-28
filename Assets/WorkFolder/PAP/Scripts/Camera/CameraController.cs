@@ -44,14 +44,13 @@ namespace WorkFolder.PAP.Scripts.Camera
             
             _mainCam = UnityEngine.Camera.main;
             Debug.Assert(_mainCam != null, "Main camera is Null");
-            _camera = (_mainCam.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera);
-            Debug.Assert(_camera != null, "Cinemachine camera is Null");
-            _axisController = _camera.GetComponentInChildren<CinemachineInputAxisController>();
             _mainCam.GetComponent<PlayerHipCamera>().playerRoot = Owner.transform;
             _weaponModule = Owner.GetModule<IWeaponModule>();
             _lockOn = _mainCam.GetComponent<LockOnCameraController>();
-            
             _lockOn.ExitLookOn(transform.position,transform.rotation);
+            _camera = _lockOn.FreeLookCam;
+            Debug.Assert(_camera != null, "Cinemachine camera is Null");
+            _axisController = _camera.GetComponentInChildren<CinemachineInputAxisController>();
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
