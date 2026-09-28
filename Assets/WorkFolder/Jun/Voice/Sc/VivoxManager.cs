@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using Unity.Services.Vivox;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 
 public sealed class VivoxManager : MonoBehaviour
 {
@@ -13,7 +12,7 @@ public sealed class VivoxManager : MonoBehaviour
     public event Action<bool> LocalSpeechDetectedChanged;
 
     [Header("3D Voice")]
-    [SerializeField] private int audibleDistance = 30;
+    [SerializeField] private int audibleDistance = 90;
     [SerializeField] private int conversationalDistance = 2;
     [SerializeField] private float fadeIntensity = 2.1f;
 
@@ -33,6 +32,9 @@ public sealed class VivoxManager : MonoBehaviour
 
 
     private Task _readyTask;
+
+    private const int MaxLoginAttempts = 5;
+    private static readonly TimeSpan LoginRetryDelay = TimeSpan.FromSeconds(10);
 
     private string _currentChannel;
     private string _joiningChannel;
@@ -125,31 +127,14 @@ public sealed class VivoxManager : MonoBehaviour
     {
         try
         {
-            if (UnityServices.State ==
-                ServicesInitializationState.Uninitialized)
-            {
-                await UnityServices.InitializeAsync();
-            }
-            else
-            {
-                while (UnityServices.State ==
-                       ServicesInitializationState.Initializing)
-                {
-                    await Task.Yield();
-                }
-            }
-
-            if (!AuthenticationService.Instance.IsSignedIn)
-            {
-                await AuthenticationService.Instance
-                    .SignInAnonymouslyAsync();
-            }
+            // 다른 UGS 기능과 로그인 작업을 공유해 동시 로그인 충돌을 피합니다.
+            await UgsSignIn.EnsureSignedInAsync();
 
             await VivoxService.Instance.InitializeAsync();
 
             BindParticipantEvents();
 
-            await VivoxService.Instance.LoginAsync();
+            await LoginWithRetryAsync();
 
             _vivoxReady = true;
 
@@ -162,6 +147,35 @@ public sealed class VivoxManager : MonoBehaviour
             Debug.LogException(exception);
             throw;
         }
+    }
+
+    private async Task LoginWithRetryAsync()
+    {
+        for (int attempt = 1; attempt <= MaxLoginAttempts; attempt++)
+        {
+            try
+            {
+                await VivoxService.Instance.LoginAsync();
+                return;
+            }
+            catch (VivoxApiException exception)
+                when (exception.StatusCode == 5043 && attempt < MaxLoginAttempts)
+            {
+                Debug.LogWarning(
+                    $"Vivox 로그인 시간 초과 ({attempt}/{MaxLoginAttempts}). " +
+                    $"{LoginRetryDelay.TotalSeconds:0}초 후 재시도합니다.");
+                await Task.Delay(LoginRetryDelay);
+            }
+        }
+    }
+
+    private Task EnsureReadyAsync()
+    {
+        // 이전 매치에서 모든 재시도가 실패했다면 새 매치에서 다시 시도합니다.
+        if (_readyTask == null || _readyTask.IsFaulted || _readyTask.IsCanceled)
+            _readyTask = InitializeVivoxAsync();
+
+        return _readyTask;
     }
 
 
@@ -307,7 +321,7 @@ public sealed class VivoxManager : MonoBehaviour
 
         _positionTarget = localPlayer;
 
-        await _readyTask;
+        await EnsureReadyAsync();
 
         string targetChannel =
             "prox_" + fusionRoomName;
@@ -387,8 +401,6 @@ public sealed class VivoxManager : MonoBehaviour
 
     public async Task LeaveCurrentChannelAsync()
     {
-        await _readyTask;
-
         if (!_isChannelJoined)
             return;
 

@@ -5518,7 +5518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394a0ca11db88424091e269f59698439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VivoxManager
-  audibleDistance: 32
+  audibleDistance: 96
   conversationalDistance: 2
   fadeIntensity: 2.1
   updateInterval: 0.3
