@@ -1,0 +1,8 @@
+<linker>
+  <!-- MapService reuses this private legacy entry point through Unity SendMessage. -->
+  <assembly fullname="Assembly-CSharp">
+    <type fullname="WorkFolder.PAP.Scripts.MapSystem.MapLoader" preserve="nothing">
+      <method name="Load" />
+    </type>
+  </assembly>
+</linker>

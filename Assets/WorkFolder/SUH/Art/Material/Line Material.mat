@@ -103,7 +103,7 @@ Material:
     - normalTexture_texCoord: 0
     - occlusionTexture_strength: 1
     - occlusionTexture_texCoord: 0
-    - roughnessFactor: 0.5
+    - roughnessFactor: 1
     - transmissionFactor: 0
     m_Colors:
     - baseColorFactor: {r: 0.213, g: 0.15954117, b: 0.11192942, a: 1}

@@ -2,8 +2,11 @@ namespace WorkFolder.SUH.Scripts.RoundSystem.Lib.Interface
 {
     public interface IMapService
     {
-        int CurrentMapBuildIndex { get; }
+        int CurrentMapIndex { get; }
         bool IsLoading { get; }
-        bool LoadNextMap();
+        bool HasMap { get; }
+        int ChooseNextMap(int previous);
+        bool ApplyMap(int index);
+        void AdoptInitialMap(int index);
     }
 }
