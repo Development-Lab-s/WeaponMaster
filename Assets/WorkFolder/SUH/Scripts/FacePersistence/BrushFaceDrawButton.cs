@@ -65,7 +65,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
             hovered = value;
             hoverTween?.Kill();
             hoverTween = DOTween.To(() => outlineColor, ApplyOutlineColor,
-                    value ? Color.white : Color.black, hoverDuration)
+                    value ? Color.white : new Color(0,0,0,0), hoverDuration)
                 .SetEase(Ease.OutCubic).SetUpdate(true);
         }
 
@@ -74,7 +74,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
             hoverTween?.Kill();
             hoverTween = null;
             hovered = false;
-            ApplyOutlineColor(Color.black);
+            ApplyOutlineColor(new Color(0,0,0,0));
         }
 
         public void FitCollider()
