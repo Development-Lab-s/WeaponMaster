@@ -18,6 +18,10 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         private readonly List<(Renderer renderer, int slot, int color, int emission)> outlines = new();
         private MaterialPropertyBlock colorBlock;
         private Tween hoverTween;
+        private Sequence clickTween;
+        private Vector3 restingScale;
+        private Quaternion restingRotation;
+        private bool clicking;
         private Color outlineColor = Color.black;
         private bool hovered;
 
@@ -71,6 +75,11 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
 
         private void OnDisable()
         {
+            clickTween?.Kill();
+            clickTween = null;
+            if (clicking) transform.SetLocalPositionAndRotation(transform.localPosition, restingRotation);
+            if (clicking) transform.localScale = restingScale;
+            clicking = false;
             hoverTween?.Kill();
             hoverTween = null;
             hovered = false;
@@ -106,14 +115,32 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
             SetHovered(pointingAtBrush);
             if (pointingAtBrush && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                characterEditor.OpenFaceDraw();
-                SetHovered(false);
+                PlayClick();
             }
+        }
+
+        private void PlayClick()
+        {
+            clicking = true;
+            restingScale = transform.localScale;
+            restingRotation = transform.localRotation;
+            SetHovered(false);
+            clickTween = DOTween.Sequence().SetUpdate(true);
+            clickTween.Append(transform.DOScale(restingScale * 0.88f, 0.09f).SetEase(Ease.OutCubic));
+            clickTween.Join(transform.DOLocalRotateQuaternion(restingRotation * Quaternion.Euler(0f, 0f, -8f), 0.09f));
+            clickTween.Append(transform.DOScale(restingScale, 0.15f).SetEase(Ease.OutCubic));
+            clickTween.Join(transform.DOLocalRotateQuaternion(restingRotation, 0.15f).SetEase(Ease.OutCubic));
+            clickTween.OnComplete(() =>
+            {
+                clicking = false;
+                clickTween = null;
+                if (characterEditor != null) characterEditor.OpenFaceDraw();
+            });
         }
 
         private bool IsPointingAtBrush()
         {
-            if (!Application.isFocused || LobbyFaceDrawFlow.IsOpen || characterEditor == null ||
+            if (clicking || !Application.isFocused || LobbyFaceDrawFlow.IsOpen || characterEditor == null ||
                 Mouse.current == null) return false;
             var camera = Camera.main;
             if (camera == null) return false;
