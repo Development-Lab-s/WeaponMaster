@@ -13,7 +13,12 @@ namespace WorkFolder.PAP.Scripts.MapSystem
         // 같은 지점에 여러 명이 몰리지 않게 지점 주변으로 흩뿌리는 반경(수평).
         [SerializeField, Min(0f)] private float spawnSpread = 1f;
 
+        [Header("Environment")]
+        [Tooltip("이 맵에서 쓸 스카이박스. 비워 두면 씬의 기본 스카이박스를 쓴다.")]
+        [SerializeField] private Material skybox;
+
         public IReadOnlyList<Transform> SpawnPoints => spawnPoints;
+        public Material Skybox => skybox;
 
         // 다른 플레이어에게서 가장 먼 스폰 지점을 고른다. 지점이 없으면 맵 원점을 쓴다.
         public void GetSpawnPose(

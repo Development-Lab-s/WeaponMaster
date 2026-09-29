@@ -496,6 +496,7 @@ MonoBehaviour:
   - {fileID: 8114064910009639535}
   - {fileID: 4732622377538318842}
   spawnSpread: 1
+  skybox: {fileID: 2100000, guid: 4778856aab888f640b0ae081d3c3ca47, type: 2}
 --- !u!1 &2410702427366553677
 GameObject:
   m_ObjectHideFlags: 0

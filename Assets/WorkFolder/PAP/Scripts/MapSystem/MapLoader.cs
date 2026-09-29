@@ -22,6 +22,7 @@ namespace WorkFolder.PAP.Scripts.MapSystem
         [SerializeField] private Transform mapParent;
 
         private MapDefinition _spawnedMap;
+        private Material _defaultSkybox;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -34,6 +35,9 @@ namespace WorkFolder.PAP.Scripts.MapSystem
         {
             if (catalog == null)
                 catalog = MapCatalogSO.LoadDefault();
+
+            // 스카이박스를 지정하지 않은 맵으로 돌아올 때 되돌릴 씬 기본값.
+            _defaultSkybox = RenderSettings.skybox;
         }
 
         // 러너가 세션에 들어가는 시점은 씬 로드와 별개라 준비될 때까지 기다렸다가 한 번만 생성한다.
@@ -86,9 +90,25 @@ namespace WorkFolder.PAP.Scripts.MapSystem
             // 같은 프레임에 스폰이 일어나도 새 맵의 콜라이더가 바로 잡히게 한다.
             Physics.SyncTransforms();
 
+            ApplyEnvironment(_spawnedMap);
+
             Current = _spawnedMap;
             Debug.Log($"[MapLoader] 맵 생성: {catalog.GetDisplayName(index)} ({index})", this);
             MapLoaded?.Invoke(_spawnedMap);
+        }
+
+        // 맵마다 지정한 스카이박스로 바꾼다. 방을 만들 때 고른 첫 맵도, 라운드마다 바뀌는 맵도
+        // 모두 이 Load를 거치고, 어떤 맵을 불러올지는 이미 모든 클라이언트가 같게 받으므로
+        // 스카이박스도 따로 보내지 않아도 모든 화면에서 같게 바뀐다.
+        private void ApplyEnvironment(MapDefinition map)
+        {
+            Material skybox = map != null && map.Skybox != null ? map.Skybox : _defaultSkybox;
+            if (RenderSettings.skybox == skybox)
+                return;
+
+            RenderSettings.skybox = skybox;
+            // 주변광·반사광이 스카이박스를 쓰는 설정이면 새 하늘에 맞게 다시 계산한다.
+            DynamicGI.UpdateEnvironment();
         }
 
         private static NetworkRunner FindRunningRunner()

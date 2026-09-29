@@ -144,11 +144,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             if (HasStateAuthority && NetCanInitialize)
             {
+                // 위치 없이 스폰하면 프리팹에 저장된 월드 위치에 생겼다가 붙을 때 먼 거리를
+                // 순간이동한다. 붙을 자리에서 바로 태어나게 한다.
                 if (NetSpawnedWeapon == null)
-                    NetSpawnedWeapon = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+                    NetSpawnedWeapon = SpawnWeaponAt(NetPartData.Offset);
 
                 if (HasSecondWeapon && NetSpawnedWeapon2 == null)
-                    NetSpawnedWeapon2 = Runner.Spawn(_weaponPrefab, inputAuthority: Object.InputAuthority);
+                    NetSpawnedWeapon2 = SpawnWeaponAt(NetPartData.Offset2);
             }
 
             CaptureFootGoals();
@@ -276,6 +278,16 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
         }
 
+        private NetworkObject SpawnWeaponAt(Vector3 localOffset)
+        {
+            Transform socket = WeaponModule.GameObject.transform;
+            return Runner.Spawn(
+                _weaponPrefab,
+                socket.TransformPoint(localOffset),
+                socket.rotation * Quaternion.Euler(NetPartData.EulerAngles),
+                inputAuthority: Object.InputAuthority);
+        }
+
         private void AttachWeaponLocal(NetworkObject weapon, Vector3 localOffset)
         {
             weapon.transform.SetParent(WeaponModule.GameObject.transform);
@@ -309,7 +321,19 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 // 기본 최대 10 m/s로 튕겨내는데, 그 반동이 척추에 고정된 조인트로 전해져 몸이 날뛴다.
                 // 겹치지 않은 평소에는 영향이 없다.
                 weaponBody.maxDepenetrationVelocity = weaponMaxDepenetrationVelocity;
+
+                // 위에서 transform만 옮겼으므로 물리 쪽 위치·속도는 스폰된 자리에 남아 있다.
+                // 그대로 두면 다음 스텝에 조인트(철퇴 줄, 척추 연결)가 그 차이를 한 번에 끌어당겨
+                // 무기가 튀고 반동이 플레이어까지 전해진다. TeleportTo처럼 새 자리에 맞추고 멈춘다.
+                weaponBody.position = weaponBody.transform.position;
+                weaponBody.rotation = weaponBody.transform.rotation;
+                if (!weaponBody.isKinematic)
+                {
+                    weaponBody.linearVelocity = Vector3.zero;
+                    weaponBody.angularVelocity = Vector3.zero;
+                }
             }
+            Physics.SyncTransforms();
 
             Transform rotPart = FindChildHelper(targetPuppet, "spine");
             if (rotPart != null && rotPart.TryGetComponent<ConfigurableJoint>(out var joint))

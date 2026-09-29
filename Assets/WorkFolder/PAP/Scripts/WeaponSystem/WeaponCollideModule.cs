@@ -25,6 +25,7 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         [SerializeField] private float hitCooldown = 0.25f;
         private float _damageSpeed = 8f;
         private Rigidbody _swordRb;
+        private Rigidbody _strikeBody;
         private Collider[] _swordCol;
         private readonly Dictionary<IDamageable, float> _lastHitTime = new Dictionary<IDamageable, float>();
         private bool _isEnabled;
@@ -48,36 +49,79 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
         {
             _swordRb = GetComponent<Rigidbody>();
             _swordCol = GetComponentsInChildren<Collider>();
+            _strikeBody = _swordRb;
+
+            // 날("Weapon" 태그 콜라이더)이 무기 루트가 아닌 다른 Rigidbody에 달린 무기(철퇴 공)는
+            // 그 부분이 실제로 때리는 곳이다. 충돌은 그 Rigidbody 쪽으로만 오므로 중계기를 붙이고,
+            // 휘두르는 속도도 그 부분으로 잰다.
+            foreach (Collider part in _swordCol)
+            {
+                Rigidbody body = part.attachedRigidbody;
+                if (body == null || body == _swordRb)
+                    continue;
+
+                if (part.CompareTag("Weapon"))
+                    _strikeBody = body;
+
+                if (!body.TryGetComponent(out WeaponHitRelay relay))
+                    relay = body.gameObject.AddComponent<WeaponHitRelay>();
+                relay.Bind(this);
+            }
         }
 
         private void Start()
         {
+            TryIgnoreOwnerCollisions();
+        }
+
+        // 무기는 스폰된 뒤 Player.Render에서 플레이어 밑으로 붙는다. Start가 그보다 먼저 불리면
+        // 주인을 못 찾아 자기 몸과의 충돌을 끄지 못하고, 휘두를 때마다 자기 몸에 맞아 튄다.
+        // 주인을 찾을 때까지 매 물리 스텝 다시 시도한다.
+        private bool TryIgnoreOwnerCollisions()
+        {
+            if (_owner != null)
+                return true;
+
             _owner = GetComponentInParent<Player>();
-            foreach (Collider col in _owner.GetComponentsInChildren<Collider>())
+            if (_owner == null)
+                return false;
+
+            foreach (Collider col in _owner.GetComponentsInChildren<Collider>(true))
             {
                 foreach (Collider swordCol in _swordCol)
                 {
-                    Physics.IgnoreCollision(swordCol, col,true);
+                    if (swordCol != null && col != null && swordCol != col)
+                        Physics.IgnoreCollision(swordCol, col, true);
                 }
             }
+
+            return true;
         }
 
-        
+
         private void FixedUpdate()
         {
-            _lastSwingSpeed = _swordRb.linearVelocity.magnitude;
+            if (!TryIgnoreOwnerCollisions())
+                return;
+
+            _lastSwingSpeed = _strikeBody.linearVelocity.magnitude;
         }
-        
-        
-        
+
+
+
         private void OnCollisionEnter(Collision collision)
+        {
+            HandleCollision(collision);
+        }
+
+        public void HandleCollision(Collision collision)
         {
             if (_owner == null || !_owner.HasInputAuthority) return;
             var contact = collision.contacts[0];
             if (contact.otherCollider.CompareTag("Weapon") && contact.thisCollider.CompareTag("Weapon"))
             {
                 if (_owner.HasInputAuthority)
-                    BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Clash, _swordRb.worldCenterOfMass, _owner.Runner);
+                    BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Clash, _strikeBody.worldCenterOfMass, _owner.Runner);
             }
             if (collision.transform.CompareTag("Player") && contact.thisCollider.CompareTag("Weapon"))
             {
@@ -95,13 +139,13 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
                     data.ScoreMultiplier = hitBox.Part.DamageMultiplier;
                     hitBox.Damageable.RpcTakeDamage(data);
                     if (_owner.HasInputAuthority)
-                        BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _swordRb.worldCenterOfMass, _owner.Runner);
+                        BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Hit, _strikeBody.worldCenterOfMass, _owner.Runner);
                     if (data.Damage >= 25)
                     {
                         CritEffectSpawnRequest request = new CritEffectSpawnRequest(collision.contacts[0].otherCollider.transform.position, data.Damage/10f);
                         Factories.GetFactory<CritEffect, CritEffectSpawnRequest>().Create(request);
                         if (_owner.HasInputAuthority)
-                            BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _swordRb.worldCenterOfMass, _owner.Runner);
+                            BK_SoundManger.instance.PlaySfx(SfxSoundEnum.Crit, _strikeBody.worldCenterOfMass, _owner.Runner);
                     }
                     if (ServiceLocator.TryGet(out IEffectManager effectManager))
                         effectManager.PlayEffect(contact.point, Quaternion.LookRotation(contact.normal).eulerAngles);

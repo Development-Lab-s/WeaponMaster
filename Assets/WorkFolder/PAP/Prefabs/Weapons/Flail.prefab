@@ -1208,6 +1208,7 @@ GameObject:
   - component: {fileID: 4357136921983393856}
   - component: {fileID: 3117468835469573381}
   - component: {fileID: 3417706045296983878}
+  - component: {fileID: 4827361950184726531}
   m_Layer: 7
   m_Name: Flail
   m_TagString: Untagged
@@ -1343,8 +1344,27 @@ MonoBehaviour:
   EnableInterpolation: 1
   Flags: 262146
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 4827361950184726531}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &4827361950184726531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6732451604105544912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd8b41d806990c44a236d3c53c9d963, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.FlailRope
+  ball: {fileID: 67386730395076794}
+  ballMass: 1.5
+  ballLinearDamping: 0.05
+  ballAngularDamping: 0.5
+  handleInertia: 0.02
+  sagAmount: 1
 --- !u!1 &7214132422375497674
 GameObject:
   m_ObjectHideFlags: 0
