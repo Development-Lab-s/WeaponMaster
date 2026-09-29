@@ -21,52 +21,6 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public int Kills;
     }
 
-    [Serializable]
-    public struct ChessBalance : INetworkStruct
-    {
-        [Min(1f), Tooltip("붕괴와 복원을 반복하는 전체 주기(초)")]
-        public float CycleSeconds;
-        [Min(0f), Tooltip("각 주기 시작 후 첫 타일 예고까지 대기(초)")]
-        public float FirstWarningSeconds;
-        [Min(0.1f), Tooltip("다음 타일 묶음의 예고를 시작하는 간격(초)")]
-        public float BatchIntervalSeconds;
-        [Min(1), Tooltip("한 번에 떨어뜨릴 타일 수")]
-        public int TilesPerBatch;
-        [Range(0.05f, 0.9f), Tooltip("동시에 사라질 수 있는 최대 타일 비율")]
-        public float MaxMissingRatio;
-        [Min(0.1f), Tooltip("흔들리는 예고 시간. 이 동안은 밟을 수 있음")]
-        public float WarningSeconds;
-        [Min(0.1f), Tooltip("실제로 아래로 내려가는 트윈 시간")]
-        public float FallSeconds;
-        [Min(1f), Tooltip("주기 시작 기준 전체 타일을 복원하는 시점(초)")]
-        public float RestoreSeconds;
-        [Min(0.1f), Tooltip("빈 칸들의 복원 시작을 순서대로 분산하는 시간")]
-        public float RestoreSpreadSeconds;
-        [Min(0.1f), Tooltip("각 타일이 올라와 제자리에 채워지는 시간")]
-        public float RestoreRiseSeconds;
-        [Min(0f), Tooltip("스폰 지점 주변 보호 반경(월드 단위). 이 영역과 겹치는 타일은 낙하하지 않음")]
-        public float SpawnProtectionRadius;
-
-        public ChessBalance Validated()
-        {
-            var value = this;
-            value.SpawnProtectionRadius = Mathf.Max(0f, value.SpawnProtectionRadius);
-            value.FirstWarningSeconds = Mathf.Max(0f, value.FirstWarningSeconds);
-            value.BatchIntervalSeconds = Mathf.Max(0.1f, value.BatchIntervalSeconds);
-            value.TilesPerBatch = Mathf.Clamp(value.TilesPerBatch, 1, 81);
-            value.MaxMissingRatio = Mathf.Clamp(value.MaxMissingRatio, 0.05f, 0.9f);
-            value.WarningSeconds = Mathf.Max(0.1f, value.WarningSeconds);
-            value.FallSeconds = Mathf.Max(0.1f, value.FallSeconds);
-            value.RestoreSeconds = Mathf.Max(value.RestoreSeconds,
-                value.FirstWarningSeconds + value.WarningSeconds + value.FallSeconds + 0.1f);
-            value.RestoreSpreadSeconds = Mathf.Max(0.1f, value.RestoreSpreadSeconds);
-            value.RestoreRiseSeconds = Mathf.Max(0.1f, value.RestoreRiseSeconds);
-            value.CycleSeconds = Mathf.Max(value.CycleSeconds,
-                value.RestoreSeconds + value.RestoreSpreadSeconds + value.RestoreRiseSeconds + 1f);
-            return value;
-        }
-    }
-
     [RequireComponent(typeof(NetworkObject), typeof(MapService), typeof(SpawnService))]
     public sealed class RoundSystem : NetworkBehaviour, IRoundSystem
     {
@@ -83,14 +37,11 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [Networked] private int FallenTileCount { get; set; }
         [Networked] private double ChessRoundStart { get; set; }
         [Networked] private int ChessCycleNumber { get; set; }
-        [Header("Chess Balance (applied next round)")]
-        [SerializeField] private ChessBalance chessBalance = new ChessBalance
-        {
-            CycleSeconds = 44f, FirstWarningSeconds = 10f, BatchIntervalSeconds = 2f,
-            TilesPerBatch = 2, MaxMissingRatio = 0.3f, WarningSeconds = 2f,
-            FallSeconds = 1.2f, RestoreSeconds = 36f, RestoreSpreadSeconds = 6f, RestoreRiseSeconds = 0.8f, SpawnProtectionRadius = 3f
-        };
-        [Networked] private ChessBalance ActiveChessBalance { get; set; }
+        private const float ChessCycleSeconds = 20f;
+        private const float ChessFirstFallSeconds = 2f;
+        private const float ChessRestoreSeconds = 12f;
+        internal const float TileFallInterval = 0.5f;
+        internal const int TilesPerFall = 4;
         [Networked, Capacity(64)] private NetworkDictionary<PlayerRef, RoundScore> Scores => default;
         [Networked, Capacity(64)] private NetworkDictionary<PlayerRef, int> MapReady => default;
 
@@ -183,7 +134,6 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             Scores.Clear();
             ChessSeed = UnityEngine.Random.Range(1, int.MaxValue);
             FallenTileCount = 0;
-            ActiveChessBalance = chessBalance.Validated();
             ChessRoundStart = Runner.SimulationTime;
             ChessCycleNumber = 0;
             RoundNumber++;
@@ -201,33 +151,29 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         private void UpdateChessboardCycle()
         {
             if (appliedRevision != MapRevision || maps.ChessTileCount == 0) return;
-            ChessBalance balance = ActiveChessBalance;
             double elapsed = Math.Max(0d, Runner.SimulationTime - ChessRoundStart);
-            int cycle = (int)(elapsed / balance.CycleSeconds);
+            int cycle = (int)(elapsed / ChessCycleSeconds);
             if (ChessCycleNumber != cycle)
             {
                 ChessCycleNumber = cycle;
                 ChessSeed = UnityEngine.Random.Range(1, int.MaxValue);
             }
-            double phase = elapsed - cycle * balance.CycleSeconds;
-            int limit = Mathf.Min(maps.GetFallableChessTileCount(balance.SpawnProtectionRadius),
-                Mathf.Max(1, Mathf.FloorToInt(maps.ChessTileCount * balance.MaxMissingRatio)));
-            // Stop scheduling early enough for the last warning and fall to finish before restoration.
-            double lastWarning = balance.RestoreSeconds - balance.WarningSeconds - balance.FallSeconds;
-            double schedulePhase = Math.Min(phase, lastWarning);
-            FallenTileCount = phase < balance.FirstWarningSeconds ? 0 :
-                Math.Min(limit, ((int)((schedulePhase - balance.FirstWarningSeconds) / balance.BatchIntervalSeconds) + 1) * balance.TilesPerBatch);
+            double phase = elapsed - cycle * ChessCycleSeconds;
+            // Restore at 12s, then leave a safe interval before the next collapse.
+            // Six complete collapse/restore cycles occur in a 120-second round.
+            int limit = Mathf.Max(1, Mathf.FloorToInt(maps.ChessTileCount * 0.75f));
+            FallenTileCount = phase < ChessFirstFallSeconds || phase >= ChessRestoreSeconds ? 0 :
+                Math.Min(limit, ((int)((phase - ChessFirstFallSeconds) / TileFallInterval) + 1) * TilesPerFall);
             ApplyChessboardState();
         }
 
         private void ApplyChessboardState(bool rendering = false)
         {
-            if (appliedRevision != MapRevision || RoundNumber == 0) return;
-            ChessBalance balance = ActiveChessBalance;
+            if (appliedRevision != MapRevision) return;
             double clock = rendering ? Runner.LocalRenderTime : Runner.SimulationTime;
             float fallAge = (float)(clock - ChessRoundStart -
-                ChessCycleNumber * balance.CycleSeconds - balance.FirstWarningSeconds);
-            maps.ApplyChessTiles(ChessSeed, FallenTileCount, fallAge, balance);
+                ChessCycleNumber * ChessCycleSeconds - ChessFirstFallSeconds);
+            maps.ApplyChessTiles(ChessSeed, FallenTileCount, fallAge);
         }
 
         public override void Render()
