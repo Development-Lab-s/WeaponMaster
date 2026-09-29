@@ -20,13 +20,13 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientSkyColor: {r: 0.38039216, g: 0.5019608, b: 0.6509804, a: 1}
+  m_AmbientEquatorColor: {r: 0.2901961, g: 0.32156864, b: 0.38039216, a: 1}
+  m_AmbientGroundColor: {r: 0.1882353, g: 0.16862746, b: 0.14509805, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 4861d66476204c9ea68f9c9edf325e35, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 410087040}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6739,6 +6739,55 @@ Transform:
   - {fileID: 1304281428}
   - {fileID: 839694096}
   m_Father: {fileID: 660013130}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &614300759
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 614300761}
+  - component: {fileID: 614300760}
+  m_Layer: 0
+  m_Name: Global Volume_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &614300760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614300759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 3e7c8be7327a85d4b94fe3b44b5ff1b1, type: 2}
+--- !u!4 &614300761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614300759}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1465.5037, y: 920.9845, z: -356.07294}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &639055971
 GameObject:
@@ -17550,6 +17599,8 @@ MonoBehaviour:
   lanceSoundClips:
   - {fileID: 8300000, guid: d6aebe8a5f17fec47bd17301e083ebcd, type: 3}
   - {fileID: 8300000, guid: 1b3adb873b969d04592d14ef6afa8bd5, type: 3}
+  maceSoundClips: []
+  sickleSoundClips: []
   walkSoundClips:
   - {fileID: 8300000, guid: 1a259e7b3b20864459100509865359c8, type: 3}
   serverEntrySoundClips:
@@ -17581,6 +17632,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e3204c0498c0e1b41a32939bdc4f0993, type: 3}
   drawSoundClips: []
   killSoundClips: []
+  powderSoundClips: []
   sfxPrefab: {fileID: 876470313289951931, guid: b9e125b2add1e4d49b252d6df3301753, type: 3}
   sfxPrefabLocal: {fileID: -5049269069515123218, guid: 4c16bea2b6b5c634db1f1d7a8c14c7ba, type: 3}
   bgmSource: {fileID: 1879776281}
@@ -20184,3 +20236,4 @@ SceneRoots:
   - {fileID: 1879776283}
   - {fileID: 858847960}
   - {fileID: 1447884377}
+  - {fileID: 614300761}
