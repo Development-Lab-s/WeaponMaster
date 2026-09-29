@@ -78,7 +78,8 @@ namespace WorkFolder.KJS._01.Scripts
                 {
                     Player targetPlayer = Runner.GetPlayerObject(data.Owner).GetComponent<Player>();
                     Die(data.DeathMent.ToString(),targetPlayer.playerName.ToString());
-                    targetPlayer.RpcKilled((int)(50 * data.ScoreMultiplier));
+                    targetPlayer.RpcKilled((int)(50 * data.ScoreMultiplier) + _player.KillStreak * 10);
+                    _ = (Owner as Player)?.UpdateScoreDownAsync();
                 }
                 else
                     Die(data.DeathMent.ToString(),"");

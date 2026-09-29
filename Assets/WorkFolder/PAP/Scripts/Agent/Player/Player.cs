@@ -442,6 +442,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             KillStreak += 1;
         }
 
+        public async Task UpdateScoreDownAsync()
+        {
+            uint currentScore = await  ServiceLocator.Get<IDataStoreService>()
+                .GetAsync<uint>(nameof(PlayerDataStore.Score));
+            await  ServiceLocator.Get<IDataStoreService>()
+                .SetAsync(nameof(PlayerDataStore.Score), currentScore - 50);
+        }
+
 
         private void HandleAttack(bool isAttack) => WeaponModule.EquipWeapon(isAttack);
 
