@@ -165,10 +165,12 @@
                     }
                     var faceController = faceDrawPanel.GetComponentInChildren<FaceSaveController>(true);
                     faceController.SetPreviewSkin(BodyColor, _bodyMaterials[BodyColor]);
-                    await LobbyFaceDrawFlow.OpenAsync(gameObject.scene, faceDrawPanel);
-                    if (this == null) return;
-                    OnReturnFromFaceDraw?.Invoke();
-                    await RefreshSavedFace();
+                    await LobbyFaceDrawFlow.OpenAsync(gameObject.scene, faceDrawPanel, async () =>
+                    {
+                        if (this == null) return;
+                        OnReturnFromFaceDraw?.Invoke();
+                        await RefreshSavedFace();
+                    });
                 }
                 catch (Exception ex)
                 {
