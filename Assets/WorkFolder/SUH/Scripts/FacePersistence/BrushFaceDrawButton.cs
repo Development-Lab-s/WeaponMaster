@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -11,13 +12,69 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
     public sealed class BrushFaceDrawButton : MonoBehaviour
     {
         [SerializeField] private CharacterEditorUI characterEditor;
+        [SerializeField, Min(0.01f)] private float hoverDuration = 0.2f;
         private BoxCollider hitBox;
         private readonly List<RaycastResult> uiHits = new();
+        private readonly List<(Renderer renderer, int slot, int color, int emission)> outlines = new();
+        private MaterialPropertyBlock colorBlock;
+        private Tween hoverTween;
+        private Color outlineColor = Color.black;
+        private bool hovered;
 
         private void Awake()
         {
             hitBox = GetComponent<BoxCollider>();
             FitCollider();
+            colorBlock = new MaterialPropertyBlock();
+            foreach (var renderer in GetComponentsInChildren<Renderer>(true))
+            {
+                var materials = renderer.sharedMaterials;
+                for (int slot = 0; slot < materials.Length; slot++)
+                {
+                    var material = materials[slot];
+                    if (material == null || material.name.IndexOf("MatOutline", System.StringComparison.OrdinalIgnoreCase) < 0)
+                        continue;
+                    // glTF uses baseColorFactor/emissiveFactor rather than Unity's _Color.
+                    string color = material.HasProperty("baseColorFactor") ? "baseColorFactor" :
+                        material.HasProperty("_Color") ? "_Color" : "_BaseColor";
+                    if (!material.HasProperty(color)) continue;
+                    int emission = material.HasProperty("emissiveFactor") ? Shader.PropertyToID("emissiveFactor") :
+                        material.HasProperty("_EmissionColor") ? Shader.PropertyToID("_EmissionColor") : -1;
+                    outlines.Add((renderer, slot, Shader.PropertyToID(color), emission));
+                }
+            }
+            ApplyOutlineColor(Color.clear);
+        }
+
+        private void ApplyOutlineColor(Color color)
+        {
+            outlineColor = color;
+            foreach (var outline in outlines)
+            {
+                if (outline.renderer == null) continue;
+                colorBlock.Clear();
+                outline.renderer.GetPropertyBlock(colorBlock, outline.slot);
+                colorBlock.SetColor(outline.color, color * 3f);
+                outline.renderer.SetPropertyBlock(colorBlock, outline.slot);
+            }
+        }
+
+        private void SetHovered(bool value)
+        {
+            if (hovered == value) return;
+            hovered = value;
+            hoverTween?.Kill();
+            hoverTween = DOTween.To(() => outlineColor, ApplyOutlineColor,
+                    value ? Color.white : Color.black, hoverDuration)
+                .SetEase(Ease.OutCubic).SetUpdate(true);
+        }
+
+        private void OnDisable()
+        {
+            hoverTween?.Kill();
+            hoverTween = null;
+            hovered = false;
+            ApplyOutlineColor(Color.black);
         }
 
         public void FitCollider()
@@ -45,10 +102,21 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
 
         private void Update()
         {
-            if (LobbyFaceDrawFlow.IsOpen || characterEditor == null ||
-                Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame) return;
+            bool pointingAtBrush = IsPointingAtBrush();
+            SetHovered(pointingAtBrush);
+            if (pointingAtBrush && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                characterEditor.OpenFaceDraw();
+                SetHovered(false);
+            }
+        }
+
+        private bool IsPointingAtBrush()
+        {
+            if (!Application.isFocused || LobbyFaceDrawFlow.IsOpen || characterEditor == null ||
+                Mouse.current == null) return false;
             var camera = Camera.main;
-            if (camera == null) return;
+            if (camera == null) return false;
             var point = Mouse.current.position.ReadValue();
             // Ignore actual UI controls, while allowing clicks through decorative fullscreen images.
             if (EventSystem.current != null)
@@ -56,11 +124,10 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
                 uiHits.Clear();
                 EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, uiHits);
                 foreach (var hit in uiHits)
-                    if (hit.gameObject.GetComponentInParent<Selectable>() != null) return;
+                    if (hit.gameObject.GetComponentInParent<Selectable>() != null) return false;
             }
-            if (Physics.Raycast(camera.ScreenPointToRay(point), out var target, camera.farClipPlane,
-                    camera.cullingMask, QueryTriggerInteraction.Collide) && target.collider == hitBox)
-                characterEditor.OpenFaceDraw();
+            return Physics.Raycast(camera.ScreenPointToRay(point), out var target, camera.farClipPlane,
+                camera.cullingMask, QueryTriggerInteraction.Collide) && target.collider == hitBox;
         }
     }
 }
