@@ -21,8 +21,10 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
 
         private ChessboardTiles chessboard;
         public int ChessTileCount => chessboard?.Count ?? 0;
-        public void ApplyChessTiles(int seed, int fallenCount, float elapsedSinceFirstFall)
-            => chessboard?.Apply(seed, fallenCount, elapsedSinceFirstFall);
+        public int GetFallableChessTileCount(float protectionRadius)
+            => chessboard?.GetFallableCount(protectionRadius) ?? 0;
+        public void ApplyChessTiles(int seed, int fallenCount, float elapsedSinceFirstFall, ChessBalance balance)
+            => chessboard?.Apply(seed, fallenCount, elapsedSinceFirstFall, balance);
 
         private void PrepareMap(MapDefinition map)
         {
@@ -121,8 +123,12 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         private readonly Collider[][] colliders;
         private readonly Quaternion[] rotations;
         private readonly Sequence[] animations;
-        private const float WarningDuration = 1f;
-        private const float FallDuration = 1.2f;
+        private ChessBalance activeBalance;
+        private readonly Bounds[] originalBounds;
+        private readonly Vector3[] spawnPositions;
+        private bool[] protectedTiles;
+        private float cachedProtectionRadius = -1f;
+        private int fallableCount;
         private const float WarningDip = 0.12f;
         private const float FallDistance = 60f;
         private int[] order;
@@ -132,10 +138,9 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public static ChessboardTiles Create(MapDefinition map)
         {
             if (map == null) return null;
-            Transform board = map.GetComponentsInChildren<Transform>(true)
-                .FirstOrDefault(t => t.name == "Chessboard_subtract_object");
-            if (board == null) return null;
-            Transform[] tiles = board.GetComponentsInChildren<Transform>(true)
+            // Model replacements acquire names such as "Chessboard_subtract_object 1".
+            // Recognize the tile structure inside the active map, not an imported root filename.
+            Transform[] tiles = map.GetComponentsInChildren<Transform>(true)
                 .Where(t => Regex.IsMatch(t.name, @"^Tile_R\d+_C\d+_(Black|White)$"))
                 .OrderBy(t => t.name, StringComparer.Ordinal).ToArray();
             if (tiles.Length == 0) return null;
@@ -145,6 +150,10 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         private ChessboardTiles(MapDefinition map, Transform[] tileTransforms)
         {
             tiles = tileTransforms;
+            spawnPositions = map.SpawnPoints == null ? Array.Empty<Vector3>() : map.SpawnPoints
+                .Where(point => point != null).Select(point => point.position).ToArray();
+            if (spawnPositions.Length == 0) spawnPositions = new[] { map.transform.position };
+            originalBounds = new Bounds[tiles.Length];
             origins = tiles.Select(t => t.position).ToArray();
             rotations = tiles.Select(t => t.rotation).ToArray();
             animations = new Sequence[tiles.Length];
@@ -162,12 +171,21 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 colliders[i] = tiles[i].GetComponentsInChildren<Collider>(true);
             }
             Physics.SyncTransforms();
+            // Snapshot before any animation; moving/hidden collider bounds must not affect protection.
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                Bounds bounds = new Bounds(origins[i], Vector3.zero);
+                foreach (Collider collider in colliders[i])
+                    if (collider != null && !collider.isTrigger) bounds.Encapsulate(collider.bounds);
+                originalBounds[i] = bounds;
+            }
             // Remove only the old broad supporting boxes, preserving perimeter and death triggers.
             foreach (BoxCollider box in map.GetComponentsInChildren<BoxCollider>(true))
             {
                 if (box.isTrigger || tiles.Any(t => box.transform.IsChildOf(t))) continue;
                 if (!box.GetComponentsInParent<Transform>(true).Any(t =>
-                        t.name == "chessboard_collider" || t.name == "Chessboard_subtract_object")) continue;
+                        t.name == "chessboard_collider" ||
+                        t.name.StartsWith("Chessboard_subtract_object", StringComparison.Ordinal))) continue;
                 Bounds bounds = box.bounds;
                 int supportedTiles = origins.Count(p => p.x > bounds.min.x && p.x < bounds.max.x &&
                                                        p.z > bounds.min.z && p.z < bounds.max.z);
@@ -176,14 +194,41 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             Physics.SyncTransforms();
         }
 
-        private Sequence CreateAnimation(int index)
+        public int GetFallableCount(float radius)
+        {
+            radius = Mathf.Max(0f, radius);
+            if (protectedTiles != null && cachedProtectionRadius == radius) return fallableCount;
+            cachedProtectionRadius = radius;
+            protectedTiles = new bool[Count];
+            fallableCount = 0;
+            for (int i = 0; i < Count; i++)
+            {
+                Bounds bounds = originalBounds[i];
+                foreach (Vector3 spawn in spawnPositions)
+                {
+                    // Horizontal distance to the tile footprint, not its center or spawn height.
+                    float dx = Mathf.Max(bounds.min.x - spawn.x, 0f, spawn.x - bounds.max.x);
+                    float dz = Mathf.Max(bounds.min.z - spawn.z, 0f, spawn.z - bounds.max.z);
+                    if (dx * dx + dz * dz <= radius * radius + 0.0001f)
+                    {
+                        protectedTiles[i] = true;
+                        break;
+                    }
+                }
+                if (!protectedTiles[i]) fallableCount++;
+            }
+            order = null;
+            return fallableCount;
+        }
+
+        private Sequence CreateAnimation(int index, float restoreAge)
         {
             Transform tile = tiles[index];
             Vector3 origin = origins[index];
             Quaternion rotation = rotations[index];
             Sequence sequence = DOTween.Sequence().SetAutoKill(false).Pause();
             // Tween 1: hesitate, wobble, and settle slightly. Deterministic, unlike random shake.
-            sequence.Append(DOVirtual.Float(0f, 1f, WarningDuration, progress =>
+            sequence.Append(DOVirtual.Float(0f, 1f, activeBalance.WarningSeconds, progress =>
             {
                 if (tile == null) return;
                 float wobble = Mathf.Sin(progress * Mathf.PI * 8f) * Mathf.Sin(progress * Mathf.PI);
@@ -191,12 +236,18 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 tile.rotation = rotation * Quaternion.Euler(wobble * 2.5f, 0f, wobble * 1.5f);
             }).SetEase(Ease.Linear));
             // Tween 2: accelerate downwards only after the warning finishes.
-            sequence.Append(DOVirtual.Float(0f, 1f, FallDuration, progress =>
+            sequence.Append(DOVirtual.Float(0f, 1f, activeBalance.FallSeconds, progress =>
             {
                 if (tile == null) return;
                 tile.position = origin + Vector3.down * (WarningDip + FallDistance * progress);
                 tile.rotation = rotation * Quaternion.Euler(progress * 12f, 0f, progress * 6f);
             }).SetEase(Ease.InCubic));
+            sequence.AppendInterval(Mathf.Max(0f, restoreAge - activeBalance.WarningSeconds - activeBalance.FallSeconds));
+            sequence.Append(DOVirtual.Float(0f, 1f, activeBalance.RestoreRiseSeconds, progress =>
+            {
+                if (tile == null) return;
+                tile.SetPositionAndRotation(origin + Vector3.down * (3f * (1f - progress)), rotation);
+            }).SetEase(Ease.OutCubic));
             return sequence;
         }
 
@@ -209,16 +260,25 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             }
         }
 
-        public void Apply(int seed, int fallenCount, float elapsedSinceFirstFall)
+        public void Apply(int seed, int fallenCount, float elapsedSinceFirstFall, ChessBalance balance)
         {
+            if (activeBalance.WarningSeconds != balance.WarningSeconds || activeBalance.FallSeconds != balance.FallSeconds ||
+                activeBalance.RestoreSeconds != balance.RestoreSeconds ||
+                activeBalance.RestoreSpreadSeconds != balance.RestoreSpreadSeconds ||
+                activeBalance.RestoreRiseSeconds != balance.RestoreRiseSeconds)
+                Dispose();
+            activeBalance = balance;
+            GetFallableCount(balance.SpawnProtectionRadius);
             if (order == null || orderSeed != seed)
             {
                 Dispose();
                 orderSeed = seed;
-                order = Enumerable.Range(0, Count).ToArray();
+                // Keep protected tiles after the selectable prefix, permanently on the board.
+                order = Enumerable.Range(0, Count).Where(i => !protectedTiles[i])
+                    .Concat(Enumerable.Range(0, Count).Where(i => protectedTiles[i])).ToArray();
                 // Explicit integer PRNG: identical shuffle on Mono/IL2CPP and every client.
                 uint random = unchecked((uint)seed) | 1u;
-                for (int i = Count - 1; i > 0; i--)
+                for (int i = fallableCount - 1; i > 0; i--)
                 {
                     random ^= random << 13;
                     random ^= random >> 17;
@@ -227,7 +287,8 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     int swap = order[i]; order[i] = order[j]; order[j] = swap;
                 }
             }
-            int count = Mathf.Clamp(fallenCount, 0, Count);
+            int count = Mathf.Clamp(fallenCount, 0, fallableCount);
+            int maximumMissing = Mathf.Min(fallableCount, Mathf.Max(1, Mathf.FloorToInt(Count * activeBalance.MaxMissingRatio)));
             for (int i = 0; i < Count; i++)
             {
                 int index = order[i];
@@ -236,9 +297,14 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 bool fallen = i < count;
                 // Every batch has its own age, so rapid consecutive falls animate together.
                 float age = Mathf.Max(0f, elapsedSinceFirstFall -
-                    (i / RoundSystem.TilesPerFall) * RoundSystem.TileFallInterval);
-                bool visible = !fallen || age < WarningDuration + FallDuration;
-                if (!fallen)
+                    (i / activeBalance.TilesPerBatch) * activeBalance.BatchIntervalSeconds);
+                float restoreAge = activeBalance.RestoreSeconds - activeBalance.FirstWarningSeconds +
+                    i * activeBalance.RestoreSpreadSeconds / Mathf.Max(1, maximumMissing - 1) -
+                    (i / activeBalance.TilesPerBatch) * activeBalance.BatchIntervalSeconds;
+                bool restoring = fallen && age >= restoreAge;
+                bool restored = restoring && age >= restoreAge + activeBalance.RestoreRiseSeconds;
+                bool visible = !fallen || age < activeBalance.WarningSeconds + activeBalance.FallSeconds || restoring;
+                if (!fallen || restored)
                 {
                     animations[index]?.Kill();
                     animations[index] = null;
@@ -246,7 +312,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 }
                 else if (visible)
                 {
-                    if (animations[index] == null) animations[index] = CreateAnimation(index);
+                    if (animations[index] == null) animations[index] = CreateAnimation(index, restoreAge);
                     // Seek a paused sequence from the shared clock, including for late joiners.
                     animations[index].Goto(age, false);
                 }
@@ -257,7 +323,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     tile.position = origins[index] + Vector3.down * (WarningDip + FallDistance);
                 }
                 foreach (Collider collider in colliders[index])
-                    if (collider != null) collider.enabled = !fallen || age < WarningDuration;
+                    if (collider != null) collider.enabled = !fallen || restored || age < activeBalance.WarningSeconds;
                 if (tile.gameObject.activeSelf != visible) tile.gameObject.SetActive(visible);
             }
             Physics.SyncTransforms();
