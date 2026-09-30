@@ -107,6 +107,15 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
                 .ToList();
 
             await Task.WhenAll(tasks);
+
+            // 기다리는 동안 나간 플레이어가 있을 수 있어 다시 찾아서 목록을 맞춘다.
+            var alivePlayerIds = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(plr => plr.Object != null && plr.Object.IsValid)
+                .Select(plr => plr.playerId.ToString())
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToHashSet();
+            localLeaderboard.RetainOnly(alivePlayerIds);
+
             UpdateLeaderboard();
         }
 

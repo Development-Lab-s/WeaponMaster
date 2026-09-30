@@ -280,7 +280,12 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
-            ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
+            // 상태가 이미 없으면 playerId를 읽을 수 없다. 이때는 리더보드 주기 갱신이 정리한다.
+            if (!hasState)
+                return;
+
+            if (ServiceLocator.TryGet(out ILeaderboardGiver giver))
+                giver.RemovePlayer(playerId.Value);
         }
 
         // 무기 하나일 때는 부위 데이터의 각도 그대로. 두 개일 때는 달린 쪽(오프셋의 좌우)으로

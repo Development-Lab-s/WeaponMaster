@@ -27254,7 +27254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 528.36346}
+  m_AnchoredPosition: {x: 0, y: 528.36316}
   m_SizeDelta: {x: 0, y: 1275.3688}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &782535740
@@ -39364,8 +39364,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209252343}
   m_HandleRect: {fileID: 209252342}
   m_Direction: 3
-  m_Value: -0.0000009241398
-  m_Size: 0.5856932
+  m_Value: -0.0000004620699
+  m_Size: 0.5857175
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -46411,6 +46411,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.FacePersistence.BrushFaceDrawButton
   characterEditor: {fileID: 628117237}
   hoverDuration: 0.2
+  checkTarget: {fileID: 1855442423}
 --- !u!65 &1430343831
 BoxCollider:
   m_ObjectHideFlags: 0

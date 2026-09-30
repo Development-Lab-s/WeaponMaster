@@ -99,6 +99,22 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             return dbounce;
         }
 
+        // 지금 방에 있는 플레이어만 남긴다. 나간 순간에 진행 중이던 갱신이 끝나며 다시 추가된
+        // 항목도 이걸로 지워진다.
+        public void RetainOnly(HashSet<string> alivePlayerIds)
+        {
+            bool changed;
+            lock (_lock)
+            {
+                changed = entries.RemoveAll(e => !alivePlayerIds.Contains(e.PlayerId)) > 0;
+            }
+
+            if (changed)
+            {
+                LeaderboardChanged?.Invoke();
+            }
+        }
+
         public LocalLeaderboardEntry GetEntry(string playerId)
         {
             lock (_lock)

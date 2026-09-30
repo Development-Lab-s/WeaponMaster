@@ -13,6 +13,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
     {
         [SerializeField] private CharacterEditorUI characterEditor;
         [SerializeField, Min(0.01f)] private float hoverDuration = 0.2f;
+        [SerializeField] private GameObject checkTarget;
         private BoxCollider hitBox;
         private readonly List<RaycastResult> uiHits = new();
         private readonly List<(Renderer renderer, int slot, int color, int emission)> outlines = new();
@@ -113,7 +114,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         {
             bool pointingAtBrush = IsPointingAtBrush();
             SetHovered(pointingAtBrush);
-            if (pointingAtBrush && Mouse.current.leftButton.wasPressedThisFrame)
+            if (pointingAtBrush && Mouse.current.leftButton.wasPressedThisFrame && checkTarget.activeSelf)
             {
                 PlayClick();
             }
