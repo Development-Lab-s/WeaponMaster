@@ -10,6 +10,7 @@ using WorkFolder.SUH.Scripts.Leaderboard.Global.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
 using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
+using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
@@ -35,40 +36,50 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
         private string leaderBoardId;
         private ushort offset;
         private ushort limit;
+        private readonly ServerRequestCache<LeaderboardScoresPage> requests = new ServerRequestCache<LeaderboardScoresPage>(10);
         
-        private void Start()
+        private void Start() => Configure();
+
+        private void Configure()
         {
-            if (!leaderboardSettingSO)
-                return;
-            if (leaderboardSettingSO.RefreshIntervalSeconds == null)
-                return;
-            leaderBoardId = leaderboardSettingSO.LeaderboardId == null ? "Global_Leaderboard" : leaderboardSettingSO.LeaderboardId ;
-            offset = (ushort)(leaderboardSettingSO.LeaderboardFindOffset == null ? 0 : leaderboardSettingSO.LeaderboardFindOffset);
-            limit = (ushort)(leaderboardSettingSO.MaxVisibleRank == null ? 0 : leaderboardSettingSO.MaxVisibleRank);
+            leaderBoardId = leaderboardSettingSO != null && !string.IsNullOrWhiteSpace(leaderboardSettingSO.LeaderboardId)
+                ? leaderboardSettingSO.LeaderboardId : "Global_Leaderboard";
+            offset = (ushort)Mathf.Clamp(leaderboardSettingSO != null ? leaderboardSettingSO.LeaderboardFindOffset : 0, 0, ushort.MaxValue);
+            limit = (ushort)Mathf.Clamp(leaderboardSettingSO != null ? leaderboardSettingSO.MaxVisibleRank : 10, 1, 100);
         }
         public async void GetTopRanker()
         {
-            await ServiceLocator.Get<ILeaderboardSender>().TryUpdatePlayer();
+            if (!requests.CanStart) return;
             try
             {
-                var scoresResponse =
-                    await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId, new GetScoresOptions{Offset = offset, Limit = limit, IncludeMetadata = true});
+                Configure(); // Also valid when a UnityEvent fires before Start.
+                var scoresResponse = await requests.GetOrRun(async () =>
+                {
+                    if (context == null || leaderboardTemplate == null)
+                        throw new InvalidOperationException("리더보드 UI 연결이 없습니다.");
+                    await UgsSignIn.EnsureSignedInAsync();
+                    var sender = ServiceLocator.Get<ILeaderboardSender>();
+                    if (sender == null) throw new InvalidOperationException("리더보드 저장 서비스가 준비되지 않았습니다.");
+                    await sender.TryUpdatePlayer();
+                    return await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId,
+                        new GetScoresOptions { Offset = offset, Limit = limit, IncludeMetadata = true });
+                });
+                if (this == null || context == null) return;
                 GetLeaderboard(scoresResponse);
             }
             catch (Exception e)
             {
-                Debug.LogError($"[리더보드] 데이터 로드 실패: {e.Message}");
+                Debug.LogWarning($"[리더보드] 조회 실패. 기존 목록을 유지하며 잠시 후 다시 시도할 수 있습니다: {e.Message}");
             }
         }
 
         private void GetLeaderboard(LeaderboardScoresPage scoresResponse)
         {
+            if (scoresResponse == null) return;
+            // A successful empty response must clear stale rows too.
+            foreach (Transform child in context) Destroy(child.gameObject);
             if (scoresResponse != null && scoresResponse.Results.Count > 0)
             {
-                foreach (Transform child in context)
-                {
-                    Destroy(child.gameObject);
-                }
                 for (int i = 0; i < scoresResponse.Results.Count; i++)
                 {
                     var entry = scoresResponse.Results[i];
@@ -81,14 +92,18 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
                     {
                         playerNameBuilder.Append(splitName[j]);
                     }
-                    playerName = playerNameBuilder.ToString();
+                    playerName = splitName.Length > 1 ? playerNameBuilder.ToString() : playerName;
                     double score = entry.Score;
                     uint kills = 0;
 
                     if (!string.IsNullOrEmpty(entry.Metadata))
                     {
-                        var metaDataObj = JsonConvert.DeserializeAnonymousType(entry.Metadata, new { kills = 0U });
-                        kills = metaDataObj.kills;
+                        try
+                        {
+                            var metaDataObj = JsonConvert.DeserializeAnonymousType(entry.Metadata, new { kills = 0U });
+                            kills = metaDataObj?.kills ?? 0;
+                        }
+                        catch (JsonException) { /* One malformed entry must not abort the entire list. */ }
                     }
                     MakeLeaderboard(rank, playerName, score, kills);
                 }

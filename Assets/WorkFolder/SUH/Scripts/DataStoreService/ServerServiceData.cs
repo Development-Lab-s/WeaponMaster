@@ -36,7 +36,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
         {
             IDataStoreService service = ServiceLocator.Get<IDataStoreService>();
 
-            await service?.SetAsync(nameof(PlayerDataStore.HairStyle), hairStyle)!;
+            await service?.SetAsync(nameof(PlayerDataStore.AccessoryStyle), hairStyle)!;
         }
     }
 }

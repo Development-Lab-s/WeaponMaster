@@ -138,7 +138,8 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             {
                 var query = entries
                     .OrderByDescending(entry => entry.KillCount)
-                    .ThenBy(entry => entry.PlayerName);
+                    .ThenBy(entry => entry.PlayerName, StringComparer.Ordinal)
+                    .ThenBy(entry => entry.PlayerId, StringComparer.Ordinal);
 
                 if (maxCount > 0)
                 {

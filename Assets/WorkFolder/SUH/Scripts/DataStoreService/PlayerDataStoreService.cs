@@ -21,6 +21,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
         private readonly string storeName = "V1";
         private IDataStore<PlayerDataStore> _store;
         private Task _initializationTask;
+        private readonly Dictionary<string, ServerRequestCache<PlayerDataStore>> publicProfiles = new Dictionary<string, ServerRequestCache<PlayerDataStore>>();
         
         private void Awake()
         {
@@ -62,6 +63,8 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         public async Task<TValue> SetAsync<TValue>(string valueName, TValue value)
         {
+            if (valueName == nameof(PlayerDataStore.AccessoryStyle) && value is uint accessory && accessory > 2)
+                throw new ArgumentOutOfRangeException(nameof(value), "AccessoryStyle must be 0, 1 or 2.");
             await EnsureInitializedAsync();
 
             FieldInfo field = GetField<TValue>(valueName);
@@ -85,20 +88,30 @@ namespace WorkFolder.SUH.Scripts.DataStoreService
 
         public async Task<TValue> GetIdAsync<TValue>(string playerId, string valueName)
         {
+            if (string.IsNullOrWhiteSpace(playerId)) throw new ArgumentException("Player ID is required.", nameof(playerId));
+            FieldInfo field = GetField<TValue>(valueName);
             await EnsureInitializedAsync();
+            if (!publicProfiles.TryGetValue(playerId, out var request))
+            {
+                request = new ServerRequestCache<PlayerDataStore>(2);
+                publicProfiles.Add(playerId, request);
+            }
+            PlayerDataStore store = await request.GetOrRun(() => LoadPublicProfile(playerId));
+            object value = field.GetValue(store);
+            return value == null ? default : (TValue)value;
+        }
 
+        private async Task<PlayerDataStore> LoadPublicProfile(string playerId)
+        {
             string key = $"{storeName}_{playerId}";                
             var keys = new HashSet<string> { key };
             var options = new LoadOptions(new PublicReadAccessClassOptions(playerId));
 
             var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(keys, options);
             if (!playerData.TryGetValue(key, out var item))
-                return default;
+                return new PlayerDataStore();
 
-            PlayerDataStore store = item.Value.GetAs<PlayerDataStore>();
-            FieldInfo field = GetField<TValue>(valueName);
-            object value = field.GetValue(store);
-            return value == null ? default : (TValue)value;
+            return item.Value.GetAs<PlayerDataStore>() ?? new PlayerDataStore();
         }
 
         public async Task<string> SetPlayerName<TValue>(string playerName)

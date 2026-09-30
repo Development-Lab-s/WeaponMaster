@@ -44,6 +44,9 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
         private Coroutine _coroutine;
         private WaitForSeconds _wait;
         private IDataStoreService _service;
+        private bool updatingPlayers;
+        private float nextPlayersRefreshAt;
+        private readonly ServerRequestCache<bool> scoreRequests = new ServerRequestCache<bool>(10);
         
         private void Start()
         {
@@ -94,41 +97,77 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         private async void UpdateAllPlayersData()
         {
+            if (updatingPlayers || Time.unscaledTime < nextPlayersRefreshAt) return;
+            updatingPlayers = true;
+            try
+            {
+                var players = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                var localLeaderboard = ServiceLocator.Get<ILeaderboardGiver>() as LocalLeaderboard;
+
+                if (localLeaderboard == null) return;
+
+                var tasks = players
+                    .Where(plr => plr.Object != null && plr.Object.IsValid)
+                    .Select(plr => (id: plr.playerId.ToString(), name: plr.playerName.ToString()))
+                    .Where(p => !string.IsNullOrEmpty(p.id))
+                    .Select(p => localLeaderboard.UpsertPlayerEntry(p.id, p.name))
+                    .ToList();
+
+                await Task.WhenAll(tasks);
+                if (this == null || !isActiveAndEnabled || localLeaderboard == null) return;
+
+                // 기다리는 동안 나간 플레이어가 있을 수 있어 다시 찾아서 목록을 맞춘다.
+                var alivePlayerIds = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                    .Where(plr => plr.Object != null && plr.Object.IsValid)
+                    .Select(plr => plr.playerId.ToString())
+                    .Where(id => !string.IsNullOrEmpty(id))
+                    .ToHashSet();
+                localLeaderboard.RetainOnly(alivePlayerIds);
+
+                SyncLeaderCrown(localLeaderboard);
+                UpdateLeaderboard();
+            }
+            catch (Exception ex)
+            {
+                nextPlayersRefreshAt = Time.unscaledTime + 5f;
+                Debug.LogWarning($"Local leaderboard refresh failed; waiting before retry: {ex.Message}");
+            }
+            finally { updatingPlayers = false; }
+        }
+
+        private static void SyncLeaderCrown(LocalLeaderboard leaderboard)
+        {
             var players = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            var localLeaderboard = ServiceLocator.Get<ILeaderboardGiver>() as LocalLeaderboard;
-
-            if (localLeaderboard == null) return;
-
-            var tasks = players
-                .Where(plr => plr.Object != null && plr.Object.IsValid)
-                .Select(plr => (id: plr.playerId.ToString(), name: plr.playerName.ToString()))
-                .Where(p => !string.IsNullOrEmpty(p.id))
-                .Select(p => localLeaderboard.UpsertPlayerEntry(p.id, p.name))
-                .ToList();
-
-            await Task.WhenAll(tasks);
-
-            // 기다리는 동안 나간 플레이어가 있을 수 있어 다시 찾아서 목록을 맞춘다.
-            var alivePlayerIds = GameObject.FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
-                .Where(plr => plr.Object != null && plr.Object.IsValid)
-                .Select(plr => plr.playerId.ToString())
-                .Where(id => !string.IsNullOrEmpty(id))
-                .ToHashSet();
-            localLeaderboard.RetainOnly(alivePlayerIds);
-
-            UpdateLeaderboard();
+            var ranked = leaderboard.GetSortedPlayers();
+            foreach (var group in players.Where(p => p.Object != null && p.Object.IsValid && p.Runner != null)
+                         .GroupBy(p => p.Runner))
+            {
+                if (!group.Key.IsSharedModeMasterClient) continue;
+                var ids = group.Select(p => p.playerId.ToString()).ToHashSet();
+                string leaderId = ranked.FirstOrDefault(entry => ids.Contains(entry.PlayerId))?.PlayerId;
+                foreach (var player in group)
+                {
+                    bool leader = !string.IsNullOrEmpty(leaderId) && player.playerId.ToString() == leaderId;
+                    // The recipient validates the RPC source, then persists it in Fusion state for late joiners.
+                    player.RPC_SetLocalLeaderboardLeader(leader);
+                }
+            }
         }
 
         public async void GetPlayerCustomData(string targetPlayerId)
         {
-            if (_service == null)
-                _service = ServiceLocator.Get<IDataStoreService>();
+            try
+            {
+                if (_service == null)
+                    _service = ServiceLocator.Get<IDataStoreService>();
 
-            if (_service == null)
-                return;
+                if (_service == null)
+                    return;
 
-            await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.KillCount));
-            await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.Score));
+                await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.KillCount));
+                await _service.GetIdAsync<uint>(targetPlayerId, nameof(PlayerDataStore.Score));
+            }
+            catch (Exception ex) { Debug.LogWarning($"Player ranking data unavailable: {ex.Message}"); }
         }
 
         [ContextMenu("UpdateLeaderboardUI")]
@@ -151,7 +190,8 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             List<LocalLeaderboardEntry> topPlayers =
                 allPlayers
                     .OrderByDescending(entry => entry.KillCount)
-                    .ThenBy(entry => entry.PlayerName)
+                    .ThenBy(entry => entry.PlayerName, StringComparer.Ordinal)
+                    .ThenBy(entry => entry.PlayerId, StringComparer.Ordinal)
                     .Take(takeCount)
                     .ToList();
             UpdateLeaderboardUI(topPlayers);
@@ -188,19 +228,32 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
 
         public async void GetScores()
         {
-            var getScoresOptions = new GetScoresOptions
+            if (!scoreRequests.CanStart) return;
+            try
             {
-                Offset = offset,
-                Limit = limit
-            };
+                await scoreRequests.GetOrRun(async () =>
+                {
+                    await UgsSignIn.EnsureSignedInAsync();
+                    var getScoresOptions = new GetScoresOptions
+                    {
+                        Offset = offset,
+                        Limit = limit
+                    };
 
-            var scoresResponse =
-                await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId, getScoresOptions);
+                    var scoresResponse =
+                    await LeaderboardsService.Instance.GetScoresAsync(leaderBoardId, getScoresOptions);
 
-            foreach (var entry in scoresResponse.Results)
-            {
-                GetPlayerCustomData(entry.PlayerId);
+                    foreach (var entry in scoresResponse.Results)
+                    {
+                        var service = ServiceLocator.Get<IDataStoreService>();
+                        if (service == null) throw new InvalidOperationException("Player data service is not ready.");
+                        // One profile fetch contains both score and kill count.
+                        await service.GetIdAsync<uint>(entry.PlayerId, nameof(PlayerDataStore.KillCount));
+                    }
+                    return true;
+                });
             }
+            catch (Exception ex) { Debug.LogWarning($"Ranking request failed; retry is throttled: {ex.Message}"); }
         }
 
         public void AfterInit()

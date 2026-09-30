@@ -1,4 +1,4 @@
-﻿using DevLib.ServiceLocator;
+using DevLib.ServiceLocator;
 using Fusion;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -85,7 +85,7 @@ namespace WorkFolder.SUH.Scripts.Proton.Runner
 
             _service = ServiceLocator.Get<IDataStoreService>();
             NetworkColor = await _service?.GetAsync<Color>(nameof(PlayerDataStore.BodyColor))!;
-            HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.AccessoryStyle))!;
             
         
             InitInfo();

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -12,6 +13,11 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
     {
         private static Task _signInTask;
 
+        private static bool HasValidAccessToken =>
+            UnityServices.State == ServicesInitializationState.Initialized &&
+            AuthenticationService.Instance.IsAuthorized &&
+            !string.IsNullOrEmpty(AuthenticationService.Instance.AccessToken);
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetOnPlay()
         {
@@ -20,8 +26,7 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
 
         public static Task EnsureSignedInAsync()
         {
-            if (UnityServices.State == ServicesInitializationState.Initialized
-                && AuthenticationService.Instance.IsSignedIn)
+            if (HasValidAccessToken)
                 return Task.CompletedTask;
 
             // 실패한 작업을 계속 돌려주면 한 번의 실패가 영구 실패가 되므로 다시 시도한다.
@@ -36,12 +41,19 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
             if (UnityServices.State != ServicesInitializationState.Initialized)
                 await UnityServices.InitializeAsync();
 
-            if (AuthenticationService.Instance.IsSignedIn)
+            if (HasValidAccessToken)
                 return;
+
+            string previousPlayerId = AuthenticationService.Instance.PlayerId;
 
             try
             {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                // Expired still counts as IsSignedIn in UGS. Resume the cached session;
+                // do not silently replace an existing account when its session token is missing.
+                await AuthenticationService.Instance.SignInAnonymouslyAsync(new SignInOptions
+                {
+                    CreateAccount = string.IsNullOrEmpty(previousPlayerId)
+                });
             }
             catch (AuthenticationException exception)
                 when (exception.ErrorCode == AuthenticationErrorCodes.ClientInvalidUserState)
@@ -49,20 +61,25 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
                 // 이 클래스를 거치지 않은 다른 코드가 이미 로그인 중이다. 그 결과를 기다린다.
                 await WaitForSignInResultAsync();
             }
+            if (!HasValidAccessToken)
+                throw new InvalidOperationException("로그인 후 유효한 인증 토큰을 받지 못했습니다. 다시 시도해주세요.");
+            if (!string.IsNullOrEmpty(previousPlayerId) && previousPlayerId != AuthenticationService.Instance.PlayerId)
+                throw new InvalidOperationException("인증 중 계정이 변경되었습니다. 다시 로그인해주세요.");
         }
 
-        private static Task WaitForSignInResultAsync()
+        private static async Task WaitForSignInResultAsync()
         {
             IAuthenticationService authentication = AuthenticationService.Instance;
-            if (authentication.IsSignedIn)
-                return Task.CompletedTask;
+            if (HasValidAccessToken)
+                return;
 
             var completion = new TaskCompletionSource<bool>();
 
             void OnSignedIn()
             {
                 Unsubscribe();
-                completion.TrySetResult(true);
+                if (HasValidAccessToken) completion.TrySetResult(true);
+                else completion.TrySetException(new InvalidOperationException("로그인 토큰을 받지 못했습니다."));
             }
 
             void OnSignInFailed(RequestFailedException exception)
@@ -81,10 +98,16 @@ namespace WorkFolder.SUH.Scripts.DataStoreService.Lib
             authentication.SignInFailed += OnSignInFailed;
 
             // 구독하는 사이에 로그인이 끝났을 수 있다.
-            if (authentication.IsSignedIn)
+            if (HasValidAccessToken)
                 OnSignedIn();
 
-            return completion.Task;
+            try
+            {
+                if (await Task.WhenAny(completion.Task, Task.Delay(30000)) != completion.Task)
+                    throw new TimeoutException("로그인 대기 시간이 초과되었습니다. 다시 시도해주세요.");
+                await completion.Task;
+            }
+            finally { Unsubscribe(); }
         }
     }
 }

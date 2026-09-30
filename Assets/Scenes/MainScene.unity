@@ -21403,15 +21403,15 @@ MonoBehaviour:
   _State: 0
   _RoundNumber: 0
   chessBalance:
-    CycleSeconds: 44
-    FirstWarningSeconds: 10
-    BatchIntervalSeconds: 2
-    TilesPerBatch: 2
-    MaxMissingRatio: 0.3
+    CycleSeconds: 46
+    FirstWarningSeconds: 8
+    BatchIntervalSeconds: 1.25
+    TilesPerBatch: 4
+    MaxMissingRatio: 0.6
     WarningSeconds: 2
     FallSeconds: 1.2
-    RestoreSeconds: 36
-    RestoreSpreadSeconds: 6
+    RestoreSeconds: 28
+    RestoreSpreadSeconds: 16
     RestoreRiseSeconds: 0.8
     SpawnProtectionRadius: 3
 --- !u!114 &910000004

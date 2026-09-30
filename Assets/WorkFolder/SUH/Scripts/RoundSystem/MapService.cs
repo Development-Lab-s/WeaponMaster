@@ -132,6 +132,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         private const float WarningDip = 0.12f;
         private const float FallDistance = 60f;
         private int[] order;
+        private float[] restoreOffsets;
         private int orderSeed;
         public int Count => tiles.Length;
 
@@ -265,7 +266,10 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             if (activeBalance.WarningSeconds != balance.WarningSeconds || activeBalance.FallSeconds != balance.FallSeconds ||
                 activeBalance.RestoreSeconds != balance.RestoreSeconds ||
                 activeBalance.RestoreSpreadSeconds != balance.RestoreSpreadSeconds ||
-                activeBalance.RestoreRiseSeconds != balance.RestoreRiseSeconds)
+                activeBalance.RestoreRiseSeconds != balance.RestoreRiseSeconds ||
+                activeBalance.FirstWarningSeconds != balance.FirstWarningSeconds ||
+                activeBalance.BatchIntervalSeconds != balance.BatchIntervalSeconds ||
+                activeBalance.TilesPerBatch != balance.TilesPerBatch)
                 Dispose();
             activeBalance = balance;
             GetFallableCount(balance.SpawnProtectionRadius);
@@ -286,9 +290,18 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     int j = (int)(random % (uint)(i + 1));
                     int swap = order[i]; order[i] = order[j]; order[j] = swap;
                 }
+                // Independent random restoration times: neither fall order nor equal spacing.
+                // Derived once from the replicated seed, identical for every peer/late joiner.
+                restoreOffsets = new float[Count];
+                for (int i = 0; i < Count; i++)
+                {
+                    random ^= random << 13;
+                    random ^= random >> 17;
+                    random ^= random << 5;
+                    restoreOffsets[i] = (random & 0x00FFFFFFu) / 16777216f;
+                }
             }
             int count = Mathf.Clamp(fallenCount, 0, fallableCount);
-            int maximumMissing = Mathf.Min(fallableCount, Mathf.Max(1, Mathf.FloorToInt(Count * activeBalance.MaxMissingRatio)));
             for (int i = 0; i < Count; i++)
             {
                 int index = order[i];
@@ -298,9 +311,10 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 // Every batch has its own age, so rapid consecutive falls animate together.
                 float age = Mathf.Max(0f, elapsedSinceFirstFall -
                     (i / activeBalance.TilesPerBatch) * activeBalance.BatchIntervalSeconds);
-                float restoreAge = activeBalance.RestoreSeconds - activeBalance.FirstWarningSeconds +
-                    i * activeBalance.RestoreSpreadSeconds / Mathf.Max(1, maximumMissing - 1) -
-                    (i / activeBalance.TilesPerBatch) * activeBalance.BatchIntervalSeconds;
+                float restoreAge = Mathf.Max(activeBalance.WarningSeconds + activeBalance.FallSeconds + 0.1f,
+                    activeBalance.RestoreSeconds - activeBalance.FirstWarningSeconds +
+                    restoreOffsets[index] * activeBalance.RestoreSpreadSeconds -
+                    (i / activeBalance.TilesPerBatch) * activeBalance.BatchIntervalSeconds);
                 bool restoring = fallen && age >= restoreAge;
                 bool restored = restoring && age >= restoreAge + activeBalance.RestoreRiseSeconds;
                 bool visible = !fallen || age < activeBalance.WarningSeconds + activeBalance.FallSeconds || restoring;

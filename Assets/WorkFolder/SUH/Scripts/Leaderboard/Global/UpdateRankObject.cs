@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
@@ -9,6 +10,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI killText;
         [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private Image profileImage;
 
         public void UpdateRankText(int rank, string name, uint kill, double score)
         {
@@ -16,6 +18,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             nameText.SetText(name);
             killText.SetText(kill.ToString());
             scoreText.SetText(score.ToString());
+            profileImage.sprite = null;
         }
     }
 }
