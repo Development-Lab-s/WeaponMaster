@@ -100,6 +100,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4165773855617039207}
   m_SourcePrefab: {fileID: 100100000, guid: 83ffc7e47575bd549a9bb3fd428eddf9, type: 3}
+--- !u!114 &661596511534061882 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1099870834913005749, guid: 83ffc7e47575bd549a9bb3fd428eddf9, type: 3}
+  m_PrefabInstance: {fileID: 463290459786922383}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!114 &1782278970271972096 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2221995833612104335, guid: 83ffc7e47575bd549a9bb3fd428eddf9, type: 3}
@@ -143,6 +154,7 @@ MonoBehaviour:
   nameText: {fileID: 1782278970271972096}
   killText: {fileID: 4325737665044745585}
   scoreText: {fileID: 7851418220426036660}
+  profileImage: {fileID: 661596511534061882}
 --- !u!114 &4325737665044745585 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4208028134872204542, guid: 83ffc7e47575bd549a9bb3fd428eddf9, type: 3}

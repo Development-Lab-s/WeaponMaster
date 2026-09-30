@@ -11,6 +11,7 @@ using WorkFolder.SUH.Scripts.Leaderboard.Lib.Interface.ServiceLocator;
 using WorkFolder.SUH.Scripts.Leaderboard.Lib.ScriptableObject;
 using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Class;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
+using WorkFolder.SUH.Scripts.FacePersistence;
 
 namespace WorkFolder.SUH.Scripts.Leaderboard.Global
 {
@@ -73,7 +74,7 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             }
         }
 
-        private void GetLeaderboard(LeaderboardScoresPage scoresResponse)
+        private async void GetLeaderboard(LeaderboardScoresPage scoresResponse)
         {
             if (scoresResponse == null) return;
             // A successful empty response must clear stale rows too.
@@ -95,6 +96,8 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
                     playerName = splitName.Length > 1 ? playerNameBuilder.ToString() : playerName;
                     double score = entry.Score;
                     uint kills = 0;
+                    Color background = Color.white;
+                    string face = null;
 
                     if (!string.IsNullOrEmpty(entry.Metadata))
                     {
@@ -105,7 +108,24 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
                         }
                         catch (JsonException) { /* One malformed entry must not abort the entire list. */ }
                     }
-                    MakeLeaderboard(rank, playerName, score, kills);
+
+                    // FaceAppearanceV1 is stored in Cloud Save because a PNG
+                    // cannot fit in the 1 KB leaderboard metadata limit.
+                    try
+                    {
+                        SavedFace savedFace = await FaceStore.Load(entry.PlayerId);
+                        if (savedFace != null)
+                        {
+                            background = savedFace.StoredBackground;
+                            face = savedFace.Png;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.LogWarning($"[리더보드] {entry.PlayerId} 얼굴 불러오기 실패: {exception.Message}");
+                    }
+
+                    MakeLeaderboard(rank, playerName, score, kills, background, face);
                 }
 
             }
@@ -128,11 +148,11 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Global
             }*/
         }
 
-        private void MakeLeaderboard(int rank, string playerName, double score, uint kills)
+        private void MakeLeaderboard(int rank, string playerName, double score, uint kills, Color background, string face)
         {
 
             GameObject obj = Instantiate(leaderboardTemplate, context);
-            obj.GetComponent<UpdateRankObject>().UpdateRankText(rank, playerName, kills, score);
+            obj.GetComponent<UpdateRankObject>().UpdateRankText(rank, playerName, kills, score, background, face);
             
         }
     }
