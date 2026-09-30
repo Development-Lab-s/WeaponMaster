@@ -83,7 +83,15 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [Networked] public int KillStreak { get; set; }
         
-        private uint HairStyleIndex { get; set; }
+        [Networked] public uint AccessoryStyleIndex { get; private set; }
+        [Networked] public NetworkBool IsLocalLeaderboardLeader { get; private set; }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RPC_SetLocalLeaderboardLeader(bool leader, RpcInfo info = default)
+        {
+            if (!HasStateAuthority || info.Source != Runner.GetMasterClient()) return;
+            IsLocalLeaderboardLeader = leader;
+        }
         
         private MaterialPropertyBlock _mpb;
         private IDataStoreService _service;
@@ -422,7 +430,8 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         public async override void Spawned()
         {
-
+            if (!TryGetComponent<WorkFolder.SUH.Scripts.CharacterVisual.PlayerAccessories>(out _))
+                gameObject.AddComponent<WorkFolder.SUH.Scripts.CharacterVisual.PlayerAccessories>();
             
             if (!HasStateAuthority && TryGetComponent(out Rigidbody rootBody))
             {
@@ -448,8 +457,9 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 uint value = await _service.GetAsync<uint>(nameof(PlayerDataStore.BodyColor));
                 if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
                 NetWorkedColor = GetBodyPaletteColor(value);
-                HairStyleIndex = await _service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+                uint accessory = await _service.GetAsync<uint>(nameof(PlayerDataStore.AccessoryStyle));
                 if (this == null || Object == null || !Object.IsValid || !HasStateAuthority) return;
+                AccessoryStyleIndex = accessory <= 2 ? accessory : 0;
             }
 
             if (!HasStateAuthority)

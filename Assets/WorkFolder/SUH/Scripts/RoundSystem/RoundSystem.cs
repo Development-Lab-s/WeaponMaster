@@ -38,9 +38,9 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public float WarningSeconds;
         [Min(0.1f), Tooltip("실제로 아래로 내려가는 트윈 시간")]
         public float FallSeconds;
-        [Min(1f), Tooltip("주기 시작 기준 전체 타일을 복원하는 시점(초)")]
+        [Min(1f), Tooltip("주기 시작 기준 랜덤 복원이 시작될 수 있는 가장 빠른 시점(초)")]
         public float RestoreSeconds;
-        [Min(0.1f), Tooltip("빈 칸들의 복원 시작을 순서대로 분산하는 시간")]
+        [Min(0.1f), Tooltip("각 타일의 복원 시점을 독립적으로 무작위 분산하는 시간 범위")]
         public float RestoreSpreadSeconds;
         [Min(0.1f), Tooltip("각 타일이 올라와 제자리에 채워지는 시간")]
         public float RestoreRiseSeconds;
@@ -86,9 +86,9 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [Header("Chess Balance (applied next round)")]
         [SerializeField] private ChessBalance chessBalance = new ChessBalance
         {
-            CycleSeconds = 44f, FirstWarningSeconds = 10f, BatchIntervalSeconds = 2f,
-            TilesPerBatch = 2, MaxMissingRatio = 0.3f, WarningSeconds = 2f,
-            FallSeconds = 1.2f, RestoreSeconds = 36f, RestoreSpreadSeconds = 6f, RestoreRiseSeconds = 0.8f, SpawnProtectionRadius = 3f
+            CycleSeconds = 46f, FirstWarningSeconds = 8f, BatchIntervalSeconds = 1.25f,
+            TilesPerBatch = 4, MaxMissingRatio = 0.6f, WarningSeconds = 2f,
+            FallSeconds = 1.2f, RestoreSeconds = 28f, RestoreSpreadSeconds = 16f, RestoreRiseSeconds = 0.8f, SpawnProtectionRadius = 3f
         };
         [Networked] private ChessBalance ActiveChessBalance { get; set; }
         [Networked, Capacity(64)] private NetworkDictionary<PlayerRef, RoundScore> Scores => default;

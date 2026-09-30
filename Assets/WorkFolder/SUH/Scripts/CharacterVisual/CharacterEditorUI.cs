@@ -24,16 +24,21 @@
             [SerializeField] private ParticleSystem[] _particleSystem;
             [SerializeField] private SkinnedMeshRenderer _meshRenderer;
             [SerializeField] private Material[] _bodyMaterials;
+            private GameObject accessoryOne;
+            private GameObject accessoryTwo;
             [SerializeField] private GameObject faceDrawPanel;
             private bool saving;
             private bool ready;
             private CharacterFacePreview facePreview;
             private SavedFace previewFace;
 
+            private void Awake() => ApplyAccessoryPreview();
+
             private void ApplyPreview()
             {
                 facePreview ??= new CharacterFacePreview(_meshRenderer);
                 facePreview.Apply(_bodyMaterials[BodyColor], previewFace);
+                ApplyAccessoryPreview();
             }
 
             private async System.Threading.Tasks.Task RefreshSavedFace()
@@ -47,7 +52,7 @@
             private void OnDestroy() => facePreview?.Dispose();
             
             
-            private uint HairStyleIndex = 0;
+            private uint AccessoryStyleIndex = 0;
             private uint BodyColor;
             private string PlayerName;
     private Vector2 originalPos;
@@ -57,15 +62,15 @@
 
             public void ChangeBtnHair(string count)
             {
-                if (HairStyleIndex <= 0 && int.Parse(count) < 0)
-                    return;
+                // Keep this UnityEvent entry point for existing scene button bindings.
+                ChangeBtnAccessory(count);
+            }
 
-                if (int.Parse(count) >= 0)
-                    HairStyleIndex++;
-                else
-                    HairStyleIndex--;
-                
-                HairStyleUserInterfaceChange();
+            public void ChangeBtnAccessory(string count)
+            {
+                if (!ready || saving || !int.TryParse(count, out int direction) || direction == 0) return;
+                AccessoryStyleIndex = (uint)Mathf.Clamp((int)AccessoryStyleIndex + Math.Sign(direction), 0, 2);
+                ApplyAccessoryPreview();
             }
 
             private async void Start()
@@ -74,7 +79,7 @@
                 {
                     var service = ServiceLocator.Get<IDataStoreService>();
                     BodyColor = await service.GetAsync<uint>("BodyColor");
-                    HairStyleIndex = await service.GetAsync<uint>("HairStyle");
+                    AccessoryStyleIndex = await service.GetAsync<uint>("AccessoryStyle");
                     if (this == null) return;
                     ApplyPreview();
                     ready = true;
@@ -125,7 +130,7 @@
                     var service = ServiceLocator.Get<IDataStoreService>();
                     if (service == null) throw new InvalidOperationException("IDataStoreService missing.");
                     await service.SetAsync<uint>("BodyColor", BodyColor);
-                    await service.SetAsync<uint>("HairStyle", HairStyleIndex);
+                    await service.SetAsync<uint>("AccessoryStyle", AccessoryStyleIndex);
                     var names = ServiceLocator.Get<IPlayerNameInterfaceChange>();
                     if (names != null && !string.IsNullOrWhiteSpace(PlayerName))
                     {
@@ -159,7 +164,7 @@
                     {
                         var service = ServiceLocator.Get<IDataStoreService>();
                         BodyColor = await service.GetAsync<uint>("BodyColor");
-                        HairStyleIndex = await service.GetAsync<uint>("HairStyle");
+                        AccessoryStyleIndex = await service.GetAsync<uint>("AccessoryStyle");
                         if (this == null) return;
                         ready = true;
                     }
@@ -190,9 +195,23 @@
                 }
             }
 
-            private void HairStyleUserInterfaceChange()
+            private void ApplyAccessoryPreview()
             {
-                //hairStyleTextLabel.SetText(HairStyleIndex.ToString());
+                if (accessoryOne == null || accessoryTwo == null)
+                {
+                    // Search only the preview model's ancestor hierarchy, including inactive meshes.
+                    for (Transform root = _meshRenderer != null ? _meshRenderer.transform : null;
+                         root != null; root = root.parent)
+                    {
+                        accessoryOne = AccessoryVisuals.Find(root, "Torus.002");
+                        accessoryTwo = AccessoryVisuals.Find(root, "Torus.003");
+                        if (accessoryOne != null && accessoryTwo != null) break;
+                    }
+                }
+                AccessoryVisuals.Show(accessoryOne, AccessoryStyleIndex == 1);
+                AccessoryVisuals.Show(accessoryTwo, AccessoryStyleIndex == 2);
+                if (hairStyleTextLabel != null)
+                    hairStyleTextLabel.SetText(AccessoryStyleIndex == 0 ? "악세사리 없음" : $"악세사리 {AccessoryStyleIndex}");
             }
 
             public void BodyColorIndexChange(string bodyColorIndex)

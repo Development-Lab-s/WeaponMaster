@@ -1,4 +1,4 @@
-﻿using DevLib.ServiceLocator;
+using DevLib.ServiceLocator;
 using UnityEngine;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib;
 using WorkFolder.SUH.Scripts.DataStoreService.Lib.Interface.ServiceLocator;
@@ -14,7 +14,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.CharacterVisual
         {
             IDataStoreService service = ServiceLocator.Get<IDataStoreService>();
         
-            uint currentHairStyle = await service?.GetAsync<uint>(nameof(PlayerDataStore.HairStyle))!;
+            uint currentHairStyle = await service?.GetAsync<uint>(nameof(PlayerDataStore.AccessoryStyle))!;
             
             playerStyle = playerHairStyle[currentHairStyle]!;
         }   

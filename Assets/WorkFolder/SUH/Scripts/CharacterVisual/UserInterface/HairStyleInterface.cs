@@ -34,7 +34,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
             AfterInit();
             
             if (service == null) return;
-            await service.SetAsync<uint>(nameof(PlayerDataStore.HairStyle), index);
+            await service.SetAsync<uint>(nameof(PlayerDataStore.AccessoryStyle), index);
         }
     }
 }
