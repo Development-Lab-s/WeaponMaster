@@ -20,12 +20,10 @@ using WorkFolder.SUH.Scripts.Leaderboard.Local.Lib.Interface.ServiceLocator;
 
 namespace WorkFolder.PAP.Scripts.Agent.Player
 {
-    // 포톤 퓨전 동기화를 위한 파트 데이터 구조체 (INetworkStruct 필수)
     public struct NetworkedPartData : INetworkStruct
     {
         public Vector2 DriveX;
         public Vector3 Offset;
-        // Vector3.zero가 아니면 같은 무기를 이 위치에 하나 더 단다.
         public Vector3 Offset2;
         public Vector3 EulerAngles;
     }
@@ -37,6 +35,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         [SerializeField]private Transform targetPuppet;
         [SerializeField] private TextMeshPro nameTag;
         [SerializeField] private GameObject nameTitleObj;
+        [SerializeField] private GameObject cameraTarget;
 
         public static List<Player> All { get; private set; }
         public IAgentMovement AgentMover { get; private set; }
@@ -47,24 +46,18 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         
         [Networked] private NetworkBool NetCanInitialize { get; set; }
         [Networked] private NetworkedPartData NetPartData { get; set; }
-        [Networked] private NetworkId NetTargetPartId { get; set; } // Transform 대신 NetworkId 저장
-        [Networked] private NetworkObject NetSpawnedWeapon { get; set; } // 스폰된 무기 참조 공유
-        [Networked] private NetworkObject NetSpawnedWeapon2 { get; set; } // offset2 위치의 두 번째 무기
+        [Networked] private NetworkId NetTargetPartId { get; set; } 
+        [Networked] private NetworkObject NetSpawnedWeapon { get; set; } 
+        [Networked] private NetworkObject NetSpawnedWeapon2 { get; set; }
 
         private bool HasSecondWeapon => NetPartData.Offset2 != Vector3.zero;
 
         [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.75f;
 
-        // 무기를 두 개 달 때(몸통 중앙) 각 무기를 바깥쪽으로 벌리는 각도. 오른쪽 무기는 오른쪽,
-        // 왼쪽 무기는 왼쪽으로 돌아 위에서 보면 V자가 된다. 동기화된 Offset/Offset2로 좌우가
-        // 정해지고 모든 클라이언트가 같은 계산을 하므로 따로 보낼 값이 없다.
         [SerializeField, Range(0f, 90f)] private float dualWeaponSpreadAngle = 15f;
 
-        // 무기 회전 관성이 척추의 몇 배까지 그대로 둘지. 넘는 무기만 척추가 느끼는 관성을 줄인다.
-        // 실행하면 무기마다 측정값이 콘솔에 찍히니 그걸 보고 맞춘다.
         [SerializeField, Min(1f)] private float maximumWeaponInertiaRatio = 8f;
 
-        // 무기가 다른 몸·무기와 겹쳤을 때 튕겨 나오는 최대 속도(PhysX 기본 10).
         [SerializeField, Min(0.1f)] private float weaponMaxDepenetrationVelocity = 3f;
 
         [Networked] public Vector3 NetLeftGoalLocal { get; private set; }
@@ -149,8 +142,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             if (HasStateAuthority && NetCanInitialize)
             {
-                // 위치 없이 스폰하면 프리팹에 저장된 월드 위치에 생겼다가 붙을 때 먼 거리를
-                // 순간이동한다. 붙을 자리에서 바로 태어나게 한다.
                 if (NetSpawnedWeapon == null)
                     NetSpawnedWeapon = SpawnWeaponAt(NetPartData.Offset);
 
@@ -249,7 +240,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Render()
         {
-            // 무기는 각자 따로 스폰되어 도착 순서가 다를 수 있으니 하나씩 따로 붙인다.
             if (NetSpawnedWeapon != null && NetSpawnedWeapon.transform.parent == null)
                 AttachWeaponLocal(NetSpawnedWeapon, NetPartData.Offset);
 
@@ -280,7 +270,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
-            // 상태가 이미 없으면 playerId를 읽을 수 없다. 이때는 리더보드 주기 갱신이 정리한다.
             if (!hasState)
                 return;
 
@@ -288,8 +277,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                 giver.RemovePlayer(playerId.Value);
         }
 
-        // 무기 하나일 때는 부위 데이터의 각도 그대로. 두 개일 때는 달린 쪽(오프셋의 좌우)으로
-        // 캐릭터 위쪽 축을 기준으로 벌린다.
         private Quaternion GetWeaponLocalRotation(Vector3 localOffset)
         {
             Quaternion baseRotation = Quaternion.Euler(NetPartData.EulerAngles);
@@ -314,14 +301,10 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
         {
             weapon.transform.SetParent(WeaponModule.GameObject.transform);
 
-            // 이 함수는 무기마다 한 번만(부모가 없을 때) 불리므로 배율도 한 번만 곱해진다.
-            // 조인트를 연결하기 전에 줄여야 콜라이더와 연결 앵커가 줄어든 크기 기준으로 잡힌다.
             if (HasSecondWeapon)
             {
                 weapon.transform.localScale *= dualWeaponScale;
 
-                // 질량도 크기와 같은 배율로 줄인다. 부피대로(배율의 세제곱) 줄이면 척추 대비
-                // 너무 가벼워져서, 무기끼리 부딪혀도 막히지 않고 뚫리던 문제가 다시 생긴다.
                 foreach (Rigidbody weaponBody in weapon.GetComponentsInChildren<Rigidbody>(true))
                     weaponBody.mass *= dualWeaponScale;
             }
@@ -332,21 +315,13 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             foreach (Rigidbody weaponBody in
                      weapon.GetComponentsInChildren<Rigidbody>(true))
             {
-                // 소유자: 퍼펫 몸은 보간으로 화면 프레임마다 부드럽게 그려지는데 무기 프리팹은 보간이
-                // 꺼져 있어 물리 스텝(50Hz) 단위로 뚝뚝 움직였다. 뛸수록 스텝 사이 이동이 커져 버벅인다.
-                // 프록시: 루트에 끌려가므로 보간이 그 이동을 되돌리지 않게 끈다(퍼펫과 같은 이유).
                 weaponBody.interpolation = HasStateAuthority
                     ? RigidbodyInterpolation.Interpolate
                     : RigidbodyInterpolation.None;
 
-                // 대검처럼 굵고 긴 날은 휘두를 때 몸·무기에 깊이 파고든다. PhysX는 겹친 만큼을
-                // 기본 최대 10 m/s로 튕겨내는데, 그 반동이 척추에 고정된 조인트로 전해져 몸이 날뛴다.
-                // 겹치지 않은 평소에는 영향이 없다.
                 weaponBody.maxDepenetrationVelocity = weaponMaxDepenetrationVelocity;
 
-                // 위에서 transform만 옮겼으므로 물리 쪽 위치·속도는 스폰된 자리에 남아 있다.
-                // 그대로 두면 다음 스텝에 조인트(철퇴 줄, 척추 연결)가 그 차이를 한 번에 끌어당겨
-                // 무기가 튀고 반동이 플레이어까지 전해진다. TeleportTo처럼 새 자리에 맞추고 멈춘다.
+
                 weaponBody.position = weaponBody.transform.position;
                 weaponBody.rotation = weaponBody.transform.rotation;
                 if (!weaponBody.isKinematic)
@@ -376,9 +351,6 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
                     if (weaponJoint is ConfigurableJoint configurableJoint)
                     {
-                        // 무기가 척추에서 크게 벌어지는(폭발) 순간에만 제자리로 붙잡는 안전장치다.
-                        // 프로젝션은 순간이동이라 기준이 작으면 뛸 때의 평범한 흔들림에도 매 스텝
-                        // 발동해 무기가 두두둑 튄다. 정상 동작에서는 절대 넘지 않을 만큼 크게 잡는다.
                         configurableJoint.projectionMode = JointProjectionMode.PositionAndRotation;
                         configurableJoint.projectionDistance = 0.3f;
                         configurableJoint.projectionAngle = 30f;
@@ -464,9 +436,14 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
                     puppetBody.interpolation = RigidbodyInterpolation.None;
             }
 
-            // Initial network state is available here, not in Unity Start().
             ColorChanged();
             NameChanged();
+        }
+
+        private void Start()
+        {
+            if (!HasStateAuthority)
+                Destroy(cameraTarget);
         }
 
         [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
