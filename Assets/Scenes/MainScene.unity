@@ -8438,6 +8438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 339633675}
+  - component: {fileID: 339633676}
   m_Layer: 5
   m_Name: Btns
   m_TagString: Untagged
@@ -8466,6 +8467,19 @@ RectTransform:
   m_AnchoredPosition: {x: 91.03052, y: 0}
   m_SizeDelta: {x: 1153.6833, y: 114.679184}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &339633676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339633674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc04025e05284673979cbec525b8fa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Sound.PlaySoundLocal
+  targetEnum: 13
 --- !u!1 &339690776
 GameObject:
   m_ObjectHideFlags: 0
@@ -31944,6 +31958,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 339633676}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 1346849349}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.GameSystem.LeaveSessionButton,
           Assembly-CSharp
@@ -40999,6 +41025,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 339633676}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 968667801}
         m_TargetAssemblyTypeName: SettingMove2, Assembly-CSharp
         m_MethodName: SettingOnMoves

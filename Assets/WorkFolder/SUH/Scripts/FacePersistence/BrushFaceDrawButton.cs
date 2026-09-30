@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -25,6 +26,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
         private bool clicking;
         private Color outlineColor = Color.black;
         private bool hovered;
+        public UnityEvent OnClickEvent;
 
         private void Awake()
         {
@@ -122,6 +124,7 @@ namespace WorkFolder.SUH.Scripts.FacePersistence
 
         private void PlayClick()
         {
+            OnClickEvent?.Invoke();
             clicking = true;
             restingScale = transform.localScale;
             restingRotation = transform.localRotation;

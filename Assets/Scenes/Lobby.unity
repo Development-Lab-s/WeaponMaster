@@ -3976,7 +3976,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -6394,7 +6394,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -19443,6 +19443,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 838672004}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &628117238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27729,6 +27744,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 838672003}
+  - component: {fileID: 838672004}
   m_Layer: 5
   m_Name: GameObject
   m_TagString: Untagged
@@ -27761,6 +27777,19 @@ RectTransform:
   m_AnchoredPosition: {x: 336.24976, y: -147.5824}
   m_SizeDelta: {x: 116.5014, y: 83.164795}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &838672004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 838672002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc04025e05284673979cbec525b8fa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Sound.PlaySoundLocal
+  targetEnum: 18
 --- !u!1 &840637106
 GameObject:
   m_ObjectHideFlags: 0
@@ -40779,7 +40808,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -42987,7 +43016,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -46443,6 +46472,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 755343381768946090, guid: 44825beebef14f84390b7446f17fbba2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1430343830}
+    - targetCorrespondingSourceObject: {fileID: 755343381768946090, guid: 44825beebef14f84390b7446f17fbba2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1430343835}
   m_SourcePrefab: {fileID: -4161369568681901532, guid: 44825beebef14f84390b7446f17fbba2, type: 3}
 --- !u!1 &1430343829 stripped
 GameObject:
@@ -46464,6 +46496,21 @@ MonoBehaviour:
   characterEditor: {fileID: 628117237}
   hoverDuration: 0.2
   checkTarget: {fileID: 1855442423}
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1430343835}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &1430343831
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -46485,6 +46532,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.5698574, y: 19.145945, z: 2.5698576}
   m_Center: {x: 0.000000022273916, y: -2.9895542, z: 0.000000089095664}
+--- !u!114 &1430343835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430343829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc04025e05284673979cbec525b8fa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Sound.PlaySoundLocal
+  targetEnum: 11
 --- !u!1 &1437030291
 GameObject:
   m_ObjectHideFlags: 0
@@ -46737,7 +46797,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -55704,7 +55764,7 @@ MonoBehaviour:
   OnClickEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2013967768}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
         m_MethodName: PlaySound
         m_Mode: 1
@@ -60571,7 +60631,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2013967767}
-  - component: {fileID: 2013967768}
   m_Layer: 0
   m_Name: ColorPicker
   m_TagString: Untagged
@@ -60600,19 +60659,6 @@ Transform:
   - {fileID: 1081872329}
   m_Father: {fileID: 899395368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2013967768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2013967766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc04025e05284673979cbec525b8fa90, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Sound.PlaySoundLocal
-  targetEnum: 18
 --- !u!1 &2019454544
 GameObject:
   m_ObjectHideFlags: 0

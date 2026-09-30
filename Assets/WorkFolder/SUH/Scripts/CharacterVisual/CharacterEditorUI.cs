@@ -214,9 +214,11 @@
                     hairStyleTextLabel.SetText(AccessoryStyleIndex == 0 ? "악세사리 없음" : $"악세사리 {AccessoryStyleIndex}");
             }
 
+            public UnityEvent OnClickEvent;
             public void BodyColorIndexChange(string bodyColorIndex)
             {
                 if (!ready || saving) return;
+                OnClickEvent?.Invoke();
                 BodyColor = uint.Parse(bodyColorIndex);
                 _particleSystem[Convert.ToInt32(bodyColorIndex)].Play();
                 ApplyPreview();
