@@ -55,6 +55,11 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
 
         [SerializeField, Range(0.1f, 1f)] private float dualWeaponScale = 0.75f;
 
+        // 무기를 두 개 달 때(몸통 중앙) 각 무기를 바깥쪽으로 벌리는 각도. 오른쪽 무기는 오른쪽,
+        // 왼쪽 무기는 왼쪽으로 돌아 위에서 보면 V자가 된다. 동기화된 Offset/Offset2로 좌우가
+        // 정해지고 모든 클라이언트가 같은 계산을 하므로 따로 보낼 값이 없다.
+        [SerializeField, Range(0f, 90f)] private float dualWeaponSpreadAngle = 15f;
+
         // 무기 회전 관성이 척추의 몇 배까지 그대로 둘지. 넘는 무기만 척추가 느끼는 관성을 줄인다.
         // 실행하면 무기마다 측정값이 콘솔에 찍히니 그걸 보고 맞춘다.
         [SerializeField, Min(1f)] private float maximumWeaponInertiaRatio = 8f;
@@ -278,13 +283,25 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             ServiceLocator.Get<ILeaderboardGiver>().RemovePlayer(playerId.Value);
         }
 
+        // 무기 하나일 때는 부위 데이터의 각도 그대로. 두 개일 때는 달린 쪽(오프셋의 좌우)으로
+        // 캐릭터 위쪽 축을 기준으로 벌린다.
+        private Quaternion GetWeaponLocalRotation(Vector3 localOffset)
+        {
+            Quaternion baseRotation = Quaternion.Euler(NetPartData.EulerAngles);
+            if (!HasSecondWeapon || Mathf.Approximately(localOffset.x, 0f))
+                return baseRotation;
+
+            float spread = Mathf.Sign(localOffset.x) * dualWeaponSpreadAngle;
+            return Quaternion.AngleAxis(spread, Vector3.up) * baseRotation;
+        }
+
         private NetworkObject SpawnWeaponAt(Vector3 localOffset)
         {
             Transform socket = WeaponModule.GameObject.transform;
             return Runner.Spawn(
                 _weaponPrefab,
                 socket.TransformPoint(localOffset),
-                socket.rotation * Quaternion.Euler(NetPartData.EulerAngles),
+                socket.rotation * GetWeaponLocalRotation(localOffset),
                 inputAuthority: Object.InputAuthority);
         }
 
@@ -305,7 +322,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             }
 
             weapon.transform.localPosition = localOffset;
-            weapon.transform.localEulerAngles = NetPartData.EulerAngles;
+            weapon.transform.localRotation = GetWeaponLocalRotation(localOffset);
 
             foreach (Rigidbody weaponBody in
                      weapon.GetComponentsInChildren<Rigidbody>(true))

@@ -2391,8 +2391,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 201850494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.7249813}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3973,6 +3973,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
   currentIndex: 3
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &253620776
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4847,7 +4862,8 @@ MonoBehaviour:
   hitAssSoundClips: []
   drawSoundClips: []
   killSoundClips: []
-  powderSoundClips: []
+  powderSoundClips:
+  - {fileID: 8300000, guid: 81ea5cce25bce174d8808e66d8f50489, type: 3}
   sfxPrefab: {fileID: 876470313289951931, guid: b9e125b2add1e4d49b252d6df3301753, type: 3}
   sfxPrefabLocal: {fileID: -5049269069515123218, guid: 4c16bea2b6b5c634db1f1d7a8c14c7ba, type: 3}
   bgmSource: {fileID: 0}
@@ -5236,9 +5252,9 @@ RectTransform:
   m_Father: {fileID: 1348166228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -26.0573, y: -17}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &349694891
 MonoBehaviour:
@@ -6260,6 +6276,8 @@ GameObject:
   - component: {fileID: 409399398}
   - component: {fileID: 409399400}
   - component: {fileID: 409399399}
+  - component: {fileID: 409399402}
+  - component: {fileID: 409399401}
   m_Layer: 0
   m_Name: Plane.004
   m_TagString: Untagged
@@ -6339,6 +6357,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 409399397}
   m_Mesh: {fileID: -4021319378949276034, guid: a23471e0c5fb1f541ac061b8e39a569c, type: 3}
+--- !u!65 &409399401
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409399397}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.7403278, y: 0.00000012470036, z: 2.7894998}
+  m_Center: {x: 2.2786112, y: 0.6127488, z: 4.65}
+--- !u!114 &409399402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409399397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e3232ba4e484b2880c4e4b38e68d84f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
+  currentIndex: 0
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &416718366
 GameObject:
   m_ObjectHideFlags: 0
@@ -27187,7 +27254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 528.36365}
+  m_AnchoredPosition: {x: 0, y: 528.36346}
   m_SizeDelta: {x: 0, y: 1275.3688}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &782535740
@@ -39297,8 +39364,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209252343}
   m_HandleRect: {fileID: 209252342}
   m_Direction: 3
-  m_Value: -0.0000013862096
-  m_Size: 0.5857175
+  m_Value: -0.0000009241398
+  m_Size: 0.5856932
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -40674,6 +40741,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
   currentIndex: 5
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &1081872331
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -42850,6 +42932,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
   currentIndex: 1
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &1203099414
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -44171,7 +44268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1297068637
 RectTransform:
   m_ObjectHideFlags: 0
@@ -46445,9 +46542,9 @@ RectTransform:
   m_Father: {fileID: 1348166228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 39, y: 0}
-  m_SizeDelta: {x: 29.0573, y: -17}
+  m_SizeDelta: {x: 29.0573, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1445362069
 MonoBehaviour:
@@ -46584,6 +46681,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
   currentIndex: 4
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &1456552870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -47751,9 +47863,9 @@ RectTransform:
   m_Father: {fileID: 1348166228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -26.0573, y: 20}
+  m_SizeDelta: {x: 0, y: 20}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1565697052
 MonoBehaviour:
@@ -55531,6 +55643,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.BodyColorMeshButton
   currentIndex: 2
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2013967768}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.Sound.PlaySoundLocal, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &1729595001
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -60386,6 +60513,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2013967767}
+  - component: {fileID: 2013967768}
   m_Layer: 0
   m_Name: ColorPicker
   m_TagString: Untagged
@@ -60414,6 +60542,19 @@ Transform:
   - {fileID: 1081872329}
   m_Father: {fileID: 899395368}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2013967768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2013967766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc04025e05284673979cbec525b8fa90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.Sound.PlaySoundLocal
+  targetEnum: 18
 --- !u!1 &2019454544
 GameObject:
   m_ObjectHideFlags: 0

@@ -6250,13 +6250,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 281799655}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70710677, y: 0.70710677, z: -0.00000003090862, w: -0.00000003090862}
+  m_LocalRotation: {x: 0.7010574, y: 0.7010574, z: 0.09229599, w: 0.09229599}
   m_LocalPosition: {x: -0.2, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1304281428}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 180, y: -15, z: -90}
 --- !u!1 &290103301
 GameObject:
   m_ObjectHideFlags: 0
@@ -21108,6 +21108,18 @@ MonoBehaviour:
   ui: {fileID: 910000006}
   _State: 0
   _RoundNumber: 0
+  chessBalance:
+    CycleSeconds: 44
+    FirstWarningSeconds: 10
+    BatchIntervalSeconds: 2
+    TilesPerBatch: 2
+    MaxMissingRatio: 0.3
+    WarningSeconds: 2
+    FallSeconds: 1.2
+    RestoreSeconds: 36
+    RestoreSpreadSeconds: 6
+    RestoreRiseSeconds: 0.8
+    SpawnProtectionRadius: 3
 --- !u!114 &910000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22175,13 +22187,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 941376712}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: -0.7071068, z: 0, w: 0}
+  m_LocalRotation: {x: -0.7010574, y: -0.7010574, z: 0.09229599, w: 0.09229599}
   m_LocalPosition: {x: 0.2, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1304281428}
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: -165, z: 90}
 --- !u!1 &949341117
 GameObject:
   m_ObjectHideFlags: 0
@@ -24168,10 +24180,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Go to Main
+  m_text: Main
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
-  m_sharedMaterial: {fileID: 7722576454694357243, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9681a1eeb9d3db5488b0b3530ce4a9a4, type: 2}
+  m_sharedMaterial: {fileID: -907065800110440947, guid: 9681a1eeb9d3db5488b0b3530ce4a9a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -31090,6 +31102,7 @@ GameObject:
   - component: {fileID: 1346849347}
   - component: {fileID: 1346849346}
   - component: {fileID: 1346849345}
+  - component: {fileID: 1346849349}
   m_Layer: 5
   m_Name: GoToMain
   m_TagString: Untagged
@@ -31140,7 +31153,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1346849346}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1346849349}
+        m_TargetAssemblyTypeName: WorkFolder.PAP.Scripts.GameSystem.LeaveSessionButton,
+          Assembly-CSharp
+        m_MethodName: Click
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1346849346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31196,9 +31222,23 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 271.0305, y: 0}
+  m_AnchoredPosition: {x: 181, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1346849349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346849344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9611491c0ea57774f8d40d387e2cb1f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.GameSystem.LeaveSessionButton
+  lobbySceneName: Lobby
+  despawnFlushSeconds: 0.25
 --- !u!1 &1349200638
 GameObject:
   m_ObjectHideFlags: 0
@@ -40111,7 +40151,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -271.03052, y: 0}
+  m_AnchoredPosition: {x: -327, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1735075827
@@ -41635,8 +41675,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Setting
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
-  m_sharedMaterial: {fileID: 7722576454694357243, guid: bc892c7469ee51f4fbfec8bc32fb011d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9681a1eeb9d3db5488b0b3530ce4a9a4, type: 2}
+  m_sharedMaterial: {fileID: -907065800110440947, guid: 9681a1eeb9d3db5488b0b3530ce4a9a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

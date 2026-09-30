@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using WorkFolder.SUH.Scripts.CharacterVisual.UserInterface.ServiceLocator;
 
 namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
@@ -9,6 +10,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
         [SerializeField] private uint currentIndex;
         
         private ICharacterEditor service;
+        public UnityEvent OnClickEvent;
         private void Start()
         {
             service = DevLib.ServiceLocator.ServiceLocator.Get<ICharacterEditor>();
@@ -17,6 +19,7 @@ namespace WorkFolder.SUH.Scripts.CharacterVisual.UserInterface
         private void OnMouseDown()
         {
             service?.BodyColorIndexChange(currentIndex);
+            OnClickEvent?.Invoke();
         }
     }
 }

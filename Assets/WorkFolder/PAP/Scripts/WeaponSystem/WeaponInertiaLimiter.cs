@@ -7,6 +7,14 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
     {
         private const int SettleSteps = 2;
 
+        // 머리처럼 가볍고 관절에 바짝 붙은 부위에 긴 무기를 달면 관성 비율이 100배를 넘어
+        // massScale도 10을 넘는다. 조인트만 무기를 가볍게 보고 충돌·중력은 원래 무게로 계산하니
+        // 부딪히는 순간 에너지가 생겨 무기가 계속 돈다. 주인 화면의 물리만 이렇게 되고, 다른
+        // 화면은 퍼펫이 루트에 끌려가 매번 제자리로 돌아오므로 멀쩡해 보인다.
+        private const float MaximumMassScale = 3f;
+        // 대검 끝이 30 m/s로 휘둘러도 약 8 rad/s다. 그 이상은 폭주로 보고 막는다.
+        private const float MaximumAngularSpeed = 25f;
+
         private Rigidbody _body;
         private Rigidbody _partBody;
         private Joint _joint;
@@ -44,9 +52,10 @@ namespace WorkFolder.PAP.Scripts.WeaponSystem
             float weaponInertia = PivotInertia(_body, pivot);
             float partInertia = Mathf.Max(PivotInertia(_partBody, pivot), 0.0001f);
             float ratio = weaponInertia / partInertia;
-            float massScale = Mathf.Max(1f, ratio / _maximumRatio);
+            float massScale = Mathf.Clamp(ratio / _maximumRatio, 1f, MaximumMassScale);
 
             _joint.massScale = massScale;
+            _body.maxAngularVelocity = MaximumAngularSpeed;
             Debug.Log(
                 $"[WeaponInertiaLimiter] {name}: {_partBody.name} 대비 회전 관성 {ratio:F1}배 " +
                 $"(상한 {_maximumRatio:F1}) → massScale {massScale:F2}",
