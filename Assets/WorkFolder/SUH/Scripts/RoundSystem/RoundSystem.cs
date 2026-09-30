@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DevLib.ServiceLocator;
 using Fusion;
+using TMPro;
 using UnityEngine;
 using WorkFolder.PAP.Scripts.Agent.Player;
 using WorkFolder.PAP.Scripts.MapSystem;
@@ -74,6 +75,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [SerializeField, Min(10f)] private float resultDurationSeconds = 10f;
         [SerializeField, Min(1f)] private float mapReadyTimeoutSeconds = 15f;
         [SerializeField] private RoundResultUI ui;
+        [SerializeField] private TextMeshProUGUI roundNextTextLabel;
         [Networked] public RoundState State { get; private set; }
         [Networked] public int RoundNumber { get; private set; }
         [Networked] private TickTimer PhaseTimer { get; set; }
@@ -94,6 +96,8 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [Networked, Capacity(64)] private NetworkDictionary<PlayerRef, RoundScore> Scores => default;
         [Networked, Capacity(64)] private NetworkDictionary<PlayerRef, int> MapReady => default;
 
+        [Networked] public int mapRoundIndex { get; private set; }
+
         public event Action<RoundState> StateChanged;
         public event Action<IReadOnlyList<RoundResultEntry>> ResultsReady;
         private MapService maps;
@@ -106,12 +110,15 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         private uint baselineScore, baselineKills;
         private string localName;
         private float nextScoreRead;
+        private int displayedNextMapIndex = int.MinValue;
+        private MapCatalogSO mapCatalog;
         private bool HasRoundAuthority => Object != null && Object.IsValid && HasStateAuthority;
 
         private void Awake()
         {
             maps = GetComponent<MapService>();
             spawns = GetComponent<SpawnService>();
+            mapCatalog = MapCatalogSO.LoadDefault();
             ServiceLocator.Register<IRoundSystem>(this);
             // Scene object survives Shared master departure and transfers authority automatically.
             GetComponent<NetworkObject>().Flags |= NetworkObjectFlags.MasterClientObject;
@@ -141,7 +148,19 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             {
                 case RoundState.Waiting:
                     if (maps.HasMap && Player.All != null && Player.All.Any(p => p != null && p.Object != null && p.Object.IsValid && p.Runner == Runner))
+                    {
                         StartRound();
+                        mapRoundIndex = maps.ChooseNextMap(MapIndex);
+                        if (mapRoundIndex < 0)
+                        {
+                            Debug.LogError(
+                                "[RoundSystem] No rotation maps registered in MapCatalog. Retrying in 10 seconds.",
+                                this);
+                            PhaseTimer = TickTimer.CreateFromSeconds(Runner, 10f);
+                            break;
+                        }
+                    }
+
                     break;
                 case RoundState.Playing:
                     if (PhaseTimer.Expired(Runner)) EndRound();
@@ -149,14 +168,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     break;
                 case RoundState.Result:
                     if (!PhaseTimer.Expired(Runner)) break;
-                    int next = maps.ChooseNextMap(MapIndex);
-                    if (next < 0)
-                    {
-                        Debug.LogError("[RoundSystem] No rotation maps registered in MapCatalog. Retrying in 10 seconds.", this);
-                        PhaseTimer = TickTimer.CreateFromSeconds(Runner, 10f);
-                        break;
-                    }
-                    MapIndex = next;
+                    MapIndex = mapRoundIndex;
                     MapRevision++;
                     FallenTileCount = 0;
                     ChessCycleNumber = 0;
@@ -165,7 +177,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     PhaseTimer = TickTimer.CreateFromSeconds(Runner, mapReadyTimeoutSeconds);
                     Runner.SessionInfo.UpdateCustomProperties(new Dictionary<string, SessionProperty>
                     {
-                        [MapCatalogSO.SessionPropertyKey] = next
+                        [MapCatalogSO.SessionPropertyKey] = mapRoundIndex
                     });
                     break;
                 case RoundState.LoadingNextMap:
@@ -245,6 +257,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 RPC_MapReady(MapRevision);
             }
             ApplyChessboardState(true);
+            UpdateNextMapLabel();
             if (observedRound != RoundNumber)
             {
                 observedRound = RoundNumber;
@@ -277,6 +290,22 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             if (ui != null)
                 ui.Present(State, RoundNumber, PhaseTimer.RemainingTime(Runner) ?? 0f,
                     GetResults(), Runner.LocalPlayer.ToString(), appliedRevision == MapRevision);
+        }
+
+        private void UpdateNextMapLabel()
+        {
+            if (roundNextTextLabel == null || mapRoundIndex < 0 || displayedNextMapIndex == mapRoundIndex)
+                return;
+
+            if (mapCatalog == null)
+                mapCatalog = MapCatalogSO.LoadDefault();
+
+            string mapName = mapCatalog != null && mapCatalog.IsValidIndex(mapRoundIndex)
+                ? mapCatalog.GetDisplayName(mapRoundIndex)
+                : "찾을 수 없습니다 ㅠㅠ";
+
+            roundNextTextLabel.SetText(mapName);
+            displayedNextMapIndex = mapRoundIndex;
         }
 
         private List<RoundResultEntry> GetResults() => Scores
