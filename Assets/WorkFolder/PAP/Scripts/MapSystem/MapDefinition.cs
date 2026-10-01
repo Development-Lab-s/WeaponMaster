@@ -12,6 +12,8 @@ namespace WorkFolder.PAP.Scripts.MapSystem
         [SerializeField] private Transform[] spawnPoints;
         // 같은 지점에 여러 명이 몰리지 않게 지점 주변으로 흩뿌리는 반경(수평).
         [SerializeField, Min(0f)] private float spawnSpread = 1f;
+        [Tooltip("다른 플레이어가 이 거리 안에 있는 스폰 지점은 고르지 않는다.")]
+        [SerializeField, Min(0f)] private float minimumPlayerDistance = 4f;
 
         [Header("Environment")]
         [Tooltip("이 맵에서 쓸 스카이박스. 비워 두면 씬의 기본 스카이박스를 쓴다.")]
@@ -20,14 +22,22 @@ namespace WorkFolder.PAP.Scripts.MapSystem
         public IReadOnlyList<Transform> SpawnPoints => spawnPoints;
         public Material Skybox => skybox;
 
-        // 다른 플레이어에게서 가장 먼 스폰 지점을 고른다. 지점이 없으면 맵 원점을 쓴다.
+        // 스폰 지점 중 하나를 무작위로 고른다. 근처에 다른 플레이어가 있는 지점은 피하고,
+        // 모든 지점이 막혀 있으면 전체에서 고른다. 지점이 없으면 맵 원점을 쓴다.
+        //
+        // 예전에는 다른 플레이어에게서 가장 먼 지점을 골랐다. 라운드가 바뀔 때는 모두가 동시에
+        // 다시 스폰해 각자 화면에 다른 플레이어가 없으므로 모든 지점의 거리가 무한대로 같아지고,
+        // 동점을 깨려고 더한 작은 값도 무한대에 묻혀 항상 첫 번째 지점에 몰렸다.
         public void GetSpawnPose(
             IEnumerable<Vector3> occupiedPositions,
             out Vector3 position,
             out Quaternion rotation)
         {
-            Transform best = null;
-            float bestDistance = float.NegativeInfinity;
+            var occupied = occupiedPositions != null
+                ? new List<Vector3>(occupiedPositions)
+                : new List<Vector3>();
+            var allPoints = new List<Transform>();
+            var freePoints = new List<Transform>();
 
             if (spawnPoints != null)
             {
@@ -36,18 +46,16 @@ namespace WorkFolder.PAP.Scripts.MapSystem
                     if (point == null)
                         continue;
 
-                    // 동점이면 매번 같은 곳이 되지 않도록 아주 작은 무작위 값을 더한다.
-                    float distance = NearestDistance(point.position, occupiedPositions)
-                                   + Random.value * 0.01f;
-                    if (distance <= bestDistance)
-                        continue;
-
-                    best = point;
-                    bestDistance = distance;
+                    allPoints.Add(point);
+                    if (NearestDistance(point.position, occupied) >= minimumPlayerDistance)
+                        freePoints.Add(point);
                 }
             }
 
-            Transform origin = best != null ? best : transform;
+            List<Transform> candidates = freePoints.Count > 0 ? freePoints : allPoints;
+            Transform origin = candidates.Count > 0
+                ? candidates[Random.Range(0, candidates.Count)]
+                : transform;
             Vector2 spread = Random.insideUnitCircle * spawnSpread;
             position = origin.position + new Vector3(spread.x, 0f, spread.y);
 

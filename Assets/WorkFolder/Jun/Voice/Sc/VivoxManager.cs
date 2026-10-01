@@ -1,4 +1,6 @@
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Unity.Services.Vivox;
@@ -13,8 +15,9 @@ public sealed class VivoxManager : MonoBehaviour
 
     [Header("3D Voice")]
     [SerializeField] private int audibleDistance = 90;
-    [SerializeField] private int conversationalDistance = 2;
-    [SerializeField] private float fadeIntensity = 2.1f;
+    // 이 거리 안은 원래 크기. 감쇠 세기 1이면 10 m에서 약 -4 dB, 20 m에서 약 -10 dB.
+    [SerializeField] private int conversationalDistance = 6;
+    [SerializeField] private float fadeIntensity = 1f;
 
     [Header("Position Update")]
     [SerializeField] private float updateInterval = 0.3f;
@@ -343,7 +346,7 @@ public sealed class VivoxManager : MonoBehaviour
         await EnsureReadyAsync();
 
         string targetChannel =
-            "prox_" + fusionRoomName;
+            ToChannelName(fusionRoomName);
 
         // 이미 같은 방에 있다면 위치 Target만 교체.
         if (_isChannelJoined &&
@@ -404,6 +407,19 @@ public sealed class VivoxManager : MonoBehaviour
         finally
         {
             _joiningChannel = null;
+        }
+    }
+
+
+    // Vivox 채널 이름은 영문, 숫자, =+-_.!~()% 만 쓸 수 있다. 방 이름은 로비에서 직접 입력해
+    // 한글이나 공백이 들어가면 채널 입장이 예외로 실패해 그 방에서는 음성이 전혀 안 된다.
+    // 방 이름을 해시해 영문·숫자로 바꾼다. 같은 방이면 모든 클라이언트가 같은 이름을 얻는다.
+    private static string ToChannelName(string fusionRoomName)
+    {
+        using (SHA256 sha = SHA256.Create())
+        {
+            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(fusionRoomName));
+            return "prox_" + BitConverter.ToString(hash, 0, 16).Replace("-", "");
         }
     }
 
@@ -602,8 +618,9 @@ public sealed class VivoxManager : MonoBehaviour
             settings.VivoxAcousticEchoCancellationEnabled = echoCancellation;
             settings.AutomaticGainControlEnabled = automaticGainControl;
             settings.AudioClippingProtectorEnabled = clippingProtection;
-            // 3D 채널은 소리가 한쪽으로 쏠릴 때 잘 깨지므로 6 dB 여유를 둔다.
-            settings.PositionalChannelVolumeProtectionEnabled = clippingProtection;
+            // 켜면 3D 채널 전체가 6 dB 작아져, 거리 감쇠와 겹쳐 조금만 떨어져도 안 들린다.
+            // 증폭을 몇 dB로 제한했고 클리핑 보호가 켜져 있으니 끈다.
+            settings.PositionalChannelVolumeProtectionEnabled = false;
         }
         catch (NotImplementedException)
         {

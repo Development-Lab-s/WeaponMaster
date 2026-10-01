@@ -16954,7 +16954,7 @@ Transform:
   m_GameObject: {fileID: 7204345068863655518}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.71, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20811,6 +20811,7 @@ MonoBehaviour:
   - {fileID: 9129493076132654577}
   - {fileID: 7263900478922186354}
   spawnSpread: 1
+  skybox: {fileID: 0}
 --- !u!1 &8992011027185243126
 GameObject:
   m_ObjectHideFlags: 0

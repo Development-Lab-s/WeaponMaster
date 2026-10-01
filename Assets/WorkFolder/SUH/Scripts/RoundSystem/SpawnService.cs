@@ -35,6 +35,19 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 HasParticipated = true;
         }
 
+        // 죽으면 HealthSystem.DeadEffect가 Player 컴포넌트까지 꺼서 Player.All에서 빠진다.
+        // Player.All만 보면 죽은 캐릭터는 숨기지도 치우지도 못해 다음 라운드까지 남고,
+        // 그 캐릭터가 "이미 스폰된 내 캐릭터"로 잡혀 새로 스폰되지 않는다. 그래서 씬에서 직접 찾는다.
+        // 결과 화면에서 이미 숨긴(비활성) 플레이어는 찾지 않아 매 프레임 중복으로 쌓이지 않는다.
+        private IEnumerable<Player> FindRunnerPlayers()
+        {
+            return FindObjectsByType<Player>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(p => p != null && p.Object != null && p.Object.IsValid && p.Runner == runner);
+        }
+
+        // DeadEffect는 Player 컴포넌트를 끄므로, 꺼져 있으면 죽은 캐릭터다.
+        private static bool IsDead(Player player) => !player.enabled;
+
         public void SuspendPlayers()
         {
             if (runner == null) return;
@@ -44,10 +57,9 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 deathUI.StopAllCoroutines();
                 deathUI.DisableUis();
             }
-            if (Player.All == null) return;
-            foreach (Player player in Player.All.ToArray())
+            foreach (Player player in FindRunnerPlayers().ToArray())
             {
-                if (player == null || player.Object == null || !player.Object.IsValid || player.Runner != runner)
+                if (suspendedPlayers.Contains(player))
                     continue;
                 suspendedPlayers.Add(player);
                 RemoveInputCallback(player);
@@ -80,14 +92,18 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 if (player == null || player.Object == null || !player.Object.IsValid || !player.HasStateAuthority)
                     continue;
                 RemoveInputCallback(player);
-
-                // Weapons are separately spawned root NetworkObjects, although parented under the player.
-                foreach (NetworkObject child in player.GetComponentsInChildren<NetworkObject>(true).Reverse().ToArray())
-                    if (child != player.Object && child.IsValid && !child.IsNested && child.HasStateAuthority)
-                        runner.Despawn(child);
-                runner.Despawn(player.Object);
+                DespawnWithWeapons(player);
             }
             suspendedPlayers.RemoveAll(p => p == null || p.Object == null || !p.Object.IsValid);
+        }
+
+        private void DespawnWithWeapons(Player player)
+        {
+            // Weapons are separately spawned root NetworkObjects, although parented under the player.
+            foreach (NetworkObject child in player.GetComponentsInChildren<NetworkObject>(true).Reverse().ToArray())
+                if (child != player.Object && child.IsValid && !child.IsNested && child.HasStateAuthority)
+                    runner.Despawn(child);
+            runner.Despawn(player.Object);
         }
 
         public void SpawnPlayersAtRandomPoints(int roundNumber)
@@ -96,8 +112,17 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 MapLoader.Current == null || playerPrefab == null || container == null) return;
             if (runner.TryGetPlayerObject(runner.LocalPlayer, out NetworkObject existing) && existing != null && existing.IsValid)
             {
-                spawnedRound = roundNumber;
-                return;
+                // 지난 라운드에 죽은 채 남은 캐릭터는 치우고 새로 스폰한다.
+                if (existing.TryGetComponent(out Player existingPlayer) && IsDead(existingPlayer) &&
+                    existing.HasStateAuthority)
+                {
+                    DespawnWithWeapons(existingPlayer);
+                }
+                else
+                {
+                    spawnedRound = roundNumber;
+                    return;
+                }
             }
             // Same equipment initialization as PAP/SelectUIScene/PlayerSpawner, without its menu transition.
             (int partIndex, ItemData weapon) = container.GetCurrentPartAndWeapon();

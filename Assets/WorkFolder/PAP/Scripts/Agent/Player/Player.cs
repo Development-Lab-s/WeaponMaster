@@ -480,7 +480,7 @@ namespace WorkFolder.PAP.Scripts.Agent.Player
             uint currentScore = await  ServiceLocator.Get<IDataStoreService>()
                 .GetAsync<uint>(nameof(PlayerDataStore.Score));
             await  ServiceLocator.Get<IDataStoreService>()
-                .SetAsync(nameof(PlayerDataStore.Score), currentScore - 50);
+                .SetAsync(nameof(PlayerDataStore.Score), Mathf.Max(0,currentScore - 50));
         }
 
 

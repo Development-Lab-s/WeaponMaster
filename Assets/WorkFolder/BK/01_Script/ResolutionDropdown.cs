@@ -5,6 +5,7 @@ using UnityEngine;
 public class ResolutionDropdown : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown dropdown;
+    [SerializeField] private GameObject checkBox;
 
     // 처음에는 창 모드로 테스트하는 것을 권장합니다.
     [SerializeField] private FullScreenMode screenMode =
@@ -13,6 +14,7 @@ public class ResolutionDropdown : MonoBehaviour
     private readonly List<Vector2Int> resolutions =
         new List<Vector2Int>();
     [SerializeField] private UnityEngine.UI.Toggle fullscreenToggle;
+    private bool currentbool = true;
 
     private void Start()
     {
@@ -92,7 +94,9 @@ public class ResolutionDropdown : MonoBehaviour
 
     public void SetFullscreen(bool value)
     {
-        screenMode = value ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+        currentbool = !currentbool;
+        checkBox.SetActive(currentbool);
+        screenMode = currentbool ? FullScreenMode.ExclusiveFullScreen : FullScreenMode.Windowed;
         ApplyResolution(dropdown.value);
         
     }

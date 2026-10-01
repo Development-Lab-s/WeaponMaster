@@ -25,10 +25,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
     [SerializeField, Min(0f)] private float airborneGravity = 20f;
 
     [Header("Slope Pelvis Drop")]
-    // 비워 두면 루트 바로 아래 "Driver"를 찾는다.
     [SerializeField] private Transform driverRoot;
     [SerializeField, Min(0f)] private float maximumPelvisDrop = 0.35f;
-    // 이만큼까지의 높이 차는 무시한다. 평지의 미세한 오차로 골반이 움직이지 않게 한다.
     [SerializeField, Min(0f)] private float pelvisDropDeadZone = 0.03f;
     [SerializeField, Min(0f)] private float pelvisDropResponse = 10f;
 
