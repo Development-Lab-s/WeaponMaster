@@ -54,7 +54,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1624099802198506527}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -156,15 +156,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD669\uBCF4\uACBD\uB2D8\uC744 \uCC98\uCE58!!!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4139d4b7fad7d9c43a1d0f309988894d, type: 2}
-  m_sharedMaterial: {fileID: -1918394051149132063, guid: 4139d4b7fad7d9c43a1d0f309988894d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 33f87393a8065d747a113b9752d4c165, type: 2}
+  m_sharedMaterial: {fileID: 964227941544000036, guid: 33f87393a8065d747a113b9752d4c165, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278243583
+  m_fontColor: {r: 1, g: 0.81665885, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
