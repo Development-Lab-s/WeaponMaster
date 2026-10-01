@@ -150,15 +150,6 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                     if (maps.HasMap && Player.All != null && Player.All.Any(p => p != null && p.Object != null && p.Object.IsValid && p.Runner == Runner))
                     {
                         StartRound();
-                        mapRoundIndex = maps.ChooseNextMap(MapIndex);
-                        if (mapRoundIndex < 0)
-                        {
-                            Debug.LogError(
-                                "[RoundSystem] No rotation maps registered in MapCatalog. Retrying in 10 seconds.",
-                                this);
-                            PhaseTimer = TickTimer.CreateFromSeconds(Runner, 10f);
-                            break;
-                        }
                     }
 
                     break;
@@ -192,6 +183,14 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public void StartRound()
         {
             if (!HasRoundAuthority || (State != RoundState.Waiting && State != RoundState.LoadingNextMap)) return;
+            // Choose once for every round, including rounds entered after loading a new map.
+            // MapIndex is now the current map, so the rotation excludes it from the next pick.
+            mapRoundIndex = maps.ChooseNextMap(MapIndex);
+            if (mapRoundIndex < 0)
+            {
+                Debug.LogWarning("[RoundSystem] No rotation maps registered; keeping the current map.", this);
+                mapRoundIndex = MapIndex;
+            }
             Scores.Clear();
             ChessSeed = UnityEngine.Random.Range(1, int.MaxValue);
             FallenTileCount = 0;
