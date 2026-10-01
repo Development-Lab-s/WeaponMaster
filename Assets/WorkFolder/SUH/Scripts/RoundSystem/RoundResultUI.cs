@@ -46,10 +46,6 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
             HideResults();
         }
 
-        private void OnEnable()
-        {
-            OnActiveEvent?.Invoke();
-        }
 
         private void OnDestroy() => ServiceLocator.UnRegister<IRoundResultUI>(this);
 
@@ -75,6 +71,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public void ShowResults(IReadOnlyList<RoundResultEntry> results)
         {
             if (root != null && !root.activeSelf) root.SetActive(true);
+            OnActiveEvent?.Invoke();
             int count = Mathf.Min(rankTexts?.Length ?? 0,
                 Mathf.Min(nameTexts?.Length ?? 0, Mathf.Min(scoreTexts?.Length ?? 0, killTexts?.Length ?? 0)));
             for (int i = 0; i < count; i++)

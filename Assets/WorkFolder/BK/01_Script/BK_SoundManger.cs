@@ -111,6 +111,7 @@ public class BK_SoundManger : MonoBehaviour
     sfxSoundClips[SfxSoundEnum.Draw] = drawSoundClips;
     sfxSoundClips[SfxSoundEnum.Kill] = killSoundClips;
     sfxSoundClips[SfxSoundEnum.powder] =  powderSoundClips;
+    sfxSoundClips[SfxSoundEnum.Win] =  winSoundClips;
     
     
     
