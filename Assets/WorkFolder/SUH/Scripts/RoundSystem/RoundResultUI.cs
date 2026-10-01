@@ -19,7 +19,6 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [SerializeField] private TMP_Text[] killTexts;
         [SerializeField] private RectTransform myRow;
         private TMP_Text myText;
-        public UnityEvent OnActiveEvent;
 
         private void Awake()
         {
@@ -71,8 +70,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         public void ShowResults(IReadOnlyList<RoundResultEntry> results)
         {
             if (root != null && !root.activeSelf) root.SetActive(true);
-            OnActiveEvent?.Invoke();
-            int count = Mathf.Min(rankTexts?.Length ?? 0,
+                int count = Mathf.Min(rankTexts?.Length ?? 0,
                 Mathf.Min(nameTexts?.Length ?? 0, Mathf.Min(scoreTexts?.Length ?? 0, killTexts?.Length ?? 0)));
             for (int i = 0; i < count; i++)
             {
