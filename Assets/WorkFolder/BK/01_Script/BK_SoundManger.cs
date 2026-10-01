@@ -26,7 +26,8 @@ public enum SfxSoundEnum
   Kill,
   Mace,
   Sickle,
-  powder
+  powder,
+  Win,
 }
 
 public enum BGMSoundEnum
@@ -57,6 +58,7 @@ public class BK_SoundManger : MonoBehaviour
   public AudioClip[] drawSoundClips;
   public AudioClip[] killSoundClips;
   public AudioClip[] powderSoundClips;
+  public AudioClip[] winSoundClips;
   
   
   private SfxSoundEnum sfxSoundEnum;

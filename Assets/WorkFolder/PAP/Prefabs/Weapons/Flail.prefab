@@ -1288,6 +1288,7 @@ MonoBehaviour:
   - "\uB1CC\uC9C4\uD0D5!"
   - "\uB204\uAC00 \uAE30\uCE68\uC18C\uB9AC\uB97C \uB0B4\uC5C8\uB294\uAC00?"
   - "\uB454\uAE30\uB85C \uB9DE\uC544\uC8FD\uC74C!"
+  hitCooldown: 0.25
 --- !u!59 &3117468835469573381
 HingeJoint:
   m_ObjectHideFlags: 0
@@ -1357,13 +1358,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bd8b41d806990c44a236d3c53c9d963, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.FlailRope
   ball: {fileID: 67386730395076794}
   ballMass: 1.5
   ballLinearDamping: 0.05
   ballAngularDamping: 0.5
   handleInertia: 0.02
+  ropeStiffness: 4000
+  ropeDamper: 80
   sagAmount: 1
 --- !u!1 &7214132422375497674
 GameObject:
@@ -1377,6 +1380,7 @@ GameObject:
   - component: {fileID: 67386730395076794}
   - component: {fileID: 1789357669166013773}
   - component: {fileID: 3563314849617621230}
+  - component: {fileID: 6689513578769713907}
   m_Layer: 7
   m_Name: Ball
   m_TagString: Weapon
@@ -1486,6 +1490,23 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &6689513578769713907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7214132422375497674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08030a3e813f4cd4898c55a6585d6c6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.PAP.Scripts.WeaponSystem.WeaponCollideModule
+  deathMents:
+  - "\uCCA0\uD1F4\uB85C \uC778\uD574 \uBB49\uAC1C\uC9D0!"
+  - "\uCC27\uC5B4\uC838 \uC8FD\uC74C!"
+  - "\uB450\uAC1C\uACE8\uC774 \uBD84\uC1C4\uB428!"
+  hitCooldown: 0.25
 --- !u!1 &7938154650190691057
 GameObject:
   m_ObjectHideFlags: 0

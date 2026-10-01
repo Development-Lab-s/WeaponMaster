@@ -24,11 +24,28 @@ public sealed class VivoxManager : MonoBehaviour
     [Header("Voice Settings")]
     [SerializeField] private bool microphoneEnabledByDefault = true;
 
-    [SerializeField, Range(0, 75)]
-    private int inputDeviceVolume = 50;
+    // 화면에 보이는 볼륨(0~100)이다. 50이 장치 원래 크기이고, 0은 거의 무음, 100은 최대 증폭.
+    // Vivox에는 이 값을 그대로 넘기지 않고 dB로 바꿔 넘긴다(ToVivoxVolume).
+    [SerializeField, Range(0, MaximumVolume)]
+    private int inputDeviceVolume = NeutralVolume;
 
-    [SerializeField, Range(0, 100)]
-    private int outputDeviceVolume = 50;
+    [SerializeField, Range(0, MaximumVolume)]
+    private int outputDeviceVolume = NeutralVolume;
+
+    // 볼륨 100일 때 올릴 최대 증폭(dB). Vivox 값은 dB 그대로라 50을 넘기면 +50 dB(약 316배)가
+    // 되어 목소리가 깨지고 배경 잡음까지 같이 커진다. 마이크는 잡음이 함께 커지므로 더 낮게 둔다.
+    [SerializeField, Range(0, 20)] private int maximumInputBoostDb = 6;
+    [SerializeField, Range(0, 20)] private int maximumOutputBoostDb = 10;
+
+    [Header("Voice Processing")]
+    [SerializeField] private bool noiseSuppression = true;
+    [SerializeField] private bool echoCancellation = true;
+    [SerializeField] private bool automaticGainControl = true;
+    [SerializeField] private bool clippingProtection = true;
+
+    private const int NeutralVolume = 50;
+    private const int MaximumVolume = 100;
+    private const int VivoxMinimumVolume = -50;
 
 
     private Task _readyTask;
@@ -131,6 +148,8 @@ public sealed class VivoxManager : MonoBehaviour
             await UgsSignIn.EnsureSignedInAsync();
 
             await VivoxService.Instance.InitializeAsync();
+
+            ApplyVoiceProcessing();
 
             BindParticipantEvents();
 
@@ -491,7 +510,7 @@ public sealed class VivoxManager : MonoBehaviour
         int volume = Mathf.Clamp(
             Mathf.RoundToInt(value),
             0,
-            75
+            MaximumVolume
         );
 
         if (inputDeviceVolume == volume)
@@ -503,7 +522,7 @@ public sealed class VivoxManager : MonoBehaviour
         {
             VivoxService.Instance
                 .SetInputDeviceVolume(
-                    inputDeviceVolume
+                    ToVivoxVolume(inputDeviceVolume, maximumInputBoostDb)
                 );
         }
     }
@@ -514,7 +533,7 @@ public sealed class VivoxManager : MonoBehaviour
         int volume = Mathf.Clamp(
             Mathf.RoundToInt(value),
             0,
-            100
+            MaximumVolume
         );
 
         if (outputDeviceVolume == volume)
@@ -526,7 +545,7 @@ public sealed class VivoxManager : MonoBehaviour
         {
             VivoxService.Instance
                 .SetOutputDeviceVolume(
-                    outputDeviceVolume
+                    ToVivoxVolume(outputDeviceVolume, maximumOutputBoostDb)
                 );
         }
     }
@@ -539,15 +558,57 @@ public sealed class VivoxManager : MonoBehaviour
 
         VivoxService.Instance
             .SetInputDeviceVolume(
-                inputDeviceVolume
+                ToVivoxVolume(inputDeviceVolume, maximumInputBoostDb)
             );
 
         VivoxService.Instance
             .SetOutputDeviceVolume(
-                outputDeviceVolume
+                ToVivoxVolume(outputDeviceVolume, maximumOutputBoostDb)
             );
 
         RefreshMicrophoneMuteState(true);
+    }
+
+
+    // Vivox 장치 볼륨은 -50~+50의 dB 값이고 0이 원래 크기다. 화면 볼륨 50을 0 dB에 맞추고,
+    // 그 아래는 -50 dB(거의 무음)까지 줄이며, 그 위는 정해 둔 최대 증폭까지만 올린다.
+    private static int ToVivoxVolume(int volume, int maximumBoostDb)
+    {
+        if (volume <= NeutralVolume)
+        {
+            return Mathf.RoundToInt(Mathf.Lerp(
+                VivoxMinimumVolume,
+                0f,
+                volume / (float)NeutralVolume));
+        }
+
+        return Mathf.RoundToInt(Mathf.Lerp(
+            0f,
+            maximumBoostDb,
+            (volume - NeutralVolume) / (float)(MaximumVolume - NeutralVolume)));
+    }
+
+
+    // 잡음 제거, 에코 제거, 자동 음량 조절, 클리핑 보호를 명시적으로 켠다.
+    // Vivox가 초기화된 뒤에만 설정할 수 있다.
+    private void ApplyVoiceProcessing()
+    {
+        try
+        {
+            IVivoxGlobalAudioSettings settings =
+                VivoxService.Instance.VivoxGlobalAudioSettings;
+
+            settings.NoiseSuppressionEnabled = noiseSuppression;
+            settings.VivoxAcousticEchoCancellationEnabled = echoCancellation;
+            settings.AutomaticGainControlEnabled = automaticGainControl;
+            settings.AudioClippingProtectorEnabled = clippingProtection;
+            // 3D 채널은 소리가 한쪽으로 쏠릴 때 잘 깨지므로 6 dB 여유를 둔다.
+            settings.PositionalChannelVolumeProtectionEnabled = clippingProtection;
+        }
+        catch (NotImplementedException)
+        {
+            // WebGL은 전역 음성 처리 설정을 지원하지 않는다.
+        }
     }
 
 

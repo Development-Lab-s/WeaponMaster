@@ -26,7 +26,8 @@ public sealed class VoiceSettingsUI : MonoBehaviour
         }
 
         microphoneVolumeSlider.minValue = 0f;
-        microphoneVolumeSlider.maxValue = 75f;
+        // 50이 원래 크기다. 100이어도 VivoxManager가 증폭을 몇 dB로 제한한다.
+        microphoneVolumeSlider.maxValue = 100f;
         voiceOutputVolumeSlider.minValue = 0f;
         voiceOutputVolumeSlider.maxValue = 100f;
         microphoneSnap = SliderSnap.Attach(microphoneVolumeSlider, 5f);

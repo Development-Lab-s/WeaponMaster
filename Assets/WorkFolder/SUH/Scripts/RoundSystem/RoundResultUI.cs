@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using DevLib.ServiceLocator;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using WorkFolder.SUH.Scripts.RoundSystem.Lib;
 using WorkFolder.SUH.Scripts.RoundSystem.Lib.Interface;
 
@@ -17,6 +19,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
         [SerializeField] private TMP_Text[] killTexts;
         [SerializeField] private RectTransform myRow;
         private TMP_Text myText;
+        public UnityEvent OnActiveEvent;
 
         private void Awake()
         {
@@ -41,6 +44,11 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 ConfigureText(myText, 18f, 26f);
             }
             HideResults();
+        }
+
+        private void OnEnable()
+        {
+            OnActiveEvent?.Invoke();
         }
 
         private void OnDestroy() => ServiceLocator.UnRegister<IRoundResultUI>(this);
