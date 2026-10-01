@@ -30728,6 +30728,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1304281428}
+  - component: {fileID: 890200001}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -30735,6 +30736,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &890200001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304281427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b21eacf3c7d40c8a4c0b1f89620e3ab, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::WorkFolder.SUH.Scripts.FacePersistence.LocalCharacterPreview
+  meshRenderer: {fileID: 1544162634}
+  bodyMaterials:
+  - {fileID: 2100000, guid: 785f3683ce964dc4b9e79ec5de7b8baa, type: 2}
+  - {fileID: 2100000, guid: 7640522a6eec417498e8709927fe28c4, type: 2}
+  - {fileID: 2100000, guid: 5fc5e68fc26df4b44b9a617606509076, type: 2}
+  - {fileID: 2100000, guid: e22f7d25c1d694741a79fc0926b2a033, type: 2}
+  - {fileID: 2100000, guid: d9a25cc07e30a5442a4b43d1bc3f1c0f, type: 2}
+  - {fileID: 2100000, guid: 45c575f64482cd0429d7250699d48e82, type: 2}
 --- !u!4 &1304281428
 Transform:
   m_ObjectHideFlags: 0

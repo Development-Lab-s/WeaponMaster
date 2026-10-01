@@ -304,7 +304,7 @@ namespace WorkFolder.SUH.Scripts.RoundSystem
                 ? mapCatalog.GetDisplayName(mapRoundIndex)
                 : "찾을 수 없습니다 ㅠㅠ";
 
-            roundNextTextLabel.SetText(mapName);
+            roundNextTextLabel.SetText($"다음 맵: {mapName}");
             displayedNextMapIndex = mapRoundIndex;
         }
 
