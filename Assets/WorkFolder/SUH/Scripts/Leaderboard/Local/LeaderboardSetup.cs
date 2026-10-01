@@ -77,6 +77,15 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
             _coroutine = StartCoroutine(LeaderboardUpdateState());
         }
 
+        private void OnEnable()
+        {
+            // Start initializes the interval once; re-enable after death must resume polling.
+            if (_wait != null)
+                LeaderboardStart();
+        }
+
+        private void OnDisable() => LeaderboardStop();
+
         public void LeaderboardStop()
         {
             if (_coroutine != null)
@@ -90,6 +99,9 @@ namespace WorkFolder.SUH.Scripts.Leaderboard.Local
         {
             while (true)
             {
+                // Restore rank on a newly spawned player even while cloud refresh is pending.
+                if (ServiceLocator.Get<ILeaderboardGiver>() is LocalLeaderboard leaderboard)
+                    SyncLeaderCrown(leaderboard);
                 UpdateAllPlayersData();
                 yield return _wait;
             }
