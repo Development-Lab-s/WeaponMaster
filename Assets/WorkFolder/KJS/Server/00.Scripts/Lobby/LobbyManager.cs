@@ -143,6 +143,7 @@ namespace _00.Scripts.Lobby
             {
                 Debug.LogError($"Lobby 참가 실패: {result.ShutdownReason}");
                 loadingFailed.SetActive(true);
+                loading.SetActive(false);
             }
         }
         
