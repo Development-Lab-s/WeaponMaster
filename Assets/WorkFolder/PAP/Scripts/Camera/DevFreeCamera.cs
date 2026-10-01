@@ -222,8 +222,6 @@ namespace WorkFolder.PAP.Scripts.Camera
             IsActive = false;
             ShowUi();
 
-            if (_camera != null)
-                _camera.fieldOfView = _originalFieldOfView;
             if (_brain != null)
                 _brain.enabled = _brainWasEnabled;
 
@@ -254,7 +252,6 @@ namespace WorkFolder.PAP.Scripts.Camera
 
             if (keyboard.rKey.wasPressedThisFrame)
             {
-                _camera.fieldOfView = _originalFieldOfView;
                 _roll = 0f;
             }
         }
@@ -274,12 +271,7 @@ namespace WorkFolder.PAP.Scripts.Camera
                 if (Mathf.Abs(scroll) > 0.01f)
                 {
                     float notches = Mathf.Sign(scroll);
-                    if (mouse.rightButton.isPressed)
-                        _camera.fieldOfView = Mathf.Clamp(
-                            _camera.fieldOfView * Mathf.Pow(0.9f, notches),
-                            minimumFieldOfView,
-                            maximumFieldOfView);
-                    else
+                    if (!mouse.rightButton.isPressed)
                         _speed = Mathf.Clamp(
                             _speed * Mathf.Pow(1.25f, notches),
                             minimumSpeed,

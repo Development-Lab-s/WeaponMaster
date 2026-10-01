@@ -1,4 +1,6 @@
+using DG.Tweening;
 using Fusion;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(PlayerMovementInput))]
@@ -44,6 +46,8 @@ public class RagdollPlayerMovement : NetworkBehaviour
 
     private Vector3 _commandedVelocity;
     private bool _hasCommandedVelocity;
+    private bool _isRunningStart;
+    private CinemachineCamera _currentCamera;
 
     public Vector3 CurrentVelocity => _hasCommandedVelocity
         ? _commandedVelocity
@@ -53,6 +57,7 @@ public class RagdollPlayerMovement : NetworkBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         _input = GetComponent<PlayerMovementInput>();
+        _currentCamera = (Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera);
         _footSolvers = GetComponentsInChildren<FootTargetSolver>(true);
         ResolvePuppetPelvisBody();
         _currentForwardSpeed = walkSpeed;
@@ -173,6 +178,12 @@ public class RagdollPlayerMovement : NetworkBehaviour
             }
             else if (_input.HasForwardInput && _input.IsSprintPressed)
             {
+                if (!_isRunningStart)
+                {
+                    _isRunningStart = true;
+                    DOTween.To(() => _currentCamera.Lens.FieldOfView, x => _currentCamera.Lens.FieldOfView = x, 80f,
+                        0.3f);
+                }
                 _currentForwardSpeed = Mathf.MoveTowards(
                     _currentForwardSpeed,
                     Mathf.Max(walkSpeed, maxRunSpeed),
@@ -181,6 +192,13 @@ public class RagdollPlayerMovement : NetworkBehaviour
             }
             else
             {
+                if (_isRunningStart)
+                {
+                    _isRunningStart = false;
+                    DOTween.To(() => _currentCamera.Lens.FieldOfView, x => _currentCamera.Lens.FieldOfView = x, 70f,
+                        0.3f);
+                    
+                }
                 _currentForwardSpeed = walkSpeed;
                 speed = walkSpeed;
             }
